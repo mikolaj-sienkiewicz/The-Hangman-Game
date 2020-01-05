@@ -218,6 +218,8 @@ int main(int argc, char ** argv){
     }
 
 
+    descrWaiting = (pollfd*) malloc(sizeof(pollfd)*descrCapacity);
+
     while(true){
         bool enoughPlayers = false;
         int ready = poll(descr, descrCount, -1);
