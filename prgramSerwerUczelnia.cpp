@@ -232,7 +232,6 @@ int main(int argc, char ** argv){
             if(descr[i].revents){
                 if(descr[i].fd == servFd)
                 {
-                    // printf("Add to waiting list");
                     addToWaitingList(descr[i].revents);
                 }
                 else
@@ -240,7 +239,7 @@ int main(int argc, char ** argv){
                 ready--;
             }
 
-            if(descrCount == 1){
+            if(descrCount <= 2){
                 enoughPlayers = true;
                 break;
             }
