@@ -247,7 +247,7 @@ int main(int argc, char **argv)
                 {
                     playersList[i].descriptor = descr[i].fd;
                 
-                    sendToClient(descr[i].fd, startGame(), startString.length() + 1);
+                    sendToClient(descr[i].fd, startGame().c_str(), startString.length() + 1);
                 }
 
                 break;
@@ -307,7 +307,7 @@ void generateWord()
     letterInWord = 4;
 }
 
-void startGame()
+std::string startGame()
 {
     std::string startString; 
     startString.append(";1;2");
@@ -316,6 +316,8 @@ void startGame()
     std::string startStringNew;
     startStringNew.append(std::to_string(startString.length()));
     startStringNew.append(startString);
+
+    return startStringNew;
 }
 
 // void sendToAllBut(int fd, char *buffer, int count)
