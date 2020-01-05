@@ -107,9 +107,8 @@ void eventOnServFd(int revents) {
         descr[descrCount].events = POLLIN|POLLRDHUP;
 
         int res = write(clientFd, "Hello", 5);
-        
+
         std::cout<<"Res: "<<res<<std::endl;
-        std::cout<<"Count: "<<count<<std::endl;
         descrCount++;
         
         printf("new connection from: %s:%hu (fd: %d)\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), clientFd);
