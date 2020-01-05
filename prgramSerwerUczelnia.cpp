@@ -246,7 +246,7 @@ int main(int argc, char **argv)
                 ready--;
             }
 
-            if (descrCount <= 2)
+            if (descrCount <= 3)
             {
                 enoughPlayers = false;
                 break;
