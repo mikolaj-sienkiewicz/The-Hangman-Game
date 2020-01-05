@@ -251,7 +251,7 @@ int main(int argc, char **argv)
                 {
                     playersList[i].descriptor = descr[i].fd;
                 
-                    sendToClient(descr[i].fd, startGame().c_str(), startString.length() + 1);
+                    sendToClient(descr[i].fd, startGame().c_str(), startGame().length() + 1);
                 }
 
                 break;
