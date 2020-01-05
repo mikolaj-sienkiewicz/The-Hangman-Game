@@ -265,7 +265,7 @@ int main(int argc, char **argv)
                 {
                     if(descr[i].fd == playersList[j].descriptor)
                     {
-                        ventOnClientFd(i);
+                        eventOnClientFd(i);
                     }
                 }
 
