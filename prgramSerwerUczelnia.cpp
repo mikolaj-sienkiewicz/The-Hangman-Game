@@ -18,7 +18,7 @@ struct client
 {
     int score;
     int lives;
-    pollfd descriptor;
+    int descriptor;
 
     client()
     {
