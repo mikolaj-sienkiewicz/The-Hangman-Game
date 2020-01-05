@@ -137,16 +137,16 @@ void eventStart(int indexInDescr)
             revents |= POLLERR;
     }
 
-    // if(revents & ~POLLIN){
-    //     printf("removing %d\n", clientFd);
+    if(revents & ~POLLIN){
+        printf("removing %d\n", clientFd);
 
-    //     // remove from description of watched files for poll
-    //     descr[indexInDescr] = descr[descrCount-1];
-    //     descrCount--;
+        // remove from description of watched files for poll
+        descr[indexInDescr] = descr[descrCount-1];
+        descrCount--;
 
-    //     shutdown(clientFd, SHUT_RDWR);
-    //     close(clientFd);
-    // }
+        shutdown(clientFd, SHUT_RDWR);
+        close(clientFd);
+    }
 }
 
 void eventOnClientFd(int indexInDescr)
