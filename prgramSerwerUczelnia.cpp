@@ -197,6 +197,10 @@ int main(int argc, char ** argv){
             error(0, errno, "poll failed");
             ctrl_c(SIGINT);
         }
+
+        if(enoughPlayers){
+                break;
+        }
         
         for(int i = 0 ; i < descrCount && ready > 0 ; ++i){
             if(descr[i].revents){
@@ -212,9 +216,7 @@ int main(int argc, char ** argv){
                 break;
             }
         }
-        if(enoughPlayers){
-                break;
-            }
+        
     }
 
 
