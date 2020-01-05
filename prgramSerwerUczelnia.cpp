@@ -35,6 +35,7 @@ std::string toFindedWord;
 int letterInWord;
 
 // data for poll
+int LIVES = 8;
 int START_GAME = 3;
 int descrCapacity = 16;
 int playersListCapacity = 16;
@@ -245,16 +246,13 @@ int main(int argc, char **argv)
 
                 gameStarted = true;
 
-                generateWord();
-
                 for (int i = 0; i < descrCount; i++)
                 {
                     playersList[i].descriptor = descr[i].fd;
-                
-                    // sendToClient(descr[i].fd, startGame().c_str(), startGame().length() + 1);
-                    // sendToClient(descr[i].fd, startGame().c_str(), startGame().length() + 1);
                     write(descr[i].fd, startGame().c_str(), startGame().length() + 1);
                 }
+
+                generateWord();
 
                 break;
             }
@@ -293,31 +291,45 @@ void ctrl_c(int)
     exit(0);
 }
 
-void sendToClient(int fd, char *buffer, int count)
-{
-    int res = write(fd, buffer, count);
-    // if (res != count)
-    // {
-    //     printf("removing %d\n", clientFd);
-    //     shutdown(clientFd, SHUT_RDWR);
-    //     close(clientFd);
-    //     descr[i] = descr[descrCount - 1];
-    //     descrCount--;
-    //     // continue;
-    // }
-}
+// void sendToClient(int fd, char *buffer, int count)
+// {
+//     int res = write(fd, buffer, count);
+//     // if (res != count)
+//     // {
+//     //     printf("removing %d\n", clientFd);
+//     //     shutdown(clientFd, SHUT_RDWR);
+//     //     close(clientFd);
+//     //     descr[i] = descr[descrCount - 1];
+//     //     descrCount--;
+//     //     // continue;
+//     // }
+// }
 
 void generateWord()
 {
     toFindedWord = "Adam";
     letterInWord = 4;
+
+    std::string startString;
+    startString.append(";2;");
+    startString.append(std::to_string(letterInWord);
+    startString.append("*");
+    std::string startStringNew;
+    startStringNew.append(std::to_string(startString.length()));
+    startStringNew.append(startString);
+
+    for (int i = 0; i < descrCount; i++)
+    {
+        playersList[i].descriptor = descr[i].fd;
+        write(descr[i].fd, startStringNew.c_str(), startStringNew.length() + 1);
+    }
 }
 
 std::string startGame()
 {
-    std::string startString; 
+    std::string startString;
     startString.append(";1;2");
-    startString.append(std::to_string(letterInWord));
+    startString.append(std::to_string(LIVES));
     startString.append("*");
     std::string startStringNew;
     startStringNew.append(std::to_string(startString.length()));
