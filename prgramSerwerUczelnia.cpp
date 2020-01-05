@@ -31,11 +31,12 @@ int servFd;
 // data for poll
 int startGame = 3;
 int descrCapacity = 16;
+int descrCapacityWaiting = 16;
 int descrCount = 1;
+int descrCountWaiting = 1;
 pollfd * descr;
+pollfd * descrWaiting;
 client * clientsList;
-
-
 
 // handles SIGINT
 void ctrl_c(int);
@@ -48,6 +49,36 @@ uint16_t readPort(char * txt);
 
 // sets SO_REUSEADDR
 void setReuseAddr(int sock);
+
+void addToWaitingList(int revents) {
+    // Wszystko co nie jest POLLIN na gnieździe nasłuchującym jest traktowane
+    // jako błąd wyłączający aplikację
+    if(revents & ~POLLIN){
+        error(0, errno, "Event %x on server socket", revents);
+        ctrl_c(SIGINT);
+    }
+    
+    if(revents & POLLIN){
+        sockaddr_in clientAddr{};
+        socklen_t clientAddrSize = sizeof(clientAddr);
+        
+        auto clientFd = accept(servFd, (sockaddr*) &clientAddr, &clientAddrSize);
+        if(clientFd == -1) error(1, errno, "accept failed");
+        
+        if(descrCountWaiting == descrCapacityWaiting){
+            // Skończyło się miejsce w descr - podwój pojemność
+            descrCapacityWaiting<<=1;
+            descrWaiting = (pollfd*) realloc(descrWaiting, sizeof(pollfd)*descrCapacityWaiting);
+            // clientsList = (client*) realloc(clientsList, sizeof(client)*descrCapacityWaiting);
+        }
+        
+        descrWaiting[descrCountWaiting].fd = clientFd;
+        descrWaiting[descrCountWaiting].events = POLLIN|POLLRDHUP;
+        descrCountWaiting++;
+        
+        printf("new connection from: %s:%hu (fd: %d)\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), clientFd);
+    }
+}
 
 void eventOnServFd(int revents) {
     // Wszystko co nie jest POLLIN na gnieździe nasłuchującym jest traktowane
@@ -76,6 +107,30 @@ void eventOnServFd(int revents) {
         descrCount++;
         
         printf("new connection from: %s:%hu (fd: %d)\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), clientFd);
+    }
+}
+
+void eventStart(int indexInDescr) {
+    auto clientFd = descr[indexInDescr].fd;
+    auto revents = descr[indexInDescr].revents;
+    
+    if(revents & POLLIN){
+        char buffer[255];
+        int count = read(clientFd, buffer, 255);
+        if(count < 1)
+            revents |= POLLERR;
+        
+    }
+    
+    if(revents & ~POLLIN){
+        printf("removing %d\n", clientFd);
+        
+        // remove from description of watched files for poll
+        descr[indexInDescr] = descr[descrCount-1];
+        descrCount--;
+        
+        shutdown(clientFd, SHUT_RDWR);
+        close(clientFd);
     }
 }
 
@@ -147,8 +202,8 @@ int main(int argc, char ** argv){
             if(descr[i].revents){
                 if(descr[i].fd == servFd)
                     eventOnServFd(descr[i].revents);
-                // else
-                //     eventOnClientFd(i);
+                else
+                    eventStart(i);
                 ready--;
             }
 
@@ -174,8 +229,10 @@ int main(int argc, char ** argv){
         for(int i = 0 ; i < descrCount && ready > 0 ; ++i){
             if(descr[i].revents){
                 if(descr[i].fd == servFd)
+                {
                     printf("Add to waiting list");
-                    // eventOnServFd(descr[i].revents);
+                    addToWaitingList(descr[i].revents);
+                }
                 else
                     eventOnClientFd(i);
                 ready--;
