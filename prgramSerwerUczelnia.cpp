@@ -106,7 +106,7 @@ void eventOnServFd(int revents) {
         descr[descrCount].fd = clientFd;
         descr[descrCount].events = POLLIN|POLLRDHUP;
 
-        int res = write(clientFd, "2;1", 5);
+        int res = write(clientFd, "2;1", 3);
 
         std::cout<<"Res: "<<res<<std::endl;
         descrCount++;
