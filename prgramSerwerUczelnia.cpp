@@ -106,18 +106,10 @@ void eventOnServFd(int revents) {
         descr[descrCount].fd = clientFd;
         descr[descrCount].events = POLLIN|POLLRDHUP;
 
-        int res = write(clientFd, buffer, count);
+        int res = write(clientFd, "Hello", 5);
+        
         std::cout<<"Res: "<<res<<std::endl;
         std::cout<<"Count: "<<count<<std::endl;
-        if(res!=count){
-            printf("removing %d\n", clientFd);
-            shutdown(clientFd, SHUT_RDWR);
-            close(clientFd);
-            descr[i] = descr[descrCount-1];
-            descrCount--;
-            continue;
-        
-        }
         descrCount++;
         
         printf("new connection from: %s:%hu (fd: %d)\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), clientFd);
