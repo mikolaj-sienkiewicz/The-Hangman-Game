@@ -106,7 +106,7 @@ void eventOnServFd(int revents) {
         descr[descrCount].fd = clientFd;
         descr[descrCount].events = POLLIN|POLLRDHUP;
 
-        int res = write(clientFd, "Hello", 5);
+        int res = write(clientFd, "2;1", 5);
 
         std::cout<<"Res: "<<res<<std::endl;
         descrCount++;
@@ -204,23 +204,24 @@ int main(int argc, char ** argv){
             ctrl_c(SIGINT);
         }
 
-        if(enoughPlayers){
-                break;
-        }
+        // if(enoughPlayers){
+        //         break;
+        // }
         
         for(int i = 0 ; i < descrCount && ready > 0 ; ++i){
             if(descr[i].revents){
                 if(descr[i].fd == servFd)
                     eventOnServFd(descr[i].revents);
                 else
-                    eventStart(i);
+                    eventOnClientFd(i);
+                    // eventStart(i);
                 ready--;
             }
 
-            if(descrCount >= startGame){
-                enoughPlayers = true;
-                break;
-            }
+            // if(descrCount >= startGame){
+            //     enoughPlayers = true;
+            //     break;
+            // }
         }
         
     }
