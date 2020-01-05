@@ -50,6 +50,10 @@ client *playersList;
 // handles SIGINT
 void ctrl_c(int);
 
+void startGame();
+
+void sendToClient();
+
 void generateWord();
 
 // sends data to clientFds excluding fd
@@ -290,20 +294,20 @@ void ctrl_c(int)
 void sendToClient(int fd, char *buffer, int count)
 {
     int res = write(fd, buffer, count);
-    if (res != count)
-    {
-        printf("removing %d\n", clientFd);
-        shutdown(clientFd, SHUT_RDWR);
-        close(clientFd);
-        descr[i] = descr[descrCount - 1];
-        descrCount--;
-        // continue;
-    }
+    // if (res != count)
+    // {
+    //     printf("removing %d\n", clientFd);
+    //     shutdown(clientFd, SHUT_RDWR);
+    //     close(clientFd);
+    //     descr[i] = descr[descrCount - 1];
+    //     descrCount--;
+    //     // continue;
+    // }
 }
 
 void generateWord()
 {
-    toFindedWord = Adam;
+    toFindedWord = "Adam";
     letterInWord = 4;
 }
 
