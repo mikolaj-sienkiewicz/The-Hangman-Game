@@ -30,6 +30,10 @@ struct client
 // server socket
 int servFd;
 
+//Word
+std::string toFindedWord;
+int letterInWord;
+
 // data for poll
 int START_GAME = 3;
 int descrCapacity = 16;
@@ -46,6 +50,8 @@ client *playersList;
 // handles SIGINT
 void ctrl_c(int);
 
+void generateWord();
+
 // sends data to clientFds excluding fd
 void sendToAllBut(int fd, char *buffer, int count);
 
@@ -54,40 +60,6 @@ uint16_t readPort(char *txt);
 
 // sets SO_REUSEADDR
 void setReuseAddr(int sock);
-
-// void addToWaitingList(int revents)
-// {
-//     // Wszystko co nie jest POLLIN na gnieździe nasłuchującym jest traktowane
-//     // jako błąd wyłączający aplikację
-//     if (revents & ~POLLIN)
-//     {
-//         error(0, errno, "Event %x on server socket", revents);
-//         ctrl_c(SIGINT);
-//     }
-
-//     if (revents & POLLIN)
-//     {
-//         sockaddr_in clientAddr{};
-//         socklen_t clientAddrSize = sizeof(clientAddr);
-
-//         auto clientFd = accept(servFd, (sockaddr *)&clientAddr, &clientAddrSize);
-//         if (clientFd == -1)
-//             error(1, errno, "accept failed");
-
-//         if (descrCountWaiting == descrCapacityWaiting)
-//         {
-//             // Skończyło się miejsce w descr - podwój pojemność
-//             descrCapacityWaiting <<= 1;
-//             descrWaiting = (pollfd *)realloc(descrWaiting, sizeof(pollfd) * descrCapacityWaiting);
-//         }
-
-//         descrWaiting[descrCountWaiting].fd = clientFd;
-//         descrWaiting[descrCountWaiting].events = POLLIN | POLLRDHUP;
-//         descrCountWaiting++;
-
-//         printf("new connection from: %s:%hu (fd: %d)\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), clientFd);
-//     }
-// }
 
 void eventOnServFd(int revents)
 {
@@ -164,7 +136,7 @@ void eventOnClientFd(int indexInDescr)
         if (count < 1)
             revents |= POLLERR;
         else
-            sendToAllBut(clientFd, buffer, count);
+            sendToClient(clientFd, "5;1;2*", count);
     }
 
     if (revents & ~POLLIN)
@@ -226,33 +198,6 @@ int main(int argc, char **argv)
             ctrl_c(SIGINT);
         }
 
-        // for (int i = 0; i < descrCount && ready > 0 && enoughPlayers; ++i)
-        // {
-        //     printf("Number of read %d \n", ready);
-        //     printf("Descriptor number %d \n", descr[i].fd);
-        //     if (descr[i].revents)
-        //     {
-        //         if (descr[i].fd == servFd)
-        //         {
-        //             printf(" 2. Add to waiting list\n");
-        //             // addToWaitingList(descr[i].revents);
-        //         }
-        //         else
-        //         {
-        //             printf(" 2. Add Event to Client\n");
-        //             eventOnClientFd(i);
-        //         }
-
-        //         ready--;
-        //     }
-
-        //     if (descrCount < 3)
-        //     {
-        //         enoughPlayers = false;
-        //         break;
-        //     }
-        // }
-
         for (int i = 0; i < descrCount && ready > 0; ++i)
         {
 
@@ -271,15 +216,15 @@ int main(int argc, char **argv)
 
                 for (int j = 0; j < playersListCapacity && gameStarted; j++)
                 {
-                    if(descr[i].fd == playersList[j].descriptor)
+                    if (descr[i].fd == playersList[j].descriptor)
                     {
                         printf(" 1. Event Player\n");
                         eventOnClientFd(i);
                         donePlayer = false;
                     }
                 }
-                
-                if(donePlayer)
+
+                if (donePlayer)
                 {
                     printf(" 1. Event Start Works\n");
                     eventStart(i);
@@ -294,12 +239,17 @@ int main(int argc, char **argv)
                 free(playersList);
                 playersList = (client *)malloc(sizeof(client) * playersListCapacity);
 
+                gameStarted = true;
+
+                generateWord();
+
                 for (int i = 0; i < descrCount; i++)
                 {
                     playersList[i].descriptor = descr[i].fd;
+                
+                    sendToClient(descr[i].fd, startGame(), startString.length() + 1);
                 }
 
-                gameStarted = true;
                 break;
             }
         }
@@ -337,27 +287,58 @@ void ctrl_c(int)
     exit(0);
 }
 
-void sendToAllBut(int fd, char *buffer, int count)
+void sendToClient(int fd, char *buffer, int count)
 {
-    int i = 1;
-    while (i < descrCount)
+    int res = write(fd, buffer, count);
+    if (res != count)
     {
-        int clientFd = descr[i].fd;
-        if (clientFd == fd)
-        {
-            i++;
-            continue;
-        }
-        int res = write(clientFd, buffer, count);
-        if (res != count)
-        {
-            printf("removing %d\n", clientFd);
-            shutdown(clientFd, SHUT_RDWR);
-            close(clientFd);
-            descr[i] = descr[descrCount - 1];
-            descrCount--;
-            continue;
-        }
-        i++;
+        printf("removing %d\n", clientFd);
+        shutdown(clientFd, SHUT_RDWR);
+        close(clientFd);
+        descr[i] = descr[descrCount - 1];
+        descrCount--;
+        // continue;
     }
 }
+
+void generateWord()
+{
+    toFindedWord = Adam;
+    letterInWord = 4;
+}
+
+void startGame()
+{
+    std::string startString; 
+    startString.append(";1;2");
+    startString.append(std::to_string(letterInWord));
+    startString.append("*");
+    std::string startStringNew;
+    startStringNew.append(std::to_string(startString.length()));
+    startStringNew.append(startString);
+}
+
+// void sendToAllBut(int fd, char *buffer, int count)
+// {
+//     // int i = 1;
+//     // while (i < descrCount)
+//     // {
+//     //     int clientFd = descr[i].fd;
+//     //     if (clientFd == fd)
+//     //     {
+//     //         i++;
+//     //         continue;
+//     //     }
+//     int res = write(fd, buffer, count);
+//     if (res != count)
+//     {
+//         printf("removing %d\n", clientFd);
+//         shutdown(clientFd, SHUT_RDWR);
+//         close(clientFd);
+//         descr[i] = descr[descrCount - 1];
+//         descrCount--;
+//         // continue;
+//     }
+//     //     i++;
+//     // }
+// }
