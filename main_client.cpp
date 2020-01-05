@@ -9,6 +9,9 @@
 #include <sstream>
 #include <iostream>
 #include <string>
+#include <cstring>
+
+
 
 
 void writeData(int fd, char* buffer, ssize_t count) {
@@ -28,11 +31,35 @@ void updateGameMonitor(std::string points, std::string lives) {
 }
 
 void encodeMessage(int sock, char * buffer, int received) {
-	printf("a");
+	//writeData(STDOUT_FILENO, "a", 1);
+	//printf("a");
 	writeData(sock, buffer, received);
 }
 void decodeMessage(char* buffer, int received) {
-	printf("b");
+	//writeData(STDOUT_FILENO, "a", 1);
+	std::string strBuffer(buffer);
+	std::size_t found=strBuffer.find(';'); //np 1 w "2;1;22*"
+	std::size_t found2 = strBuffer.find(';',found+1); //np 3 w "2;1;22*"
+
+	//end of message in the buffor 
+	std::size_t finish = strBuffer.find('*');
+
+
+	std::string commandLength = strBuffer.substr(0, found);
+	std::string commandType= strBuffer.substr(found + 1, found2 - found - 1);
+	std::string commandMessage = strBuffer.substr(found2+1, finish-found2-1);
+	/*if (commandType == "1") {
+
+	}
+	else if (commandType == "2") {
+		//updateGameMonitor
+	}*/
+
+	/* convert string to char array and print the result
+	char cstr[commandLength.size() + 1];
+	strcpy(cstr, &commandLength[0]);
+	writeData(STDOUT_FILENO, cstr, sizeof(cstr));*/
+
 	writeData(STDOUT_FILENO, buffer, received);
 }
 
@@ -59,7 +86,7 @@ int main(int argc, char** argv) {
 	freeaddrinfo(resolved);
 
 	// Lista deskryptorów do monitorowania
-	pollfd desc[3];
+	pollfd desc[2];
 
 	// Na pierwszej pozycji: standardowe wejście
 	desc[0].fd = STDIN_FILENO;
@@ -93,7 +120,7 @@ int main(int argc, char** argv) {
 
 		// w przypadku poll trzeba przejść przez całą przekazaną listę (lub do
 		// znalezienia zdarzeń na tylu deskryptorach, ile zwrócił poll)
-		for (int i = 0; i < 3; ++i) {
+		for (int i = 0; i < 2; ++i) {
 			// pole revents jest wypełniane przez poll opisem gotowych zdarzeń
 			if (desc[i].revents & (POLLERR | POLLHUP | POLLRDHUP)) {
 				// Jeśli poll raportuje błąd / EOF na pliku, zakończ program
@@ -107,12 +134,9 @@ int main(int argc, char** argv) {
 				// jeśli przyszły z standardowego wejścia, zapisz do funkcji kodujacej i wysylajacej,
 				// wpw wyslij do funkcji odczytujacej
 				//auto whereToWrite = desc[i].fd == STDIN_FILENO ? sock : STDOUT_FILENO;
-				desc[i].fd == STDIN_FILENO ? encodeMessage(sock,buffer,received) : decodeMessage(buffer,received);
-				
-				//writeData(whereToWrite, buffer, received);
-			}
-			if (desc[i].revents & POLLOUT) {
+				desc[i].fd == STDIN_FILENO ? encodeMessage(sock, buffer, received) : decodeMessage(buffer, received);
 
+				//writeData(whereToWrite, buffer, received);
 			}
 
 		}
