@@ -291,19 +291,19 @@ void ctrl_c(int)
     exit(0);
 }
 
-// void sendToClient(int fd, char *buffer, int count)
-// {
-//     int res = write(fd, buffer, count);
-//     // if (res != count)
-//     // {
-//     //     printf("removing %d\n", clientFd);
-//     //     shutdown(clientFd, SHUT_RDWR);
-//     //     close(clientFd);
-//     //     descr[i] = descr[descrCount - 1];
-//     //     descrCount--;
-//     //     // continue;
-//     // }
-// }
+void sendToClient(int fd, char *buffer, int count)
+{
+    int res = write(fd, buffer, count);
+    // if (res != count)
+    // {
+    //     printf("removing %d\n", clientFd);
+    //     shutdown(clientFd, SHUT_RDWR);
+    //     close(clientFd);
+    //     descr[i] = descr[descrCount - 1];
+    //     descrCount--;
+    //     // continue;
+    // }
+}
 
 void generateWord()
 {
