@@ -266,6 +266,7 @@ int main(int argc, char **argv)
                 {
                     printf(" 1. Add clients\n");
                     eventOnServFd(descr[i].revents);
+                    continue;
                 }
 
                 for (int j = 0; j < playersListCapacity && gameStarted; j++)
@@ -278,7 +279,7 @@ int main(int argc, char **argv)
                     }
                 }
                 
-                else if(donePlayer)
+                if(donePlayer)
                 {
                     printf(" 1. Event Start Works\n");
                     eventStart(i);
