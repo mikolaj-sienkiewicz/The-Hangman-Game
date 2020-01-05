@@ -18,6 +18,7 @@ struct client
 {
     int score;
     int lives;
+    pollfd descriptor;
 
     client()
     {
@@ -30,14 +31,17 @@ struct client
 int servFd;
 
 // data for poll
-int startGame = 3;
+int START_GAME = 3;
 int descrCapacity = 16;
-int descrCapacityWaiting = 16;
+int playersListCapacity = 16;
 int descrCount = 1;
 int descrCountWaiting = 1;
+
+bool gameStarted = false;
+
 pollfd *descr;
-pollfd *descrWaiting;
-client *clientsList;
+// pollfd *descrWaiting;
+client *playersList;
 
 // handles SIGINT
 void ctrl_c(int);
@@ -51,40 +55,39 @@ uint16_t readPort(char *txt);
 // sets SO_REUSEADDR
 void setReuseAddr(int sock);
 
-void addToWaitingList(int revents)
-{
-    // Wszystko co nie jest POLLIN na gnieździe nasłuchującym jest traktowane
-    // jako błąd wyłączający aplikację
-    if (revents & ~POLLIN)
-    {
-        error(0, errno, "Event %x on server socket", revents);
-        ctrl_c(SIGINT);
-    }
+// void addToWaitingList(int revents)
+// {
+//     // Wszystko co nie jest POLLIN na gnieździe nasłuchującym jest traktowane
+//     // jako błąd wyłączający aplikację
+//     if (revents & ~POLLIN)
+//     {
+//         error(0, errno, "Event %x on server socket", revents);
+//         ctrl_c(SIGINT);
+//     }
 
-    if (revents & POLLIN)
-    {
-        sockaddr_in clientAddr{};
-        socklen_t clientAddrSize = sizeof(clientAddr);
+//     if (revents & POLLIN)
+//     {
+//         sockaddr_in clientAddr{};
+//         socklen_t clientAddrSize = sizeof(clientAddr);
 
-        auto clientFd = accept(servFd, (sockaddr *)&clientAddr, &clientAddrSize);
-        if (clientFd == -1)
-            error(1, errno, "accept failed");
+//         auto clientFd = accept(servFd, (sockaddr *)&clientAddr, &clientAddrSize);
+//         if (clientFd == -1)
+//             error(1, errno, "accept failed");
 
-        if (descrCountWaiting == descrCapacityWaiting)
-        {
-            // Skończyło się miejsce w descr - podwój pojemność
-            descrCapacityWaiting <<= 1;
-            descrWaiting = (pollfd *)realloc(descrWaiting, sizeof(pollfd) * descrCapacityWaiting);
-            // clientsList = (client*) realloc(clientsList, sizeof(client)*descrCapacityWaiting);
-        }
+//         if (descrCountWaiting == descrCapacityWaiting)
+//         {
+//             // Skończyło się miejsce w descr - podwój pojemność
+//             descrCapacityWaiting <<= 1;
+//             descrWaiting = (pollfd *)realloc(descrWaiting, sizeof(pollfd) * descrCapacityWaiting);
+//         }
 
-        descrWaiting[descrCountWaiting].fd = clientFd;
-        descrWaiting[descrCountWaiting].events = POLLIN | POLLRDHUP;
-        descrCountWaiting++;
+//         descrWaiting[descrCountWaiting].fd = clientFd;
+//         descrWaiting[descrCountWaiting].events = POLLIN | POLLRDHUP;
+//         descrCountWaiting++;
 
-        printf("new connection from: %s:%hu (fd: %d)\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), clientFd);
-    }
-}
+//         printf("new connection from: %s:%hu (fd: %d)\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), clientFd);
+//     }
+// }
 
 void eventOnServFd(int revents)
 {
@@ -110,7 +113,6 @@ void eventOnServFd(int revents)
             // Skończyło się miejsce w descr - podwój pojemność
             descrCapacity <<= 1;
             descr = (pollfd *)realloc(descr, sizeof(pollfd) * descrCapacity);
-            clientsList = (client *)realloc(clientsList, sizeof(client) * descrCapacity);
         }
 
         descr[descrCount].fd = clientFd;
@@ -137,11 +139,12 @@ void eventStart(int indexInDescr)
             revents |= POLLERR;
     }
 
-    if(revents & ~POLLIN){
+    if (revents & ~POLLIN)
+    {
         printf("removing %d\n", clientFd);
 
         // remove from description of watched files for poll
-        descr[indexInDescr] = descr[descrCount-1];
+        descr[indexInDescr] = descr[descrCount - 1];
         descrCount--;
 
         shutdown(clientFd, SHUT_RDWR);
@@ -208,9 +211,6 @@ int main(int argc, char **argv)
         error(1, errno, "listen failed");
 
     descr = (pollfd *)malloc(sizeof(pollfd) * descrCapacity);
-    clientsList = (client *)malloc(sizeof(client) * descrCapacity);
-    descrWaiting = (pollfd *)malloc(sizeof(pollfd) * descrCapacity);
-
 
     descr[0].fd = servFd;
     descr[0].events = POLLIN;
@@ -226,45 +226,54 @@ int main(int argc, char **argv)
             ctrl_c(SIGINT);
         }
 
-        for (int i = 0; i < descrCount && ready > 0 && enoughPlayers; ++i)
+        // for (int i = 0; i < descrCount && ready > 0 && enoughPlayers; ++i)
+        // {
+        //     printf("Number of read %d \n", ready);
+        //     printf("Descriptor number %d \n", descr[i].fd);
+        //     if (descr[i].revents)
+        //     {
+        //         if (descr[i].fd == servFd)
+        //         {
+        //             printf(" 2. Add to waiting list\n");
+        //             // addToWaitingList(descr[i].revents);
+        //         }
+        //         else
+        //         {
+        //             printf(" 2. Add Event to Client\n");
+        //             eventOnClientFd(i);
+        //         }
+
+        //         ready--;
+        //     }
+
+        //     if (descrCount < 3)
+        //     {
+        //         enoughPlayers = false;
+        //         break;
+        //     }
+        // }
+
+        for (int i = 0; i < descrCount && ready > 0; ++i)
         {
-            printf("Number of read %d \n", ready);
-            printf("Descriptor number %d \n", descr[i].fd);
-            if (descr[i].revents)
-            {
-                if (descr[i].fd == servFd)
-                {
-                    printf(" 2. Add to waiting list\n");
-                    addToWaitingList(descr[i].revents);
-                }
-                else
-                {
-                    printf(" 2. Add Event to Client\n");
-                    eventOnClientFd(i);
-                }
 
-                ready--;
-            }
-
-            if (descrCount < 3)
-            {
-                enoughPlayers = false;
-                break;
-            }
-        }
-
-        for (int i = 0; i < descrCount && ready > 0 && !enoughPlayers; ++i)
-        {
             if (descr[i].revents)
             {
                 printf("Number of read %d \n", ready);
                 printf("Descriptor number %d \n", descr[i].fd);
+
+                for (int j = 0; j < playersListCapacity && gameStarted; j++)
+                {
+                    if(descr[i].fd == playersList[j].descriptor)
+                    {
+                        ventOnClientFd(i);
+                    }
+                }
+
                 if (descr[i].fd == servFd)
                 {
                     printf(" 1. Add clients\n");
                     eventOnServFd(descr[i].revents);
                 }
-
                 else
                 {
                     printf(" 1. Event Start Works\n");
@@ -274,48 +283,24 @@ int main(int argc, char **argv)
                 ready--;
             }
 
-            if (descrCount > startGame)
+            if (descrCount > START_GAME && !gameStarted)
             {
-                enoughPlayers = true;
+                playersListCapacity = descrCount;
+                free(playersList);
+                playersList = (client *)malloc(sizeof(client) * playersListCapacity);
+
+                for (int i = 0; i < descrCount; i++)
+                {
+                    playersList[i].descriptor = descr[i].fd;
+                }
+
+                gameStarted = true;
                 break;
             }
         }
     }
 
-    // enoughPlayers = false;
-
     printf("We move to other while");
-
-    // while(true){
-
-    //     int ready = poll(descr, descrCount, -1);
-    //     if(ready == -1){
-    //         error(0, errno, "poll failed");
-    //         ctrl_c(SIGINT);
-    //     }
-
-    //     if(enoughPlayers){
-    //             break;
-    //     }
-
-    //     for(int i = 0 ; i < descrCount && ready > 0 ; ++i){
-    //         if(descr[i].revents){
-    //             if(descr[i].fd == servFd)
-    //             {
-    //                 addToWaitingList(descr[i].revents);
-    //             }
-    //             else
-    //                 eventOnClientFd(i);
-    //             ready--;
-    //         }
-
-    //         if(descrCount <= 2){
-    //             enoughPlayers = true;
-    //             break;
-    //         }
-    //     }
-
-    // }
 }
 
 uint16_t readPort(char *txt)
