@@ -189,9 +189,10 @@ int main(int argc, char ** argv){
     
     descr[0].fd = servFd;
     descr[0].events = POLLIN;
+    bool enoughPlayers = false;
     
     while(true){
-        bool enoughPlayers = false;
+        
         int ready = poll(descr, descrCount, -1);
         if(ready == -1){
             error(0, errno, "poll failed");
@@ -221,13 +222,20 @@ int main(int argc, char ** argv){
 
 
     descrWaiting = (pollfd*) malloc(sizeof(pollfd)*descrCapacity);
+    enoughPlayers = false;
+
+    printf("We move to other while");
 
     while(true){
-        bool enoughPlayers = false;
+        
         int ready = poll(descr, descrCount, -1);
         if(ready == -1){
             error(0, errno, "poll failed");
             ctrl_c(SIGINT);
+        }
+
+        if(enoughPlayers){
+                break;
         }
         
         for(int i = 0 ; i < descrCount && ready > 0 ; ++i){
@@ -246,9 +254,7 @@ int main(int argc, char ** argv){
                 break;
             }
         }
-        if(enoughPlayers){
-                break;
-        }
+        
     }
 }
 
