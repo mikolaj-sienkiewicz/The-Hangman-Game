@@ -255,6 +255,7 @@ int main(int argc, char **argv)
         {
             if (descr[i].revents)
             {
+                printf("Number of read %d", ready)
                 if (descr[i].fd == servFd)
                 {
                     printf(" 1. Add clients\n");
