@@ -50,9 +50,9 @@ client *playersList;
 // handles SIGINT
 void ctrl_c(int);
 
-void startGame();
+std::string startGame();
 
-void sendToClient();
+void sendToClient(int fd, char *buffer, int count);
 
 void generateWord();
 
