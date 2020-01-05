@@ -312,7 +312,7 @@ void generateWord()
 
     std::string startString;
     startString.append(";2;");
-    startString.append(std::to_string(letterInWord);
+    startString.append(std::to_string(letterInWord));
     startString.append("*");
     std::string startStringNew;
     startStringNew.append(std::to_string(startString.length()));
