@@ -258,6 +258,7 @@ int main(int argc, char **argv)
 
             if (descr[i].revents)
             {
+                bool donePlayer = true;
                 printf("Number of read %d \n", ready);
                 printf("Descriptor number %d \n", descr[i].fd);
 
@@ -265,16 +266,18 @@ int main(int argc, char **argv)
                 {
                     if(descr[i].fd == playersList[j].descriptor)
                     {
+                        printf(" 1. Event Player\n");
                         eventOnClientFd(i);
+                        donePlayer = false;
                     }
                 }
 
-                if (descr[i].fd == servFd)
+                if (descr[i].fd == servFd && donePlayer)
                 {
                     printf(" 1. Add clients\n");
                     eventOnServFd(descr[i].revents);
                 }
-                else
+                else if(donePlayer)
                 {
                     printf(" 1. Event Start Works\n");
                     eventStart(i);
