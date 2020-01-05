@@ -209,6 +209,8 @@ int main(int argc, char **argv)
 
     descr = (pollfd *)malloc(sizeof(pollfd) * descrCapacity);
     clientsList = (client *)malloc(sizeof(client) * descrCapacity);
+    descrWaiting = (pollfd *)malloc(sizeof(pollfd) * descrCapacity);
+
 
     descr[0].fd = servFd;
     descr[0].events = POLLIN;
@@ -230,12 +232,12 @@ int main(int argc, char **argv)
             {
                 if (descr[i].fd == servFd)
                 {
-                    printf("Add to waiting list");
+                    printf(" 2. Add to waiting list\n");
                     addToWaitingList(descr[i].revents);
                 }
                 else
                 {
-                    printf("Add Event to Client");
+                    printf(" 2. Add Event to Client\n");
                     eventOnClientFd(i);
                 }
 
@@ -255,13 +257,13 @@ int main(int argc, char **argv)
             {
                 if (descr[i].fd == servFd)
                 {
-                    printf("Add clients");
+                    printf(" 1. Add clients\n");
                     eventOnServFd(descr[i].revents);
                 }
 
                 else
                 {
-                    printf("Event Start Works");
+                    printf(" 1. Event Start Works\n");
                     eventStart(i);
                 }
 
@@ -276,8 +278,7 @@ int main(int argc, char **argv)
         }
     }
 
-    descrWaiting = (pollfd *)malloc(sizeof(pollfd) * descrCapacity);
-    enoughPlayers = false;
+    // enoughPlayers = false;
 
     printf("We move to other while");
 
