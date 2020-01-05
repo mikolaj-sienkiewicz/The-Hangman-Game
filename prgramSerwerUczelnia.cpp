@@ -228,6 +228,8 @@ int main(int argc, char **argv)
 
         for (int i = 0; i < descrCount && ready > 0 && enoughPlayers; ++i)
         {
+            printf("Number of read %d \n", ready);
+            printf("Descriptor number %d \n", descr[i].fd);
             if (descr[i].revents)
             {
                 if (descr[i].fd == servFd)
@@ -255,7 +257,8 @@ int main(int argc, char **argv)
         {
             if (descr[i].revents)
             {
-                printf("Number of read %d", ready);
+                printf("Number of read %d \n", ready);
+                printf("Descriptor number %d \n", descr[i].fd);
                 if (descr[i].fd == servFd)
                 {
                     printf(" 1. Add clients\n");
