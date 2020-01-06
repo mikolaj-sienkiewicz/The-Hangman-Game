@@ -311,7 +311,7 @@ void sendToClient(int fd, char *buffer)
         write(fd, "5;4;0*", 5);
         return;
     }
-    else if (strBuffer.substr(4, numberLetter).compare(toFindedWord))
+    else if (strBuffer.substr(4, numberLetter).compare(toFindedWord) == 1)
     {
         //check compare
         write(fd, "5;4;1*", 6);
@@ -319,17 +319,16 @@ void sendToClient(int fd, char *buffer)
     }
     else if (numberLetter == 5)
     {
-        std::string letter = strBuffer.substr(5, 6);
-
-        std::string str, sub; // str is string to search, sub is the substring to search for
+        char letter = strBuffer[4];
 
         std::vector<size_t> positions; // holds all the positions that sub occurs within str
 
-        size_t pos = toFindedWord.find(letter, 0);
-        while (pos != std::string::npos)
+         for(int i =0; i < toFindedWord.size(); i++)
         {
-            positions.push_back(pos);
-            pos = toFindedWord.find(letter, pos + 1);
+            if(toFindedWord[i] == letter)
+            {
+                positions.push_back(i+1);
+            } 
         }
 
         if (positions.size() != 0)
