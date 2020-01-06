@@ -312,7 +312,7 @@ void sendToClient(int fd, char *buffer)
     //     write(fd, "5;4;0*", 6);
     //     return;
     // }
-    else if (bufferSyntax.substr(2, bufferSyntax.length()-1).compare(toFindedWord) == 1)
+    else if (bufferSyntax.substr(2, bufferSyntax.length()-3).compare(toFindedWord) == 1)
     {
         //check compare
         write(fd, "5;4;1*", 6);
@@ -364,7 +364,7 @@ void sendToClient(int fd, char *buffer)
     else
     {
         // write(fd, "5;4;0*", 6);
-        write(fd, "does not", 8);
+         write(fd, "5;4;0*", 6);
         return;
     }
 }
