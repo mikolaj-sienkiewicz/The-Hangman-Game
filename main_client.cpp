@@ -10,10 +10,15 @@
 #include <iostream>
 #include <string>
 #include <cstring>
+#include <regex>
+#include <cstdlib>
+#include <fstream>
+
+
 
 
 //wiedza o grze od serwera
-std::string GAMESTATUS ="1",LIVES="10",TOPSCORE="UNKNOWN",nPLAYERS="UNKNOWN",nSPECTATORS="UNKNOWN",POINTS="0";
+std::string GAMESTATUS ="1",LIVES="10",TOPSCORE="UNKNOWN",nPLAYERS="UNKNOWN",nSPECTATORS="UNKNOWN",POINTS="0",WORD="", WORDLENGTH="0";
 
 
 
@@ -36,7 +41,7 @@ void updateInitMonitor() {
 	std::ostringstream oss(std::ostringstream::ate);
 	// "\033[0;0f" -> ustawia kursor w lewym gornym rogu, "\033[2J" -> czysci ekran
 	oss.str("\033[2J");
-	oss << "\033[0;0f" << "############################ THE HANGMAN #############################\n" << "Waiting for players to join\nCurrently there are: "<<nSPECTATORS<<" players in the waiting room\n\n"<<"Press any key to refresh \ And remember..patience is key...\n";
+	oss << "\033[0;0f" << "############################ THE HANGMAN #############################\n" << "Waiting for players to join\nCurrently there are: "<<nSPECTATORS<<" players in the waiting room\n\n"<<"Press ENTER to refresh \nAnd remember that patience is key...\n";
 	std::cout << oss.str();
 }
 
@@ -45,7 +50,7 @@ void updateGameMonitor() {
 	std::ostringstream oss(std::ostringstream::ate);
 	// "\033[0;0f" -> ustawia kursor w lewym gornym rogu, "\033[2J" -> czysci ekran
 	oss.str("\033[2J");
-	oss << "\033[0;0f" << "############################ THE HANGMAN #############################\n" << "Points: " << POINTS << "\n" << "Lives: " << LIVES << "\n" << "Insert 1 letter to guess it, or more to go for the word : \n";
+	oss << "\033[0;0f" << "############################ THE HANGMAN #############################\n"<<"Current Word: "<<WORD<<"\n" << "Points: " << POINTS << "\n" << "Lives: " << LIVES << "\n" << "Insert 1 letter to guess it, or more to go for the word : \n";
 	std::cout << oss.str();
 }
 
@@ -54,13 +59,13 @@ void updateWaitingMonitor() {
 	std::ostringstream oss(std::ostringstream::ate);
 	// "\033[0;0f" -> ustawia kursor w lewym gornym rogu, "\033[2J" -> czysci ekran
 	oss.str("\033[2J");
-	oss << "\033[0;0f" << "############################ THE HANGMAN #############################\n" << "Current Top Score: " << TOPSCORE << "\n" << "Number of players in the game: " << nPLAYERS << "\n" << "Number of spectators watching: " << nSPECTATORS << "\n" << "Send anything to refresh the screen\n";
+	oss << "\033[0;0f" << "############################ THE HANGMAN #############################\n" << "Current Top Score: " << TOPSCORE << "\n" << "Number of players in the game: " << nPLAYERS << "\n" << "Number of spectators watching: " << nSPECTATORS << "\n" << "press ENTER to refresh the screen\n";
 	std::cout << oss.str();
 }
 
 void encodeMessage(int sock, char * buffer, int received) {
 	if (GAMESTATUS == "1") {
-		//wysylam 1* po refresh
+		//wysylam 1* po refresh encode()
 		updateInitMonitor();
 
 	}
@@ -68,7 +73,7 @@ void encodeMessage(int sock, char * buffer, int received) {
 		updateGameMonitor();
 	}
 	else {
-		//wysylam 1* po refresh
+		//wysylam 1* po refresh encode()
 		updateWaitingMonitor();
 	}
 	//writeData(STDOUT_FILENO, "a", 1);
@@ -87,8 +92,10 @@ decodedMessage decodeMessage(char* buffer, int received) {
 
 	dM.commandLength = strBuffer.substr(0, found);
 	dM.commandType = strBuffer.substr(found + 1, found2 - found - 1);
-	dM.commandMessage = strBuffer.substr(found2 + 1, finish - found2 - 1);
-
+	dM.commandMessage = strBuffer.substr(found2 + 1, finish - found2-1);
+	std::string commandLength = strBuffer.substr(0, found);
+	std::string commandType = strBuffer.substr(found + 1, found2 - found - 1);
+	std::string commandMessage = strBuffer.substr(found2 + 1, finish - found2 - 1);
 	
 	
 	/*if (commandType == "1") {
@@ -99,13 +106,13 @@ decodedMessage decodeMessage(char* buffer, int received) {
 	}*/
 
 	/*convert string to char array and print the result
-	char cstr[commandLength.size() + 1];
-	strcpy(cstr, &commandLength[0]);
+	char cstr[commandMessage.size() + 1];
+	strcpy(cstr, &commandMessage[0]);
 	writeData(STDOUT_FILENO, cstr, sizeof(cstr));*/
 
 	
 
-	writeData(STDOUT_FILENO, buffer, received);
+	//writeData(STDOUT_FILENO, buffer, received);
 	return dM;
 }
 
@@ -187,11 +194,14 @@ int main(int argc, char** argv) {
 				}
 				//PART FOR RECEIVING 
 				else {
+					//wzorzecwiadomosci 
+					//regex wzorzec( "2*" );
+
 					decodedMessage receivedData=decodeMessage(buffer, received);
-					/*convert string to char array and print the result*/
+					/*convert string to char array and print the result
 					char cstr[receivedData.commandLength.size() + 1];
 					strcpy(cstr, &receivedData.commandLength[0]);
-					writeData(STDOUT_FILENO, cstr, sizeof(cstr));
+					writeData(STDOUT_FILENO, cstr, sizeof(cstr));*/
 					//command regards game status
 					if (receivedData.commandType == "1") {
 						//inicjalizacja
@@ -200,15 +210,23 @@ int main(int argc, char** argv) {
 							updateInitMonitor();
 						}
 						//gra -> regex po 2 jest ilosc zyc
-						else if (receivedData.commandMessage == "2") {
-							//TODO zmienic zeby ilosc zyc byla brana z regexa
-							GAMESTATUS = "2";
-							updateGameMonitor();
-						}
 						//poczekalnia 
 						else if (receivedData.commandMessage == "3") {
 							GAMESTATUS = "3";
 							updateWaitingMonitor();
+						}
+						else{
+							//uzupelnia string WORD podkresleniami tyle ile jest po liczbie 2
+							GAMESTATUS = "2";
+							WORDLENGTH = receivedData.commandMessage.substr(1);
+							char cstr[WORDLENGTH.size() + 1];
+							strcpy(cstr, &WORDLENGTH[0]);
+							int intWORDLENGTH = atol(cstr);
+							for (int i = 0; i < intWORDLENGTH; i++)
+							{
+								WORD += "_";
+							}
+							updateGameMonitor();
 						}
 					}
 				} 
