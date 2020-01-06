@@ -39,7 +39,7 @@ int letterInWord;
 
 // data for poll
 int LIVES = 2;
-int START_GAME = 3;
+int START_GAME = 1;
 
 int descrCapacity = 16;
 int playersListCapacity = 16;
@@ -413,12 +413,12 @@ void sendToClient(int fd, char *buffer, int indexPlayer)
         {
             playersList[indexPlayer].lives++;
 
-            if (playersList[indexPlayer].lives >= LIVES)
-            {
-                amountOfPlayers--;
-                write(fd, "5;1;3*", 6);
-                return;
-            }
+            // if (playersList[indexPlayer].lives >= LIVES)
+            // {
+            //     amountOfPlayers--;
+            //     write(fd, "5;1;3*", 6);
+            //     return;
+            // }
 
             write(fd, "4;3;*", 5);
             return;
@@ -429,12 +429,12 @@ void sendToClient(int fd, char *buffer, int indexPlayer)
         // write(fd, "5;4;0*", 6);
         playersList[indexPlayer].lives++;
 
-        if (playersList[indexPlayer].lives >= LIVES)
-        {
-            amountOfPlayers--;
-            write(fd, "5;1;3*", 6);
-            return;
-        }
+        // if (playersList[indexPlayer].lives >= LIVES)
+        // {
+        //     amountOfPlayers--;
+        //     write(fd, "5;1;3*", 6);
+        //     return;
+        // }
 
         write(fd, "5;4;0*", 6);
         return;
