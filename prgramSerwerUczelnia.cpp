@@ -55,7 +55,7 @@ void ctrl_c(int);
 
 std::string startGame();
 
-void sendToClient(int fd, char *buffer, int count);
+void sendToClient(int fd, char *buffer);
 
 void generateWord();
 
@@ -143,7 +143,7 @@ void eventOnClientFd(int indexInDescr)
         if (count < 1)
             revents |= POLLERR;
         else
-            sendToClient(clientFd, buffer, count);
+            sendToClient(clientFd, buffer);
     }
 
     if (revents & ~POLLIN)
