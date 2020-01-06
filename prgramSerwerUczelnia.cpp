@@ -355,7 +355,7 @@ int main(int argc, char **argv)
                 for (int i = 1; i < descrCount; i++)
                 {
                     playersList[i].descriptor = descr[i].fd;
-                    playersList[i].number = ++i;
+                    playersList[i].number = i;
                     writeData(playersList[i].descriptor, convertStringToChars(startGame()), startGame().length() + 1);
                 }
 
@@ -518,7 +518,7 @@ void generateWord()
     for (int i = 1; i < descrCount; i++)
     {
         // playersList[i].descriptor = descr[i].fd;
-        writeData(playersList[i].descriptor, convertStringToChars(startStringNew), startStringNew.length());
+        writeData(descr[playersList[i].number].fd, convertStringToChars(startStringNew), startStringNew.length());
     }
 }
 
