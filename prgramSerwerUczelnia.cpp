@@ -309,7 +309,7 @@ void sendToClient(int fd, char *buffer)
     else if (numberLetter != 5 && letterInWord != (bufferSyntax.length() - 3))
     {
         //it was fail
-        write(fd, "5;4;0*", 5);
+        write(fd, "5;4;0*", 6);
         return;
     }
     else if (bufferSyntax.substr(2, bufferSyntax.length()-1).compare(toFindedWord) == 1)
@@ -363,7 +363,8 @@ void sendToClient(int fd, char *buffer)
     }
     else
     {
-        write(fd, "5;4;0*", 6);
+        // write(fd, "5;4;0*", 6);
+        write(fd, "It is does not work", 6);
         return;
     }
 }
