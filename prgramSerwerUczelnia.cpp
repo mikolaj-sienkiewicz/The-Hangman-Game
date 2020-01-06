@@ -269,7 +269,7 @@ int main(int argc, char **argv)
                     // continue;
                 }
 
-                for (int j = 0; j < playersListCapacity && gameStarted; j++)
+                for (int j = 0; j < playersListCapacity && gameStarted && donePlayer; j++)
                 {
                     if (descr[i].fd == playersList[j].descriptor && playersList[j].lives <= LIVES)
                     {
