@@ -364,7 +364,7 @@ void sendToClient(int fd, char *buffer)
     else
     {
         // write(fd, "5;4;0*", 6);
-        write(fd, "It is does not work", 6);
+        write(fd, "does not", 8);
         return;
     }
 }
