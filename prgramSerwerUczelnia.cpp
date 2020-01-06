@@ -298,7 +298,7 @@ void sendToClient(int fd, char *buffer)
     int i = 1;
     std::string strBuffer(buffer);
     std::size_t found = strBuffer.find(';'); //end of msg length; ex 1 in "2;1;22*"
-    int numberLetter = atol(strBuffer.substr(0, found));
+    int numberLetter = atoi(strBuffer.substr(0, found));
 
     if (strBuffer.length() == numberLetter + 1)
     {
@@ -320,7 +320,7 @@ void sendToClient(int fd, char *buffer)
         std::vector<size_t> positions; // holds all the positions that sub occurs within str
 
         size_t pos = strBuffer.find(letter, 0);
-        while (pos != string::npos)
+        while (pos != std::string::npos)
         {
             positions.push_back(pos);
             pos = strBuffer.find(letter, pos + 1);
