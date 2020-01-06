@@ -305,7 +305,7 @@ void sendToClient(int fd, char *buffer)
         write(fd, "Fail buffor", 11);
         return;
     }
-    else if (numberLetter != 6 && letterInWord != (numberLetter - 4))
+    else if (numberLetter != 5 && letterInWord != (numberLetter - 4))
     {
         //it was fail
         write(fd, "5;4;0*", 5);
