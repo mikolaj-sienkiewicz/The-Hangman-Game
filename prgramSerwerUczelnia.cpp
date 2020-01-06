@@ -130,7 +130,7 @@ void eventStart(int indexInDescr)
         std::string startString;
         startString.append("The ");
         startString.append(std::to_string(amountOfPlayers));
-        startString.append(" Players");
+        startString.append(" Players\n");
 
         write(clientFd, startString.c_str(), startString.length());
     }
@@ -223,13 +223,15 @@ int main(int argc, char **argv)
 
     while (true)
     {
-
+        
         int ready = poll(descr, descrCount, -1);
         if (ready == -1)
         {
             error(0, errno, "poll failed");
             ctrl_c(SIGINT);
         }
+
+        printf("INIT Descriptor number %d \n", descr[i].fd);
 
         for (int i = 0; i < descrCount && ready > 0; ++i)
         {
