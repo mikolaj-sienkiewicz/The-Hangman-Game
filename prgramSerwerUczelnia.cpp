@@ -341,7 +341,7 @@ int main(int argc, char **argv)
 
                 gameStarted = true;
 
-                for (int i = 0; i < playersListCapacity; i++)
+                for (int i = ; i < playersListCapacity; i++)
                 {
                     playersList[i].descriptor = descr[i].fd;
                     playersList[i].number = ++i;
