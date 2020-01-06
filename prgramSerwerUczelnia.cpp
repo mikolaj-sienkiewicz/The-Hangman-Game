@@ -38,7 +38,7 @@ int letterInWord;
 
 // data for poll
 int LIVES = 8;
-int START_GAME = 1;
+int START_GAME = 3;
 int descrCapacity = 16;
 int playersListCapacity = 16;
 int descrCount = 1;
@@ -306,12 +306,6 @@ void sendToClient(int fd, char *buffer)
         write(fd, "Fail buffor", 11);
         return;
     }
-    // else if (numberLetter != 5 && letterInWord != (bufferSyntax.length() - 3))
-    // {
-    //     //it was fail
-    //     write(fd, "5;4;0*", 6);
-    //     return;
-    // }
     else if (bufferSyntax.substr(2, bufferSyntax.length()-3).compare(toFindedWord) == 1)
     {
         //check compare
