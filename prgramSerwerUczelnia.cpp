@@ -254,7 +254,7 @@ int main(int argc, char **argv)
                 ready--;
             }
 
-            if (amountOfPlayers <= 1 && gameStarted && !stop)
+            if (amountOfPlayers <= 1 && gameStarted)
             {
                 int i = 1;
 
@@ -262,12 +262,13 @@ int main(int argc, char **argv)
                 startString.append("Won the ");
                 startString.append(std::to_string(theBestPlayer.number));
                 startString.append(" Player");
+                startString.append("\n Wait for next game");
                 while (i < descrCount)
                 {
                     int clientFd = descr[i].fd;
                     if (clientFd == theBestPlayer.descriptor)
                     {
-                        write(clientFd, "You won", 7);
+                        write(clientFd, "You won \n Wait for next game", 29);
                         i++;
                         continue;
                     }
@@ -284,7 +285,9 @@ int main(int argc, char **argv)
                     i++;
                 }
 
-                stop = true;
+                gameStarted = false;
+                
+                sleep(10);
             }
 
             if (descrCount > START_GAME && !gameStarted)
