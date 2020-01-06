@@ -335,7 +335,7 @@ int main(int argc, char **argv)
             if (descrCount > START_GAME && !gameStarted)
             {
                 printf("NEW GAME START");
-                playersListCapacity = descrCount;
+                playersListCapacity = descrCount-1;
                 free(playersList);
                 playersList = (client *)malloc(sizeof(client) * playersListCapacity);
 
