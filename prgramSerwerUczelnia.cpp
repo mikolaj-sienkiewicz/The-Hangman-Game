@@ -126,7 +126,7 @@ void eventStart(int indexInDescr)
 
         std::string strBuffer(buffer);
 
-        printf("Send by client %s", strBuffer);
+        printf("Send by client %s", strBuffer.c_str());
     }
 
     if (revents & ~POLLIN)
@@ -358,7 +358,7 @@ void sendToClient(int fd, char *buffer, int indexPlayer)
     int numberLetter = atoi(strBuffer.substr(0, found).c_str());
     std::string bufferSyntax = strBuffer.substr(found + 1);
 
-    printf("Send by client %s", strBuffer);
+    printf("Send by client %s", strBuffer.c_str());
 
     if (strBuffer.length() == numberLetter + 1)
     {
