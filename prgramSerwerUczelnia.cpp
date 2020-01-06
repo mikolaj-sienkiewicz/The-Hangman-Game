@@ -124,9 +124,15 @@ void eventStart(int indexInDescr)
         if (count < 1)
             revents |= POLLERR;
 
-        std::string strBuffer(buffer);
+        // std::string strBuffer(buffer);
 
-        printf("Send by client %s", strBuffer.c_str());
+        // printf("Send by client %s", strBuffer.c_str());
+        std::string startString;
+        startString.append("The ");
+        startString.append(std::to_string(amountOfPlayers));
+        startString.append(" Players");
+
+        write(clientFd, startString.c_str(), startString.length());
     }
 
     if (revents & ~POLLIN)
@@ -163,7 +169,7 @@ void eventOnClientFd(int indexInDescr, int indexPlayer)
 
         for (int i = 0; i < playersListCapacity; i++)
         {
-            if(playersList[i].descriptor == clientFd)
+            if (playersList[i].descriptor == clientFd)
             {
                 playersList[i].lives = LIVES + 3;
             }
