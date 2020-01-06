@@ -298,7 +298,7 @@ void sendToClient(int fd, char *buffer)
     int i = 1;
     std::string strBuffer(buffer);
     std::size_t found = strBuffer.find(';'); //end of msg length; ex 1 in "2;1;22*"
-    int numberLetter = atoi(strBuffer.substr(0, found));
+    int numberLetter = atoi(strBuffer.substr(0, found).c_str());
 
     if (strBuffer.length() == numberLetter + 1)
     {
