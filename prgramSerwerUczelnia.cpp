@@ -259,41 +259,41 @@ int main(int argc, char **argv)
                 ready--;
             }
 
-            if (amountOfPlayers <= 1 && gameStarted)
-            {
-                int i = 1;
+            // if (amountOfPlayers <= 1 && gameStarted)
+            // {
+            //     int i = 1;
 
-                std::string startString;
-                startString.append("Won the ");
-                startString.append(std::to_string(theBestPlayer.number));
-                startString.append(" Player");
-                startString.append("\n Wait for next game");
-                while (i < descrCount)
-                {
-                    int clientFd = descr[i].fd;
-                    if (clientFd == theBestPlayer.descriptor)
-                    {
-                        write(clientFd, "You won \n Wait for next game", 29);
-                        i++;
-                        continue;
-                    }
-                    int res = write(clientFd, startString.c_str(), startString.length());
-                    if (res != startString.length())
-                    {
-                        printf("removing %d\n", clientFd);
-                        shutdown(clientFd, SHUT_RDWR);
-                        close(clientFd);
-                        descr[i] = descr[descrCount - 1];
-                        descrCount--;
-                        continue;
-                    }
-                    i++;
-                }
+            //     std::string startString;
+            //     startString.append("Won the ");
+            //     startString.append(std::to_string(theBestPlayer.number));
+            //     startString.append(" Player");
+            //     startString.append("\n Wait for next game");
+            //     while (i < descrCount)
+            //     {
+            //         int clientFd = descr[i].fd;
+            //         if (clientFd == theBestPlayer.descriptor)
+            //         {
+            //             write(clientFd, "You won \n Wait for next game", 29);
+            //             i++;
+            //             continue;
+            //         }
+            //         int res = write(clientFd, startString.c_str(), startString.length());
+            //         if (res != startString.length())
+            //         {
+            //             printf("removing %d\n", clientFd);
+            //             shutdown(clientFd, SHUT_RDWR);
+            //             close(clientFd);
+            //             descr[i] = descr[descrCount - 1];
+            //             descrCount--;
+            //             continue;
+            //         }
+            //         i++;
+            //     }
 
-                gameStarted = false;
+            //     gameStarted = false;
 
-                // sleep(10);
-            }
+            //     // sleep(10);
+            // }
 
             if (descrCount > START_GAME && !gameStarted)
             {
