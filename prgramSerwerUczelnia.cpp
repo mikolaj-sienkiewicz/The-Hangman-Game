@@ -327,7 +327,7 @@ void sendToClient(int fd, char *buffer)
         {
             if(toFindedWord[i] == letter)
             {
-                positions.push_back(i+1);
+                positions.push_back(++i);
             } 
         }
 
