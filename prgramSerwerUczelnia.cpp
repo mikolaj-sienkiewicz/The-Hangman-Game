@@ -14,6 +14,8 @@
 #include <iostream>
 #include <cstdlib>
 #include <vector>
+#include <stdlib.h>     
+#include <time.h>       
 
 //struct for clients
 struct client
@@ -30,6 +32,7 @@ struct client
     }
 };
 
+std:string listOfWords [10] = {"zielony", "polak", "matka", "ananas", "graf", "matematyka", "czerwony", "niebieski", "pomaranczowy", "lis"}
 // server socket
 int servFd;
 
@@ -61,6 +64,8 @@ client *playersList;
 void ctrl_c(int);
 
 std::string startGame();
+
+std::string randomWord();
 
 ssize_t readData(int fd, char * buffer, ssize_t buffsize){
 	auto ret = read(fd, buffer, buffsize);
@@ -198,6 +203,8 @@ void eventOnClientFd(int indexInDescr, int indexPlayer)
 
 int main(int argc, char **argv)
 {
+    srand (time(NULL));
+
     // get and validate port number
     if (argc != 2)
         error(1, 0, "Need 1 arg (port)");
@@ -257,7 +264,7 @@ int main(int argc, char **argv)
                 {
                     printf(" 1. Add clients\n");
                     eventOnServFd(descr[i].revents);
-                    continue;
+                    // continue;
                 }
 
                 for (int j = 0; j < playersListCapacity && gameStarted; j++)
@@ -292,20 +299,21 @@ int main(int argc, char **argv)
                 int i = 1;
 
                 std::string startString;
-                startString.append("Won the ");
+                // startString.append("Won the ");
                 startString.append(std::to_string(theBestPlayer.number));
-                startString.append(" Player");
-                startString.append("\n Wait for next game");
+                startString.append(" Player\n");
                 while (i < descrCount)
                 {
                     int clientFd = descr[i].fd;
                     if (clientFd == theBestPlayer.descriptor)
                     {
-                        write(clientFd, "You won \n Wait for next game", 29);
+                        write(clientFd, "You won \n", 10);                        
+                        write(fd, "5;1;3*\n", 8);
                         i++;
                         continue;
                     }
                     int res = write(clientFd, startString.c_str(), startString.length());
+                    write(fd, "5;1;3*\n", 8);
                     if (res != startString.length())
                     {
                         printf("removing %d\n", clientFd);
@@ -325,7 +333,7 @@ int main(int argc, char **argv)
 
             if (descrCount > START_GAME && !gameStarted)
             {
-                printf("New event, new descriptor");
+                printf("NEW GAME START");
                 playersListCapacity = descrCount;
                 free(playersList);
                 playersList = (client *)malloc(sizeof(client) * playersListCapacity);
@@ -344,6 +352,11 @@ int main(int argc, char **argv)
                 generateWord();
 
                 break;
+            }
+
+            if(descrCount > START_GAME)
+            {
+                printf("NOT ENOUGH PLAYERS\n");
             }
         }
     }
@@ -476,7 +489,8 @@ void sendToClient(int fd, char *buffer, int indexPlayer)
 
 void generateWord()
 {
-    toFindedWord = "ananas";
+    toFindedWord = listOfWords[rand() % 10];
+
     letterInWord = toFindedWord.length();
 
     printf("New word %s", toFindedWord.c_str());
@@ -509,27 +523,27 @@ std::string startGame()
     return startStringNew;
 }
 
-void sendToAllBut(int fd, char *buffer, int count)
-{
-    // int i = 1;
-    // while (i < descrCount)
-    // {
-    //     int clientFd = descr[i].fd;
-    //     if (clientFd == fd)
-    //     {
-    //         i++;
-    //         continue;
-    //     }
-    // int res = write(fd, buffer, count);
-    // if (res != count)
-    // {
-    //     printf("removing %d\n", clientFd);
-    //     shutdown(clientFd, SHUT_RDWR);
-    //     close(clientFd);
-    //     descr[i] = descr[descrCount - 1];
-    //     descrCount--;
-    //     // continue;
-    // }
-    //     i++;
-    // }
-}
+// void sendToAllBut(int fd, char *buffer, int count)
+// {
+//     // int i = 1;
+//     // while (i < descrCount)
+//     // {
+//     //     int clientFd = descr[i].fd;
+//     //     if (clientFd == fd)
+//     //     {
+//     //         i++;
+//     //         continue;
+//     //     }
+//     // int res = write(fd, buffer, count);
+//     // if (res != count)
+//     // {
+//     //     printf("removing %d\n", clientFd);
+//     //     shutdown(clientFd, SHUT_RDWR);
+//     //     close(clientFd);
+//     //     descr[i] = descr[descrCount - 1];
+//     //     descrCount--;
+//     //     // continue;
+//     // }
+//     //     i++;
+//     // }
+// }
