@@ -351,8 +351,8 @@ void sendToClient(int fd, char *buffer)
             startStringNew.append(std::to_string(startString.length()));
             startStringNew.append(startString);
 
-            write(fd, startStringNew, startStringNew.length());
-            
+            write(fd, startStringNew.c_str(), startStringNew.length() + 1);
+
             return;
         }
         else
