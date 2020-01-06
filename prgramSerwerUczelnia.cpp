@@ -313,6 +313,7 @@ void sendToClient(int fd, char *buffer)
     }
     else if (strBuffer.substr(4, strBuffer.size() - 1) == toFindedWord)
     {
+        //check compare
         write(fd, "5;4;1*", 6);
         return;
     }
@@ -333,8 +334,25 @@ void sendToClient(int fd, char *buffer)
 
         if (positions.size() != 0)
         {
-            // string 
-            write(fd, "Dupa", 4);
+            // string
+            std::string startString;
+            startString.append(";1;");
+
+            startString.append(std::to_string(positions[0]));
+
+            for(int i=1; i<positions.size(); i++)
+            {
+                startString.append("-");
+                startString.append(std::to_string(positions[i]));
+            }
+            
+            startString.append("*");
+            std::string startStringNew;
+            startStringNew.append(std::to_string(startString.length()));
+            startStringNew.append(startString);
+
+            write(fd, startStringNew, startStringNew.length());
+            
             return;
         }
         else
