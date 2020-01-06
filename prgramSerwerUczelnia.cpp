@@ -506,7 +506,7 @@ void generateWord()
 
     for (int i = 0; i < descrCount; i++)
     {
-        playersList[i].descriptor = descr[i].fd;
+        // playersList[i].descriptor = descr[i].fd;
         write(descr[i].fd, startStringNew.c_str(), startStringNew.length());
     }
 }
