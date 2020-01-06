@@ -62,6 +62,18 @@ void ctrl_c(int);
 
 std::string startGame();
 
+ssize_t readData(int fd, char * buffer, ssize_t buffsize){
+	auto ret = read(fd, buffer, buffsize);
+	if(ret==-1) error(1,errno, "read failed on descriptor %d", fd);
+	return ret;
+}
+
+void writeData(int fd, char * buffer, ssize_t count){
+	auto ret = write(fd, buffer, count);
+	if(ret==-1) error(1, errno, "write failed on descriptor %d", fd);
+	if(ret!=count) error(0, errno, "wrote less than requested to descriptor %d (%ld/%ld)", fd, count, ret);
+}
+
 void sendToClient(int fd, char *buffer, int indexPlayer);
 
 void generateWord();
@@ -105,7 +117,7 @@ void eventOnServFd(int revents)
         descr[descrCount].events = POLLIN | POLLRDHUP;
 
         int res = write(clientFd, "5;1;1*", 6);
-        std::cout << "Res: " << res << std::endl;
+        // std::cout << "Res: " << res << std::endl;
         descrCount++;
 
         printf("new connection from: %s:%hu (fd: %d)\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), clientFd);
@@ -120,10 +132,10 @@ void eventStart(int indexInDescr)
     if (revents & POLLIN)
     {
         char buffer[255];
-        // int count = read(clientFd, buffer, 255);
-        // if (count < 1)
-        //     revents |= POLLERR;
-
+        int count = readData(clientFd, buffer, 255);
+        if (count < 1)
+            revents |= POLLERR;
+  
         // std::string strBuffer(buffer);
 
         // printf("Send by client %s", strBuffer.c_str());
@@ -156,7 +168,7 @@ void eventOnClientFd(int indexInDescr, int indexPlayer)
     if (revents & POLLIN)
     {
         char buffer[255];
-        int count = read(clientFd, buffer, 255);
+        int count = readData(clientFd, buffer, 255);
         if (count < 1)
             revents |= POLLERR;
         else
@@ -411,7 +423,7 @@ void sendToClient(int fd, char *buffer, int indexPlayer)
         {
             // string
             std::string startString;
-            startString.append(";1;");
+            startString.append(";3;");
 
             startString.append(std::to_string(positions[0]));
 
@@ -466,6 +478,8 @@ void generateWord()
 {
     toFindedWord = "ananas";
     letterInWord = toFindedWord.length();
+
+    printf("New word %s", toFindedWord);
 
     std::string startString;
     startString.append(";2;");
