@@ -22,6 +22,7 @@ std::string GAMESTATUS ="1",LIVES="10",TOPSCORE="UNKNOWN",nPLAYERS="UNKNOWN",nSP
 int intWORDLENGTH = 0;
 
 
+
 struct decodedMessage
 {
 	std::string commandLength;
@@ -37,6 +38,8 @@ void writeData(int fd, char* buffer, ssize_t count) {
 }
 
 void updateInitMonitor() {
+	fflush(stdout);
+	fflush(stdin);
 	//Initialize stream string ate -> at the end append
 	//std::ostringstream oss(std::ostringstream::ate);
 	// "\033[0;0f" -> ustawia kursor w lewym gornym rogu, "\033[2J" -> czysci ekran
@@ -44,24 +47,37 @@ void updateInitMonitor() {
 	//oss << "\033[0;0f" << "############################ THE HANGMAN #############################\n" << "Waiting for players to join\nCurrently there are: "<<nSPECTATORS<<" players in the waiting room\n\n"<<"Press ENTER to refresh \nAnd remember that patience is key...\n";
 	//std::cout << oss.str();
 	std::string theString = "";
-	theString += std::string("\033[2J") + "\033[0;0f" + "############################ THE HANGMAN #############################\n" + "Waiting for players to join\nCurrently there are: " + nSPECTATORS + " players in the waiting room\n\n" + "Press ENTER to refresh \nAnd remember that patience is key...\n";
+	//theString += std::string("\033[2J") + "\033[0;0f" + "############################ THE HANGMAN #############################\n" + "Waiting for players to join\nCurrently there are: " + nSPECTATORS + " players in the waiting room\n\n" + "Press ENTER to refresh \nAnd remember that patience is key...\n";
+	//theString += std::string("\033[2J") + "\033[0;0f"+"############################ THE HANGMAN #############################\n" + "Waiting for players to join\nCurrently there are: " + nSPECTATORS + " players in the waiting room\n\n" + "Press ENTER to refresh \nAnd remember that patience is key...\n";
+	theString += std::string("\033[2J") + "\033[0;0f" + "############################ THE HANGMAN #############################\n" + "Current Word: " + WORD + "\n" + "Points: " + POINTS + "\n" + "Lives: " + LIVES + "\n" + "Insert 1 letter to guess it, or more to go for the word : \n";
+
 	char cstr[theString.size() + 1];
 	strcpy(cstr, &theString[0]);
-	//writeData(1, cstr, strlen(cstr));
+
+	printf(cstr);
+	
+	//writeData(STDOUT_FILENO, cstr, strlen(cstr));
+
 }
 
 void updateGameMonitor() {
+	fflush(stdout);
+	fflush(stdin);
 	//Initialize stream string ate -> at the end append
 	//std::ostringstream oss(std::ostringstream::ate);
 	//oss.str("\033[2J");
 	//oss << "\033[0;0f" << "############################ THE HANGMAN #############################\n"<<"Current Word: "<<WORD<<"\n" << "Points: " << POINTS << "\n" << "Lives: " << LIVES << "\n" << "Insert 1 letter to guess it, or more to go for the word : \n";
 	//std::cout << oss.str();
-	std::string theString="";
-	theString+=std::string("\033[2J")+"\033[0;0f"+"############################ THE HANGMAN #############################\n" + "Current Word: " + WORD + "\n" + "Points: " + POINTS + "\n" + "Lives: " + LIVES + "\n" + "Insert 1 letter to guess it, or more to go for the word : \n";
-	char cstr[theString.size() + 1];
-	strcpy(cstr, &theString[0]);
-	//writeData(1, cstr, strlen(cstr));
+	std::string theString2="";
+	//theString+=std::string("\033[2J")+"\033[0;0f"+"############################ THE HANGMAN #############################\n" + "Current Word: " + WORD + "\n" + "Points: " + POINTS + "\n" + "Lives: " + LIVES + "\n" + "Insert 1 letter to guess it, or more to go for the word : \n";
+	theString2+= std::string("\033[2J") + "\033[0;0f"+"############################ THE HANGMAN #############################\n"+ "Current Word: " + WORD + "\n" + "Points: " + POINTS + "\n" + "Lives: " + LIVES + "\n" + "Insert 1 letter to guess it, or more to go for the word : \n";
 
+	char cstr2[theString2.size() + 1];
+	strcpy(cstr2, &theString2[0]);
+	//writeData(STDOUT_FILENO, "a", strlen("a"));
+	printf(cstr2);
+	
+	
 }
 
 void updateWaitingMonitor() {
@@ -76,11 +92,13 @@ void updateWaitingMonitor() {
 	theString += std::string("\033[2J") + "\033[0;0f" + "############################ THE HANGMAN #############################\n" + "Current Top Score: " +TOPSCORE + "\n" + "Number of players in the game: " + nPLAYERS + "\n" + "Number of spectators watching: " + nSPECTATORS + "\n" + "press ENTER to refresh the screen\n";
 	char cstr[theString.size() + 1];
 	strcpy(cstr, &theString[0]);
-	//writeData(1, cstr, strlen(cstr));
+	printf(cstr);
+	fflush(stdout);
+
+	//writeData(STDOUT_FILENO, cstr, strlen(cstr));
 }
 
 void encodeMessage(int sock, char * buffer, int received) {
-	//std::cout << buffer;
 
 	//TYLE ILE RECEIVED ENKODOWAC
 	char subbuf[received]; //I TO SAMO CO NIZEJ 
@@ -107,7 +125,7 @@ void encodeMessage(int sock, char * buffer, int received) {
 
 	}
 	else if (GAMESTATUS == "2") {
-		//dlugosc;id;wiadomosc*
+
 		std::string messageWithLength;
 		std::string message;
 		//std::string strBuffer(buffer);
@@ -133,7 +151,7 @@ void encodeMessage(int sock, char * buffer, int received) {
 
 
 		writeData(sock, cstr, strlen(cstr));
-		writeData(STDOUT_FILENO, cstr, strlen(cstr));
+		//writeData(STDOUT_FILENO, cstr, strlen(cstr));
 
 		//updateGameMonitor();
 	}
@@ -210,6 +228,9 @@ ssize_t readData(int fd, char* buffer, ssize_t buffsize) {
 int main(int argc, char** argv) {
 	if (argc != 3) error(1, 0, "Need 2 args");
 
+	setbuf(stdout, NULL);
+
+
 	addrinfo * resolved, hints = { .ai_flags = 0,.ai_family = AF_INET,.ai_socktype = SOCK_STREAM };
 	int res = getaddrinfo(argv[1], argv[2], &hints, &resolved);
 	if (res || !resolved) error(1, 0, "getaddrinfo: %s", gai_strerror(res));
@@ -246,6 +267,8 @@ int main(int argc, char** argv) {
 	char buffer[255];
 
 	while (1) {
+		//std::cout << "a";
+
 		//std::cout << MESSAGE_QUEUE;
 		// Wywołanie poll - czekanie na wystąpnienie zdarzenia (w tym 
 		// przypadku możliwości odczytu danych bez blokowania)
@@ -323,7 +346,7 @@ int main(int argc, char** argv) {
 				std::string debugString = "" + receivedData.commandLength + ";" + receivedData.commandType + ";" + receivedData.commandMessage + "*";
 				char cstr[debugString.size()+1];
 				strcpy(cstr, &debugString[0]);
-				writeData(STDOUT_FILENO, cstr, sizeof(cstr)); 
+				//writeData(STDOUT_FILENO, cstr, sizeof(cstr)); 
 
 				/*convert string to char array and print the result
 				char cstr[receivedData.commandLength.size() + 1];
@@ -334,7 +357,9 @@ int main(int argc, char** argv) {
 					//inicjalizacja
 					if (receivedData.commandMessage == "1") {
 						GAMESTATUS = "1";
-						updateInitMonitor();
+
+						///POWODUJE BLAD PO ODKOMENTOWANIU NIE WIADOMO CZEMU
+						//updateInitMonitor();
 					}
 					//gra -> regex po 2 jest ilosc zyc
 					//poczekalnia 
