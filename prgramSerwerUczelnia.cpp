@@ -264,7 +264,8 @@ int main(int argc, char **argv)
                 {
                     printf(" 1. Add clients\n");
                     eventOnServFd(descr[i].revents);
-                    continue;
+                    donePlayer = false;
+                    // continue;
                 }
 
                 for (int j = 0; j < playersListCapacity && gameStarted; j++)
@@ -354,7 +355,7 @@ int main(int argc, char **argv)
                 break;
             }
 
-            if(descrCount > START_GAME)
+            if(descrCount < START_GAME)
             {
                 printf("NOT ENOUGH PLAYERS\n");
             }
