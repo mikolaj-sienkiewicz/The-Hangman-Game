@@ -400,7 +400,7 @@ void sendToClient(int fd, char *buffer, int indexPlayer)
         {
             playersList[indexPlayer].lives++;
 
-            if (playersList[indexPlayer] => LIVES)
+            if (playersList[indexPlayer] >= LIVES)
             {
                 amountOfPlayers--;
                 write(fd, "5;1;3*", 6);
@@ -416,7 +416,7 @@ void sendToClient(int fd, char *buffer, int indexPlayer)
         // write(fd, "5;4;0*", 6);
         playersList[indexPlayer].lives++;
 
-        if (playersList[indexPlayer] => LIVES)
+        if (playersList[indexPlayer] >= LIVES)
         {
             amountOfPlayers--;
             write(fd, "5;1;3*", 6);
