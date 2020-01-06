@@ -263,8 +263,9 @@ int main(int argc, char **argv)
                 if (descr[i].fd == servFd)
                 {
                     printf(" 1. Add clients\n");
-                    eventOnServFd(descr[i].revents);
                     donePlayer = false;
+                    eventOnServFd(descr[i].revents);
+                   
                     // continue;
                 }
 
@@ -273,14 +274,13 @@ int main(int argc, char **argv)
                     if (descr[i].fd == playersList[j].descriptor && playersList[j].lives <= LIVES)
                     {
                         // printf(" 1. Event Player\n");
+                        donePlayer = false;
                         if (theBestPlayer.score < playersList[j].score)
                         {
                             theBestPlayer = playersList[j];
                         }
 
-                        eventOnClientFd(i, j);
-
-                        donePlayer = false;
+                        eventOnClientFd(i, j);                        
                     }
                 }
 
