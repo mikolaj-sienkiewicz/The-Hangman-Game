@@ -231,7 +231,7 @@ int main(int argc, char **argv)
             ctrl_c(SIGINT);
         }
 
-        printf("INIT Descriptor number %d \n", descr[i].fd);
+        printf("INIT Descriptor number %d \n", descrCount);
 
         for (int i = 0; i < descrCount && ready > 0; ++i)
         {
