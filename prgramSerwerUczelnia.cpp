@@ -121,9 +121,10 @@ void eventOnServFd(int revents)
         descr[descrCount].fd = clientFd;
         descr[descrCount].events = POLLIN | POLLRDHUP;
 
+        int number = clientFd;
         std::string data;
         data.append("ClientFD ");
-        data.append(to_string(descr[descrCount].fd));
+        data.append(to_string(number));
         data.append(" numerdescryptora: ");
         data.append(to_string(descrCount));
         data.append("\n");
