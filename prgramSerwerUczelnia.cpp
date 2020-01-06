@@ -479,7 +479,7 @@ void generateWord()
     toFindedWord = "ananas";
     letterInWord = toFindedWord.length();
 
-    printf("New word %s", toFindedWord);
+    printf("New word %s", toFindedWord.c_str());
 
     std::string startString;
     startString.append(";2;");
