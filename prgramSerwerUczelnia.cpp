@@ -258,7 +258,7 @@ int main(int argc, char **argv)
             if (descr[i].revents)
             {
                 bool donePlayer = true;
-                printf("Descriptor number %d \n", descr[i].fd);
+                // printf("Descriptor number %d \n", descr[i].fd);
 
                 if (descr[i].fd == servFd)
                 {
@@ -287,7 +287,7 @@ int main(int argc, char **argv)
                 if (donePlayer)
                 {
                     // printf(" 1. Event Start Works\n");
-                    // printf("DescrCout %d", descrCount);
+                    printf("YES TUTAJ");
 
                     eventStart(i);
                 }
