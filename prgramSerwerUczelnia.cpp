@@ -67,6 +67,8 @@ std::string startGame();
 
 std::string randomWord();
 
+char * convertStringToChars(std::string word);
+
 ssize_t readData(int fd, char * buffer, ssize_t buffsize){
 	auto ret = read(fd, buffer, buffsize);
 	if(ret==-1) error(1,errno, "read failed on descriptor %d", fd);
@@ -158,7 +160,7 @@ void eventStart(int indexInDescr)
         startString.append(std::to_string(amountOfPlayers));
         startString.append(" Players\n");
 
-        write(clientFd, startString.c_str(), startString.length());
+        writeData(clientFd, startString.c_str(), startString.length());
     }
 
     if (revents & ~POLLIN)
@@ -354,7 +356,7 @@ int main(int argc, char **argv)
                 {
                     playersList[i].descriptor = descr[i].fd;
                     playersList[i].number = ++i;
-                    write(descr[i].fd, startGame().c_str(), startGame().length() + 1);
+                    writeData(descr[i].fd, convertStringToChars(startGame()), startGame().length() + 1);
                 }
 
                 amountOfPlayers = playersListCapacity;
@@ -461,7 +463,7 @@ void sendToClient(int fd, char *buffer, int indexPlayer)
             startStringNew.append(std::to_string(startString.length()));
             startStringNew.append(startString);
 
-            write(fd, startStringNew.c_str(), startStringNew.length());
+            write(fd, convertStringToChars(startStringNew), startStringNew.length());
 
             return;
         }
@@ -516,7 +518,7 @@ void generateWord()
     for (int i = 1; i < descrCount; i++)
     {
         // playersList[i].descriptor = descr[i].fd;
-        write(descr[i].fd, startStringNew.c_str(), startStringNew.length());
+        writeData(descr[i].fd, convertStringToChars(startStringNew), startStringNew.length());
     }
 }
 
@@ -531,6 +533,15 @@ std::string startGame()
     startStringNew.append(startString);
 
     return startStringNew;
+}
+
+char * convertStringToChars(std::string word)
+{
+    char cstr[word.length() + 1];
+
+    std::copy(word.begin(), w.end(), cstr);
+    cstr[word.length()] = '\0';
+    return cstr;
 }
 
 // void sendToAllBut(int fd, char *buffer, int count)
