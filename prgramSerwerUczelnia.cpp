@@ -390,7 +390,7 @@ void sendToClient(int fd, char *buffer)
 
 void generateWord()
 {
-    toFindedWord = "Ananas";
+    toFindedWord = "ananas";
     letterInWord = 4;
 
     std::string startString;
