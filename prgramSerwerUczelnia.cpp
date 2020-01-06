@@ -335,7 +335,7 @@ int main(int argc, char **argv)
             if (descrCount > START_GAME && !gameStarted)
             {
                 printf("NEW GAME START");
-                playersListCapacity = descrCount-1;
+                playersListCapacity = descrCount;
                 free(playersList);
                 playersList = (client *)malloc(sizeof(client) * playersListCapacity);
 
@@ -343,9 +343,9 @@ int main(int argc, char **argv)
 
                 for (int i = 0; i < playersListCapacity; i++)
                 {
-                    playersList[i].descriptor = descr[i+1].fd;
+                    playersList[i].descriptor = descr[i].fd;
                     playersList[i].number = ++i;
-                    write(descr[i+1].fd, startGame().c_str(), startGame().length() + 1);
+                    write(descr[i].fd, startGame().c_str(), startGame().length() + 1);
                 }
 
                 amountOfPlayers = playersListCapacity;
@@ -504,10 +504,10 @@ void generateWord()
     startStringNew.append(std::to_string(startString.length()));
     startStringNew.append(startString);
 
-    for (int i = 1; i < descrCount; i++)
+    for (int i = 0; i < descrCount; i++)
     {
-        // playersList[i].descriptor = descr[i+1].fd;
-        write(descr[i+1].fd, startStringNew.c_str(), startStringNew.length());
+        playersList[i].descriptor = descr[i].fd;
+        write(descr[i].fd, startStringNew.c_str(), startStringNew.length());
     }
 }
 
