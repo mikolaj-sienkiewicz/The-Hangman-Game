@@ -267,6 +267,7 @@ int main(int argc, char **argv)
                     if (clientFd == theBestPlayer.descriptor)
                     {
                         write(clientFd, "You won", 7);
+                        i++;
                         continue;
                     }
                     int res = write(clientFd, startString.c_str(), startString.length());
