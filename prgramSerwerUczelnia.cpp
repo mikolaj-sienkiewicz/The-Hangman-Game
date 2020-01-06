@@ -198,8 +198,6 @@ int main(int argc, char **argv)
 
     descr = (pollfd *)malloc(sizeof(pollfd) * descrCapacity);
 
-    theBestPlayer = new3
-
     descr[0].fd = servFd;
     descr[0].events = POLLIN;
     bool enoughPlayers = false;
