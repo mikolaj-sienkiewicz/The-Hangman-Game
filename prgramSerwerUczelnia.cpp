@@ -39,7 +39,7 @@ int letterInWord;
 
 // data for poll
 int LIVES = 2;
-int START_GAME = 1;
+int START_GAME = 3;
 
 int descrCapacity = 16;
 int playersListCapacity = 16;
@@ -161,6 +161,14 @@ void eventOnClientFd(int indexInDescr, int indexPlayer)
     {
         printf("removing %d\n", clientFd);
 
+        for (int i = 0; i < playersListCapacity; i++)
+        {
+            if(playersList[i].descriptor) == clientFd)
+            {
+                playersList[i].lives = LIVES + 3;
+            }
+        }
+
         // remove from description of watched files for poll
         descr[indexInDescr] = descr[descrCount - 1];
         descrCount--;
@@ -223,7 +231,6 @@ int main(int argc, char **argv)
             if (descr[i].revents)
             {
                 bool donePlayer = true;
-                printf("Number of read %d \n", ready);
                 printf("Descriptor number %d \n", descr[i].fd);
 
                 if (descr[i].fd == servFd)
@@ -252,48 +259,48 @@ int main(int argc, char **argv)
                 {
                     // printf(" 1. Event Start Works\n");
                     // printf("DescrCout %d", descrCount);
-                    
+
                     eventStart(i);
                 }
 
                 ready--;
             }
 
-            // if (amountOfPlayers <= 1 && gameStarted)
-            // {
-            //     int i = 1;
+            if (amountOfPlayers <= 1 && gameStarted)
+            {
+                int i = 1;
 
-            //     std::string startString;
-            //     startString.append("Won the ");
-            //     startString.append(std::to_string(theBestPlayer.number));
-            //     startString.append(" Player");
-            //     startString.append("\n Wait for next game");
-            //     while (i < descrCount)
-            //     {
-            //         int clientFd = descr[i].fd;
-            //         if (clientFd == theBestPlayer.descriptor)
-            //         {
-            //             write(clientFd, "You won \n Wait for next game", 29);
-            //             i++;
-            //             continue;
-            //         }
-            //         int res = write(clientFd, startString.c_str(), startString.length());
-            //         if (res != startString.length())
-            //         {
-            //             printf("removing %d\n", clientFd);
-            //             shutdown(clientFd, SHUT_RDWR);
-            //             close(clientFd);
-            //             descr[i] = descr[descrCount - 1];
-            //             descrCount--;
-            //             continue;
-            //         }
-            //         i++;
-            //     }
+                std::string startString;
+                startString.append("Won the ");
+                startString.append(std::to_string(theBestPlayer.number));
+                startString.append(" Player");
+                startString.append("\n Wait for next game");
+                while (i < descrCount)
+                {
+                    int clientFd = descr[i].fd;
+                    if (clientFd == theBestPlayer.descriptor)
+                    {
+                        write(clientFd, "You won \n Wait for next game", 29);
+                        i++;
+                        continue;
+                    }
+                    int res = write(clientFd, startString.c_str(), startString.length());
+                    if (res != startString.length())
+                    {
+                        printf("removing %d\n", clientFd);
+                        shutdown(clientFd, SHUT_RDWR);
+                        close(clientFd);
+                        descr[i] = descr[descrCount - 1];
+                        descrCount--;
+                        continue;
+                    }
+                    i++;
+                }
 
-            //     gameStarted = false;
+                gameStarted = false;
 
-            //     // sleep(10);
-            // }
+                // sleep(10);
+            }
 
             if (descrCount > START_GAME && !gameStarted)
             {
@@ -369,6 +376,9 @@ void sendToClient(int fd, char *buffer, int indexPlayer)
     {
         //check compare
         playersList[indexPlayer].score = playersList[indexPlayer].score + 10;
+
+        printf("Finded word Player %d", indexPlayer);
+
         write(fd, "5;4;1*", 6);
         return;
     }
@@ -385,6 +395,8 @@ void sendToClient(int fd, char *buffer, int indexPlayer)
                 positions.push_back(i);
             }
         }
+
+        printf("Find Letter %c Player %d", letter, indexPlayer);
 
         if (positions.size() != 0)
         {
@@ -413,12 +425,12 @@ void sendToClient(int fd, char *buffer, int indexPlayer)
         {
             playersList[indexPlayer].lives++;
 
-            // if (playersList[indexPlayer].lives >= LIVES)
-            // {
-            //     amountOfPlayers--;
-            //     write(fd, "5;1;3*", 6);
-            //     return;
-            // }
+            if (playersList[indexPlayer].lives >= LIVES)
+            {
+                amountOfPlayers--;
+                write(fd, "5;1;3*", 6);
+                return;
+            }
 
             write(fd, "4;3;*", 5);
             return;
@@ -429,12 +441,12 @@ void sendToClient(int fd, char *buffer, int indexPlayer)
         // write(fd, "5;4;0*", 6);
         playersList[indexPlayer].lives++;
 
-        // if (playersList[indexPlayer].lives >= LIVES)
-        // {
-        //     amountOfPlayers--;
-        //     write(fd, "5;1;3*", 6);
-        //     return;
-        // }
+        if (playersList[indexPlayer].lives >= LIVES)
+        {
+            amountOfPlayers--;
+            write(fd, "5;1;3*", 6);
+            return;
+        }
 
         write(fd, "5;4;0*", 6);
         return;
