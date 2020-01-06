@@ -12,6 +12,8 @@
 #include <signal.h>
 #include <string.h>
 #include <iostream>
+#include <cstdlib>
+#include <vector>
 
 //struct for clients
 struct client
@@ -141,7 +143,7 @@ void eventOnClientFd(int indexInDescr)
         if (count < 1)
             revents |= POLLERR;
         else
-            sendToClient(clientFd, "5;1;2*", count);
+            sendToClient(clientFd, buffer, count);
     }
 
     if (revents & ~POLLIN)
@@ -291,9 +293,71 @@ void ctrl_c(int)
     exit(0);
 }
 
-void sendToClient(int fd, char *buffer, int count)
+void sendToClient(int fd, char *buffer)
 {
-    int res = write(fd, buffer, count);
+    int i = 1;
+    std::string strBuffer(buffer);
+    std::size_t found = strBuffer.find(';'); //end of msg length; ex 1 in "2;1;22*"
+    int numberLetter = atol(strBuffer.substr(0, found));
+
+    if (strBuffer.length() == numberLetter + 1)
+    {
+        write(fd, "Fail buffor", 11);
+        return;
+    }
+    else if (numberLetter != 5 && letterInWord != (numberLetter - 4))
+    {
+        //it was fail
+        write(fd, "5;4;0", 5);
+        return;
+    }
+    else if (numberLetter == 5)
+    {
+        std::string letter = strBuffer.substr(5, 6);
+
+        std::string str, sub; // str is string to search, sub is the substring to search for
+
+        std::vector<size_t> positions; // holds all the positions that sub occurs within str
+
+        size_t pos = strBuffer.find(letter, 0);
+        while (pos != string::npos)
+        {
+            positions.push_back(pos);
+            pos = strBuffer.find(letter, pos + 1);
+        }
+
+        if (positions.size() != 0)
+        {
+            // string 
+            write(fd, "Dupa", 5);
+            return;
+        }
+        else
+        {
+            write(fd, "4;3;*", 5);
+            return;
+        }
+    }
+    else if (strBuffer.substr(4, strBuffer.size() - 1) == toFindedWord)
+    {
+        write(fd, "5;4;1", 5);
+        return;
+    }
+    else
+    {
+        write(fd, "5;4;0", 5);
+        return;
+    }
+
+    // while (i < descrCount)
+    // {
+    //     int clientFd = descr[i].fd;
+    //     if (clientFd == fd)
+    //     {
+    //         i++;
+    //         continue;
+    //     }
+    // int res = write(fd, buffer, count);
     // if (res != count)
     // {
     //     printf("removing %d\n", clientFd);
@@ -301,7 +365,9 @@ void sendToClient(int fd, char *buffer, int count)
     //     close(clientFd);
     //     descr[i] = descr[descrCount - 1];
     //     descrCount--;
-    //     // continue;
+    //     continue;
+    // }
+    //     i++;
     // }
 }
 
