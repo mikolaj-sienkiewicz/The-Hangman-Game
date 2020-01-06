@@ -32,7 +32,7 @@ struct client
     }
 };
 
-std:string listOfWords [10] = {"zielony", "polak", "matka", "ananas", "graf", "matematyka", "czerwony", "niebieski", "pomaranczowy", "lis"}
+std:string listOfWords [10] = {"zielony", "polak", "matka", "ananas", "graf", "matematyka", "czerwony", "niebieski", "pomaranczowy", "lis"};
 // server socket
 int servFd;
 
@@ -307,13 +307,13 @@ int main(int argc, char **argv)
                     int clientFd = descr[i].fd;
                     if (clientFd == theBestPlayer.descriptor)
                     {
-                        write(clientFd, "You won \n", 10);                        
-                        write(fd, "5;1;3*\n", 8);
+                        writeData(clientFd, "You won \n", 10);                        
+                        writeData(clientFd, "5;1;3*\n", 8);
                         i++;
                         continue;
                     }
                     int res = write(clientFd, startString.c_str(), startString.length());
-                    write(fd, "5;1;3*\n", 8);
+                    writeData(clientFd, "5;1;3*\n", 8);
                     if (res != startString.length())
                     {
                         printf("removing %d\n", clientFd);
