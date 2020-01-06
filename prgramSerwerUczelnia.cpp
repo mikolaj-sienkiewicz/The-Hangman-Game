@@ -121,7 +121,7 @@ void eventOnServFd(int revents)
         descr[descrCount].fd = clientFd;
         descr[descrCount].events = POLLIN | POLLRDHUP;
 
-        int res = writeData(clientFd, "5;1;1*", 6);
+        writeData(clientFd, "5;1;1*", 6);
         // std::cout << "Res: " << res << std::endl;
         descrCount++;
 
@@ -268,7 +268,7 @@ int main(int argc, char **argv)
                     // continue;
                 }
 
-                for (int j = 0; j < playersListCapacity && gameStarted && donePlayer; j++)
+                for (int j = 0; j < playersListCapacity && gameStarted; j++)
                 {
                     if (descr[i].fd == playersList[j].descriptor && playersList[j].lives <= LIVES)
                     {
