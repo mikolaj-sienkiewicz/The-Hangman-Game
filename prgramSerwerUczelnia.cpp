@@ -163,7 +163,7 @@ void eventOnClientFd(int indexInDescr, int indexPlayer)
 
         for (int i = 0; i < playersListCapacity; i++)
         {
-            if(playersList[i].descriptor) == clientFd)
+            if(playersList[i].descriptor == clientFd)
             {
                 playersList[i].lives = LIVES + 3;
             }
