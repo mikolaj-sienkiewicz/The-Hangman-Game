@@ -305,10 +305,10 @@ void sendToClient(int fd, char *buffer)
         write(fd, "Fail buffor", 11);
         return;
     }
-    else if (numberLetter != 5 && letterInWord != (numberLetter - 4))
+    else if (numberLetter != 6 && letterInWord != (numberLetter - 4))
     {
         //it was fail
-        write(fd, "5;4;0", 5);
+        write(fd, "5;4;0*", 5);
         return;
     }
     else if (numberLetter == 5)
@@ -329,7 +329,7 @@ void sendToClient(int fd, char *buffer)
         if (positions.size() != 0)
         {
             // string 
-            write(fd, "Dupa", 5);
+            write(fd, "Dupa", 4);
             return;
         }
         else
@@ -340,12 +340,12 @@ void sendToClient(int fd, char *buffer)
     }
     else if (strBuffer.substr(4, strBuffer.size() - 1) == toFindedWord)
     {
-        write(fd, "5;4;1", 5);
+        write(fd, "5;4;1*", 6);
         return;
     }
     else
     {
-        write(fd, "5;4;0", 5);
+        write(fd, "5;4;0*", 6);
         return;
     }
 
