@@ -518,7 +518,7 @@ void generateWord()
     for (int i = 1; i < descrCount; i++)
     {
         // playersList[i].descriptor = descr[i].fd;
-        writeData(playersList[i].descriptor[i], convertStringToChars(startStringNew), startStringNew.length());
+        writeData(playersList[i].descriptor, convertStringToChars(startStringNew), startStringNew.length());
     }
 }
 
