@@ -350,7 +350,7 @@ void sendToClient(int fd, char *buffer)
             startStringNew.append(std::to_string(startString.length()));
             startStringNew.append(startString);
 
-            write(fd, startStringNew.c_str(), startStringNew.length() + 1);
+            write(fd, startStringNew.c_str(), startStringNew.length());
 
             return;
         }
@@ -365,33 +365,12 @@ void sendToClient(int fd, char *buffer)
         write(fd, "5;4;0*", 6);
         return;
     }
-
-    // while (i < descrCount)
-    // {
-    //     int clientFd = descr[i].fd;
-    //     if (clientFd == fd)
-    //     {
-    //         i++;
-    //         continue;
-    //     }
-    // int res = write(fd, buffer, count);
-    // if (res != count)
-    // {
-    //     printf("removing %d\n", clientFd);
-    //     shutdown(clientFd, SHUT_RDWR);
-    //     close(clientFd);
-    //     descr[i] = descr[descrCount - 1];
-    //     descrCount--;
-    //     continue;
-    // }
-    //     i++;
-    // }
 }
 
 void generateWord()
 {
     toFindedWord = "ananas";
-    letterInWord = 4;
+    letterInWord = toFindedWord.length();
 
     std::string startString;
     startString.append(";2;");
@@ -404,7 +383,7 @@ void generateWord()
     for (int i = 0; i < descrCount; i++)
     {
         playersList[i].descriptor = descr[i].fd;
-        write(descr[i].fd, startStringNew.c_str(), startStringNew.length() + 1);
+        write(descr[i].fd, startStringNew.c_str(), startStringNew.length());
     }
 }
 
