@@ -311,7 +311,7 @@ void sendToClient(int fd, char *buffer)
         write(fd, "5;4;0*", 5);
         return;
     }
-    else if (strBuffer.substr(4, strBuffer.size() - 1) == toFindedWord)
+    else if (strBuffer.substr(4, numberLetter).compare(toFindedWord))
     {
         //check compare
         write(fd, "5;4;1*", 6);
@@ -325,11 +325,11 @@ void sendToClient(int fd, char *buffer)
 
         std::vector<size_t> positions; // holds all the positions that sub occurs within str
 
-        size_t pos = strBuffer.find(letter, 0);
+        size_t pos = toFindedWord.find(letter, 0);
         while (pos != std::string::npos)
         {
             positions.push_back(pos);
-            pos = strBuffer.find(letter, pos + 1);
+            pos = toFindedWord.find(letter, pos + 1);
         }
 
         if (positions.size() != 0)
