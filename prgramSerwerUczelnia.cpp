@@ -129,7 +129,7 @@ void eventOnServFd(int revents)
         data.append("\n");
 
         writeData(clientFd, "5;1;1*", 6);
-        writeData(clientFd, data, data.length());
+        write(clientFd, data.c_str(), data.length());
         // std::cout << "Res: " << res << std::endl;
         descrCount++;
 
@@ -415,7 +415,7 @@ void sendToClient(int fd, char *buffer, int indexPlayer)
     //     write(fd, "Fail buffor", 11);
     //     return;
     // }
-    else if (bufferSyntax.substr(2, bufferSyntax.length() - 3).compare(toFindedWord) == 1)
+    if (bufferSyntax.substr(2, bufferSyntax.length() - 3).compare(toFindedWord) == 1)
     {
         //check compare
         playersList[indexPlayer].score = playersList[indexPlayer].score + 10;
