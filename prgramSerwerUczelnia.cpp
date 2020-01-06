@@ -32,7 +32,7 @@ struct client
     }
 };
 
-std:string listOfWords [10] = {"zielony", "polak", "matka", "ananas", "graf", "matematyka", "czerwony", "niebieski", "pomaranczowy", "lis"};
+std::string listOfWords [10] = {"zielony", "polak", "matka", "ananas", "graf", "matematyka", "czerwony", "niebieski", "pomaranczowy", "lis"};
 // server socket
 int servFd;
 
