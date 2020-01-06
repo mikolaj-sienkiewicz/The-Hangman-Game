@@ -160,7 +160,7 @@ void eventStart(int indexInDescr)
         startString.append(std::to_string(amountOfPlayers));
         startString.append(" Players\n");
 
-        writeData(clientFd, startString.c_str(), startString.length());
+        writeData(clientFd, convertStringToChars(startString), startString.length());
     }
 
     if (revents & ~POLLIN)
@@ -539,7 +539,7 @@ char * convertStringToChars(std::string word)
 {
     char cstr[word.length() + 1];
 
-    std::copy(word.begin(), w.end(), cstr);
+    std::copy(word.begin(), word.end(), cstr);
     cstr[word.length()] = '\0';
     return cstr;
 }
