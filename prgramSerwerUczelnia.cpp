@@ -299,19 +299,20 @@ void sendToClient(int fd, char *buffer)
     std::string strBuffer(buffer);
     std::size_t found = strBuffer.find(';'); //end of msg length; ex 1 in "2;1;22*"
     int numberLetter = atoi(strBuffer.substr(0, found).c_str());
+    std::string bufferSyntax = strBuffer.substr(found+1);
 
     if (strBuffer.length() == numberLetter + 1)
     {
         write(fd, "Fail buffor", 11);
         return;
     }
-    else if (numberLetter != 5 && letterInWord != (numberLetter - 5))
+    else if (numberLetter != 5 && letterInWord != (bufferSyntax.length() - 3))
     {
         //it was fail
         write(fd, "5;4;0*", 5);
         return;
     }
-    else if (strBuffer.substr(4, numberLetter).compare(toFindedWord) == 1)
+    else if (bufferSyntax.substr(2, bufferSyntax.length()-1).compare(toFindedWord) == 1)
     {
         //check compare
         write(fd, "5;4;1*", 6);
