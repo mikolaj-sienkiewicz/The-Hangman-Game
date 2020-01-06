@@ -247,6 +247,7 @@ int main(int argc, char **argv)
                 if (donePlayer)
                 {
                     printf(" 1. Event Start Works\n");
+                    printf("DescrCout %d", descrCount);
                     eventStart(i);
                 }
 
