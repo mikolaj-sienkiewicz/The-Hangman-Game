@@ -513,7 +513,7 @@ void generateWord()
     startStringNew.append(std::to_string(startString.length()));
     startStringNew.append(startString);
 
-    for (int i = 0; i < descrCount; i++)
+    for (int i = 1; i < descrCount; i++)
     {
         // playersList[i].descriptor = descr[i].fd;
         write(descr[i].fd, startStringNew.c_str(), startStringNew.length());
