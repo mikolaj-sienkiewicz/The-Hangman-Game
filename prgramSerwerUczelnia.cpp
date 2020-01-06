@@ -264,7 +264,7 @@ int main(int argc, char **argv)
                 {
                     printf(" 1. Add clients\n");
                     eventOnServFd(descr[i].revents);
-                    // continue;
+                    continue;
                 }
 
                 for (int j = 0; j < playersListCapacity && gameStarted; j++)
