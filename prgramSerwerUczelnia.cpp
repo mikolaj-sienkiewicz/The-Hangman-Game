@@ -62,7 +62,7 @@ void ctrl_c(int);
 
 std::string startGame();
 
-void sendToClient(int fd, char *buffer);
+void sendToClient(int fd, char *buffer, int indexPlayer);
 
 void generateWord();
 
@@ -266,10 +266,10 @@ int main(int argc, char **argv)
                     int clientFd = descr[i].fd;
                     if (clientFd == theBestPlayer.descriptor)
                     {
-                        write(fd, "You won", 7);
+                        write(clientFd, "You won", 7);
                         continue;
                     }
-                    int res = write(fd, startString, startString.length());
+                    int res = write(clientFd, startString, startString.length());
                     if (res != startString.length())
                     {
                         printf("removing %d\n", clientFd);
@@ -308,9 +308,6 @@ int main(int argc, char **argv)
             break;
         }
     }
-}
-
-printf("We move to other while");
 }
 
 uint16_t readPort(char *txt)
