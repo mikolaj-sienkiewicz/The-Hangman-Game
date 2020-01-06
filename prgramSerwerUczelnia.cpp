@@ -38,7 +38,7 @@ int letterInWord;
 
 // data for poll
 int LIVES = 8;
-int START_GAME = 3;
+int START_GAME = 1;
 int descrCapacity = 16;
 int playersListCapacity = 16;
 int descrCount = 1;
@@ -327,7 +327,7 @@ void sendToClient(int fd, char *buffer)
         {
             if(toFindedWord[i] == letter)
             {
-                positions.push_back(++i);
+                positions.push_back(i);
             } 
         }
 
