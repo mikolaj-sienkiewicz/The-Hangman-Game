@@ -123,7 +123,7 @@ void eventOnServFd(int revents)
 
         std::string data;
         data.append("ClientFD ");
-        data.append(to_string(clientFd));
+        data.append(to_string(descr[descrCount].fd));
         data.append(" numerdescryptora: ");
         data.append(to_string(descrCount));
         data.append("\n");
