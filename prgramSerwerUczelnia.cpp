@@ -278,7 +278,7 @@ int main(int argc, char **argv)
                     // continue;
                 }
 
-                for (int j = 0; j < playersListCapacity && gameStarted && donePlayer; j++)
+                for (int j = 1; j < playersListCapacity && gameStarted && donePlayer ; j++)
                 {
                     if (descr[i].fd == playersList[j].descriptor && playersList[j].lives <= LIVES)
                     {
@@ -288,7 +288,7 @@ int main(int argc, char **argv)
                         {
                             theBestPlayer = playersList[j];
                         }
-                        printf("TEGO SIE NIE SPODZIEWALEM");
+                        printf("Descryptory ktore dzialaja: i %d j %d  ", i, j);
                         eventOnClientFd(i, j);                        
                     }
                 }
@@ -296,7 +296,7 @@ int main(int argc, char **argv)
                 if (donePlayer)
                 {
                     // printf(" 1. Event Start Works\n");
-                    printf("YES TUTAJ");
+                    // printf("YES TUTAJ");
 
                     eventStart(i);
                 }
@@ -344,13 +344,13 @@ int main(int argc, char **argv)
             if (descrCount > START_GAME && !gameStarted)
             {
                 printf("NEW GAME START");
-                playersListCapacity = descrCount;
+                playersListCapacity = descrCount-1;
                 free(playersList);
-                playersList = (client *)malloc(sizeof(client) * playersListCapacity);
+                playersList = (client *)malloc(sizeof(client) * descrCount);
 
                 gameStarted = true;
 
-                for (int i = 0; i < playersListCapacity; i++)
+                for (int i = 1; i < descrCount; i++)
                 {
                     playersList[i].descriptor = descr[i].fd;
                     playersList[i].number = ++i;
