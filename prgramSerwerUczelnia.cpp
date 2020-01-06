@@ -311,6 +311,11 @@ void sendToClient(int fd, char *buffer)
         write(fd, "5;4;0*", 5);
         return;
     }
+    else if (strBuffer.substr(4, strBuffer.size() - 1) == toFindedWord)
+    {
+        write(fd, "5;4;1*", 6);
+        return;
+    }
     else if (numberLetter == 5)
     {
         std::string letter = strBuffer.substr(5, 6);
@@ -337,11 +342,6 @@ void sendToClient(int fd, char *buffer)
             write(fd, "4;3;*", 5);
             return;
         }
-    }
-    else if (strBuffer.substr(4, strBuffer.size() - 1) == toFindedWord)
-    {
-        write(fd, "5;4;1*", 6);
-        return;
     }
     else
     {
