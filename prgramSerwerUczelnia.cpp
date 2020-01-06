@@ -120,9 +120,9 @@ void eventStart(int indexInDescr)
     if (revents & POLLIN)
     {
         char buffer[255];
-        int count = read(clientFd, buffer, 255);
-        if (count < 1)
-            revents |= POLLERR;
+        // int count = read(clientFd, buffer, 255);
+        // if (count < 1)
+        //     revents |= POLLERR;
 
         // std::string strBuffer(buffer);
 
@@ -251,12 +251,13 @@ int main(int argc, char **argv)
                     if (descr[i].fd == playersList[j].descriptor && playersList[j].lives <= LIVES)
                     {
                         // printf(" 1. Event Player\n");
-                        eventOnClientFd(i, j);
-
                         if (theBestPlayer.score < playersList[j].score)
                         {
                             theBestPlayer = playersList[j];
                         }
+
+                        eventOnClientFd(i, j);
+
                         donePlayer = false;
                     }
                 }
