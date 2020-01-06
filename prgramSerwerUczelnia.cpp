@@ -279,7 +279,7 @@ int main(int argc, char **argv)
                         {
                             theBestPlayer = playersList[j];
                         }
-
+                        printf("TEGO SIE NIE SPODZIEWALEM");
                         eventOnClientFd(i, j);                        
                     }
                 }
