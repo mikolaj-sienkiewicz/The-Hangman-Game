@@ -128,7 +128,7 @@ void eventOnServFd(int revents)
         data.append(to_string(descrCount));
         data.append("\n");
 
-        writeData(clientFd, "5;1;1*", 6);
+        // writeData(clientFd, "5;1;1*", 6);
         write(clientFd, data.c_str(), data.length());
         // std::cout << "Res: " << res << std::endl;
         descrCount++;
@@ -316,7 +316,7 @@ int main(int argc, char **argv)
                     int clientFd = descr[i].fd;
                     if (clientFd == theBestPlayer.descriptor)
                     {
-                        writeData(clientFd, "You won \n", 10);                        
+                        // writeData(clientFd, "You won \n", 10);                        
                         writeData(clientFd, "5;1;3*\n", 8);
                         i++;
                         continue;
