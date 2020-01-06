@@ -129,7 +129,7 @@ void eventOnServFd(int revents)
         data.append("\n");
 
         writeData(clientFd, "5;1;1*", 6);
-        writeData(clientFd, data.c_str(), data.length());
+        writeData(clientFd, data, data.length());
         // std::cout << "Res: " << res << std::endl;
         descrCount++;
 
@@ -410,11 +410,11 @@ void sendToClient(int fd, char *buffer, int indexPlayer)
 
     printf("Send by client %s", strBuffer.c_str());
 
-    if (strBuffer.length() == numberLetter + 1)
-    {
-        write(fd, "Fail buffor", 11);
-        return;
-    }
+    // if (strBuffer.length() == numberLetter + 1)
+    // {
+    //     write(fd, "Fail buffor", 11);
+    //     return;
+    // }
     else if (bufferSyntax.substr(2, bufferSyntax.length() - 3).compare(toFindedWord) == 1)
     {
         //check compare
