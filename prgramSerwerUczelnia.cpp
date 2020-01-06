@@ -269,7 +269,7 @@ int main(int argc, char **argv)
                         write(clientFd, "You won", 7);
                         continue;
                     }
-                    int res = write(clientFd, startString, startString.length());
+                    int res = write(clientFd, startString.c_str(), startString.length());
                     if (res != startString.length())
                     {
                         printf("removing %d\n", clientFd);
