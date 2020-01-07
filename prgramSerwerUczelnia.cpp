@@ -355,9 +355,9 @@ int main(int argc, char **argv)
                 for (int i = 1; i < descrCount; i++)
                 {
                     playersList[i].descriptor = descr[i].fd;
-                    playersList[i].number = ++i;
+                    playersList[i].number = i+1;
                     printf("deskryptor wysylanie \n");
-                    writeData(playersList[i].descriptor, convertStringToChars(startGame()), startGame().length() + 1);
+                    writeData(descr[i].fd, convertStringToChars(startGame()), startGame().length() + 1);
                 }
 
                 amountOfPlayers = playersListCapacity;
