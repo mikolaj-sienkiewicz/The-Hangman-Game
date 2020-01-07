@@ -519,6 +519,7 @@ void generateWord()
     {
         // playersList[i].descriptor = descr[i].fd;
         writeData(descr[playersList[i].number].fd, convertStringToChars(startStringNew), startStringNew.length());
+        //it is difficult to say
     }
 }
 
