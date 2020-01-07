@@ -282,7 +282,7 @@ int main(int argc, char **argv)
 
                 for (int j = 1; j < playersListCapacity && gameStarted && donePlayer ; j++)
                 {
-                    if (descr[i].fd == playersList[j].descriptor && playersList[j].lives <= LIVES)
+                    if (i == playersList[j].number && playersList[j].lives <= LIVES)
                     {
                         // printf(" 1. Event Player\n");
                         donePlayer = false;
