@@ -158,7 +158,7 @@ void eventStart(int indexInDescr)
         std::string startString;
         startString.append("The ");
         startString.append(std::to_string(amountOfPlayers));
-        startString.append(" Players\n");
+        startString.append(" Players");
 
         writeData(clientFd, convertStringToChars(startString), startString.length());
     }
@@ -362,7 +362,7 @@ int main(int argc, char **argv)
                     writeData(descr[i].fd, convertStringToChars(startGame()), startGame().length());
                 }
 
-                amountOfPlayers = playersListCapacity-1;
+                amountOfPlayers = playersListCapacity;
 
                 generateWord();
 
