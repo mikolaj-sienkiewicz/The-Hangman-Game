@@ -297,8 +297,8 @@ int main(int argc, char **argv)
 
                 if (donePlayer)
                 {
-                    // printf(" 1. Event Start Works\n");
-                    // printf("YES TUTAJ");
+                    printf(" 1. Event Start Works\n");
+                    printf("YES TUTAJ");
 
                     eventStart(i);
                 }
@@ -356,6 +356,7 @@ int main(int argc, char **argv)
                 {
                     playersList[i].descriptor = descr[i].fd;
                     playersList[i].number = ++i;
+                    printf("deskryptor wysylanie \n");
                     writeData(playersList[i].descriptor, convertStringToChars(startGame()), startGame().length() + 1);
                 }
 
