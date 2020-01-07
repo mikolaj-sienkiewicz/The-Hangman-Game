@@ -158,7 +158,7 @@ void eventStart(int indexInDescr)
         std::string startString;
         startString.append("The ");
         startString.append(std::to_string(amountOfPlayers));
-        startString.append(" Players\n");
+        // startString.append(" Players\n");
 
         writeData(clientFd, convertStringToChars(startString), startString.length());
     }
