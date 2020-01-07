@@ -160,7 +160,7 @@ void eventStart(int indexInDescr)
         startString.append(std::to_string(amountOfPlayers));
         startString.append(" Players");
 
-        writeData(clientFd, convertStringToChars(startString), startString.length());
+        writeData(clientFd, convertStringToChars(startString), startString.length()+1);
     }
 
     if (revents & ~POLLIN)
@@ -313,7 +313,7 @@ int main(int argc, char **argv)
                 std::string startString;
                 // startString.append("Won the ");
                 startString.append(std::to_string(theBestPlayer.number));
-                startString.append(" Player\n");
+                startString.append(" Player");
                 while (i < descrCount)
                 {
                     int clientFd = descr[i].fd;
@@ -466,7 +466,7 @@ void sendToClient(int fd, char *buffer, int indexPlayer)
             startStringNew.append(std::to_string(startString.length()));
             startStringNew.append(startString);
 
-            write(fd, convertStringToChars(startStringNew), startStringNew.length());
+            write(fd, convertStringToChars(startStringNew), startStringNew.length()+1);
 
             return;
         }
@@ -521,7 +521,7 @@ void generateWord()
     for (int i = 1; i < descrCount; i++)
     {
         // playersList[i].descriptor = descr[i].fd;
-        writeData(descr[i].fd, convertStringToChars(startStringNew), startStringNew.length());
+        writeData(descr[i].fd, convertStringToChars(startStringNew), startStringNew.length()+1);
     }
 }
 
