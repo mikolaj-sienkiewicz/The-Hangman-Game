@@ -158,7 +158,7 @@ void eventStart(int indexInDescr)
         std::string startString;
         startString.append("The ");
         startString.append(std::to_string(amountOfPlayers));
-        // startString.append(" Players\n");
+        startString.append(" Players\n");
 
         writeData(clientFd, convertStringToChars(startString), startString.length());
     }
@@ -282,7 +282,7 @@ int main(int argc, char **argv)
 
                 for (int j = 1; j < playersListCapacity && gameStarted && donePlayer ; j++)
                 {
-                    if (i == playersList[j].number && playersList[j].lives <= LIVES)
+                    if (descr[i].fd == playersList[j].descriptor && playersList[j].lives <= LIVES)
                     {
                         // printf(" 1. Event Player\n");
                         donePlayer = false;
@@ -355,7 +355,7 @@ int main(int argc, char **argv)
                 for (int i = 1; i < descrCount; i++)
                 {
                     playersList[i].descriptor = descr[i].fd;
-                    playersList[i].number = i;
+                    playersList[i].number = ++i;
                     writeData(playersList[i].descriptor, convertStringToChars(startGame()), startGame().length() + 1);
                 }
 
@@ -518,8 +518,7 @@ void generateWord()
     for (int i = 1; i < descrCount; i++)
     {
         // playersList[i].descriptor = descr[i].fd;
-        writeData(descr[playersList[i].number].fd, convertStringToChars(startStringNew), startStringNew.length());
-        //it is difficult to say
+        writeData(descr[i].fd, convertStringToChars(startStringNew), startStringNew.length());
     }
 }
 
