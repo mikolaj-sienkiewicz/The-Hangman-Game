@@ -346,7 +346,7 @@ int main(int argc, char **argv)
             if (descrCount > START_GAME && !gameStarted)
             {
                 printf("NEW GAME START");
-                playersListCapacity = descrCount-1;
+                playersListCapacity = descrCount;
                 free(playersList);
                 playersList = (client *)malloc(sizeof(client) * descrCount);
 
@@ -356,11 +356,13 @@ int main(int argc, char **argv)
                 {
                     playersList[i].descriptor = descr[i].fd;
                     playersList[i].number = i+1;
+                    playersList[i].lives = 0;
+                    playersList[i].score = 0;
                     printf("deskryptor wysylanie \n");
-                    writeData(descr[i].fd, convertStringToChars(startGame()), startGame().length() + 1);
+                    writeData(descr[i].fd, convertStringToChars(startGame()), startGame().length());
                 }
 
-                amountOfPlayers = playersListCapacity;
+                amountOfPlayers = playersListCapacity-1;
 
                 generateWord();
 
