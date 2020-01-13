@@ -15,7 +15,15 @@
 #include <fstream>
 
 
-
+//DEBUGGER GDB 
+//dgb ./a.out y
+//run runuje calosc (mozna dodac argumenty normalnie po) albo start zatryzmuje na pierwszej- uruchamianie
+//break x.cpp:8 (zatrzymanie w linii 8)
+//continue(uruchom dalej) albo step(wejdz glepbiej) albo next(przejdz do nastepnej instrukcji) albo untill
+//bt mowi gdzie jestesmy w kodzie (backtrace)
+//frame nr (patrzy z jakim argumentem funkcja na strosie z nr nr ma)
+//print <buf> albo print strlen(buf) do podpatrywania co sie dzieje ze zmiennymi
+// w proc/<pid>/fd wszystkie otwarte pliki
 
 //wiedza o grze od serwera
 std::string GAMESTATUS ="1",LIVES="10",TOPSCORE="UNKNOWN",nPLAYERS="UNKNOWN",nSPECTATORS="UNKNOWN",POINTS="0",WORD="", WORDLENGTH="0",MESSAGE_QUEUE="";
@@ -38,84 +46,42 @@ void writeData(int fd, char* buffer, ssize_t count) {
 }
 
 void updateInitMonitor() {
-	fflush(stdout);
-	fflush(stdin);
-	//Initialize stream string ate -> at the end append
-	//std::ostringstream oss(std::ostringstream::ate);
-	// "\033[0;0f" -> ustawia kursor w lewym gornym rogu, "\033[2J" -> czysci ekran
-	//oss.str("\033[2J");
-	//oss << "\033[0;0f" << "############################ THE HANGMAN #############################\n" << "Waiting for players to join\nCurrently there are: "<<nSPECTATORS<<" players in the waiting room\n\n"<<"Press ENTER to refresh \nAnd remember that patience is key...\n";
-	//std::cout << oss.str();
 	std::string theString = "";
-	//theString += std::string("\033[2J") + "\033[0;0f" + "############################ THE HANGMAN #############################\n" + "Waiting for players to join\nCurrently there are: " + nSPECTATORS + " players in the waiting room\n\n" + "Press ENTER to refresh \nAnd remember that patience is key...\n";
-	//theString += std::string("\033[2J") + "\033[0;0f"+"############################ THE HANGMAN #############################\n" + "Waiting for players to join\nCurrently there are: " + nSPECTATORS + " players in the waiting room\n\n" + "Press ENTER to refresh \nAnd remember that patience is key...\n";
-	theString += std::string("\033[2J") + "\033[0;0f" + "############################ THE HANGMAN #############################\n" + "Current Word: " + WORD + "\n" + "Points: " + POINTS + "\n" + "Lives: " + LIVES + "\n" + "Insert 1 letter to guess it, or more to go for the word : \n";
-
-	char cstr[theString.size() + 1];
-	strcpy(cstr, &theString[0]);
-
-	printf(cstr);
-	
-	//writeData(STDOUT_FILENO, cstr, strlen(cstr));
-
+	theString += std::string("\033[2J") + "\033[0;0f"+"############################ THE HANGMAN #############################\n" + "Waiting for players to join\nCurrently there are: " + nSPECTATORS + " players in the waiting room\n\n" + "Press ENTER to refresh \nAnd remember that patience is key...\n";
+	printf ("%s",theString.c_str());
 }
 
 void updateGameMonitor() {
-	fflush(stdout);
-	fflush(stdin);
-	//Initialize stream string ate -> at the end append
-	//std::ostringstream oss(std::ostringstream::ate);
-	//oss.str("\033[2J");
-	//oss << "\033[0;0f" << "############################ THE HANGMAN #############################\n"<<"Current Word: "<<WORD<<"\n" << "Points: " << POINTS << "\n" << "Lives: " << LIVES << "\n" << "Insert 1 letter to guess it, or more to go for the word : \n";
-	//std::cout << oss.str();
-	std::string theString2="";
-	//theString+=std::string("\033[2J")+"\033[0;0f"+"############################ THE HANGMAN #############################\n" + "Current Word: " + WORD + "\n" + "Points: " + POINTS + "\n" + "Lives: " + LIVES + "\n" + "Insert 1 letter to guess it, or more to go for the word : \n";
-	theString2+= std::string("\033[2J") + "\033[0;0f"+"############################ THE HANGMAN #############################\n"+ "Current Word: " + WORD + "\n" + "Points: " + POINTS + "\n" + "Lives: " + LIVES + "\n" + "Insert 1 letter to guess it, or more to go for the word : \n";
-
-	char cstr2[theString2.size() + 1];
-	strcpy(cstr2, &theString2[0]);
-	//writeData(STDOUT_FILENO, "a", strlen("a"));
-	printf(cstr2);
-	
-	
+	std::string theString="";
+	theString+= std::string("\033[2J") + "\033[0;0f"+"############################ THE HANGMAN #############################\n"+ "Current Word: " + WORD + "\n" + "Points: " + POINTS + "\n" + "Lives: " + LIVES + "\n" + "Insert 1 letter to guess it, or more to go for the word : \n";
+	printf("%s",theString.c_str());
 }
 
 void updateWaitingMonitor() {
-	//Initialize stream string ate -> at the end append
-	//std::ostringstream oss(std::ostringstream::ate);
-	// "\033[0;0f" -> ustawia kursor w lewym gornym rogu, "\033[2J" -> czysci ekran
-	//oss.str("\033[2J");
-	//oss << "\033[0;0f" << "############################ THE HANGMAN #############################\n" << "Current Top Score: " << TOPSCORE << "\n" << "Number of players in the game: " << nPLAYERS << "\n" << "Number of spectators watching: " << nSPECTATORS << "\n" << "press ENTER to refresh the screen\n";
-	//std::cout << oss.str();
-
 	std::string theString = "";
 	theString += std::string("\033[2J") + "\033[0;0f" + "############################ THE HANGMAN #############################\n" + "Current Top Score: " +TOPSCORE + "\n" + "Number of players in the game: " + nPLAYERS + "\n" + "Number of spectators watching: " + nSPECTATORS + "\n" + "press ENTER to refresh the screen\n";
-	char cstr[theString.size() + 1];
-	strcpy(cstr, &theString[0]);
-	printf(cstr);
-	fflush(stdout);
-
-	//writeData(STDOUT_FILENO, cstr, strlen(cstr));
+	printf("%s",theString.c_str());
 }
 
 void encodeMessage(int sock, char * buffer, int received) {
 
-	//TYLE ILE RECEIVED ENKODOWAC
-	char subbuf[received]; //I TO SAMO CO NIZEJ 
 	//-1 zeby uciac \n na koncu
+	std::string finalBuffer2(buffer, received-1);
+
+	//TYLE ILE RECEIVED ENKODOWAC
+	/*char subbuf[received]; //I TO SAMO CO NIZEJ 
+	
 	for (int i = 0; i < received-1; i++)
 	{
 		subbuf[i] = buffer[i];
 	}
-	//std::cout << "subbuffer size : " << std::to_string(strlen(subbuffer)) << "\n";
-
 	std::string strBuffer(subbuf); //buffer[0;received]
 	std::string finalBuffer = "";
 
 	for (int i = 0; i < received-1; i++)
 	{
 		finalBuffer += strBuffer[i];
-	}
+	}*/
 
 	//finalBuffer przechowuje obciety buffer po received
 
@@ -132,44 +98,31 @@ void encodeMessage(int sock, char * buffer, int received) {
 		
 		//FINAL BUFFER MA NA KONCU \n
 		message.append(";1;");
-		message.append(finalBuffer);
+		message.append(finalBuffer2);
 		message.append("*");
-		//std::cout<<"HERE: "  << finalBuffer << "\n";
-		/*char cstr2[message.size() + 1];
-		strcpy(cstr2, &message[0]);
-		writeData(1, cstr2, strlen(cstr2));*/
+
 
 		messageWithLength.append(std::to_string(message.length()));
 		messageWithLength.append(message);
 
-		
-		//std::cout << "HERE: " << messageWithLength << "\n";
 
-		char cstr[messageWithLength.size() + 1];
-		strcpy(cstr, &messageWithLength[0]);
-		
+		///UWAGA
+		writeData(sock, messageWithLength.data(), strlen(messageWithLength.c_str()));
 
-
-		writeData(sock, cstr, strlen(cstr));
-		//writeData(STDOUT_FILENO, cstr, strlen(cstr));
-
+		//chyba nie trzeba updatowac bo dostaniemy odpowiedz od serwera ktora to ztriggeruje
 		//updateGameMonitor();
 	}
 	else {
 		//wysylam 1* po refresh encode()
 		updateWaitingMonitor();
 	}
-	//writeData(STDOUT_FILENO, "a", 1);
-	//printf("a");
+
 }
 
 decodedMessage decodeMessage(std::string strBuffer, int received) {
 
-	//std::cout << "MESSAGE BEGGINING: " << strBuffer << "\n";
-
 	decodedMessage dM;
 
-	
 	std::size_t found=strBuffer.find(';'); //end of msg length; ex 1 in "2;1;22*"
 	std::size_t found2 = strBuffer.find(';',found+1); //end of msg type; ex 3 in "2;1;22*"
 
@@ -192,29 +145,11 @@ decodedMessage decodeMessage(std::string strBuffer, int received) {
 	}
 	//was empty but buffer got more
 	else if(finish != strBuffer.length()) {
-
+		
+		//wyglada jakby mogl byc memory leak
 		MESSAGE_QUEUE += strBuffer.substr(finish + 1, strBuffer.length());
 
 	}
-	
-	/*if (commandType == "1") {
-
-	}
-	else if (commandType == "2") {
-		//updateGameMonitor
-	}*/
-
-	/*convert string to char array and print the result
-	char cstr[commandMessage.size() + 1];
-	strcpy(cstr, &commandMessage[0]);
-	writeData(STDOUT_FILENO, cstr, sizeof(cstr));*/
-
-	
-
-	//writeData(STDOUT_FILENO, buffer, received);
-	//std::cout <<"dm type: "<<dM.commandType<<"\ndm msg: "<< dM.commandMessage << std::endl;
-	//std::cout << "MESSAGE END: " << MESSAGE_QUEUE << "\n";
-
 	return dM;
 }
 
@@ -224,13 +159,11 @@ ssize_t readData(int fd, char* buffer, ssize_t buffsize) {
 	return ret;
 }
 
-
 int main(int argc, char** argv) {
 	if (argc != 3) error(1, 0, "Need 2 args");
 
 	setbuf(stdout, NULL);
-
-
+	
 	addrinfo * resolved, hints = { .ai_flags = 0,.ai_family = AF_INET,.ai_socktype = SOCK_STREAM };
 	int res = getaddrinfo(argv[1], argv[2], &hints, &resolved);
 	if (res || !resolved) error(1, 0, "getaddrinfo: %s", gai_strerror(res));
@@ -250,15 +183,9 @@ int main(int argc, char** argv) {
 	desc[0].fd = STDIN_FILENO;
 	desc[0].events = POLLIN;
 
-	// Na drugiej pozycji: standardowe wyjscie
-	//desc[1].fd = STDOUT_FILENO;
-	//desc[1].events = POLLOUT;
-
 	// Na drugiej pozycji: gniazdo sieciowe
 	desc[1].fd = sock;
 	desc[1].events = POLLIN | POLLRDHUP;
-
-
 
 	// W obu przypadkach poll ma oczekiwać na możliwość wykonania odczytu bez
 	// blokowania, dla sock też na zamknięcie gniazda przez drugą stronę
@@ -267,26 +194,26 @@ int main(int argc, char** argv) {
 	char buffer[255];
 
 	while (1) {
-		//std::cout << "a";
-
-		//std::cout << MESSAGE_QUEUE;
 		// Wywołanie poll - czekanie na wystąpnienie zdarzenia (w tym 
 		// przypadku możliwości odczytu danych bez blokowania)
-		int ready;
-		//std::cout <<"MESSAGEQUELEN: "<< std::to_string(MESSAGE_QUEUE.length()) << std::endl;
+		int ready=0;
+
 		if (MESSAGE_QUEUE == "")
 		{
-			ready = poll(desc, 3, -1);
+			ready = poll(desc, 2, -1);
 		}
 		
+		// nie zainicjonowane
 		if (ready == -1) {
 			shutdown(sock, SHUT_RDWR);
 			close(sock);
 			error(1, errno, "poll failed");
 		}
-		
-		// w przypadku poll trzeba przejść przez całą przekazaną listę (lub do
-		// znalezienia zdarzeń na tylu deskryptorach, ile zwrócił poll)
+
+
+	///CZYSCIC POLL.REEVENTS JAK JUZ WEJDZIESZ W IFA 
+	//POLL WYPELNIL STRUKTURE A POTEM JAKBY ZOSTANIE TA SAMA WARTOSC WIEC REEVENTS TRZEBA CZYSCIC
+	//if ready!=0 ALE WTEDY ZOBACZYC CZY IF Z MESSAGE QUEUE NIE TRZEBA WYWALIC ZA FOR
 		for (int i = 0; i < 2; ++i) {
 			// pole revents jest wypełniane przez poll opisem gotowych zdarzeń
 			if (desc[i].revents & (POLLERR | POLLHUP | POLLRDHUP)) {
@@ -296,72 +223,40 @@ int main(int argc, char** argv) {
 				exit(0);
 			}
 			if (desc[i].revents & POLLIN) {
+				
+				//czyszczenie revents, poniewaz w przeciwnym wypadku jak message queue nie bedzie puste to poll nie wyczysci tych pól
+				desc[i].revents=0;
+
 				//std::cout << "MESSAGE_QUEUE FROM THE INSIDE: " << MESSAGE_QUEUE << "\n";
 				// jeśli program raportuje możliwość odczytu, odczytaj dane
 				received = readData(desc[i].fd, buffer, 255);
-
-				// jeśli przyszły z standardowego wejścia, zapisz do funkcji kodujacej i wysylajacej,
-				// wpw wyslij do funkcji odczytujacej
-				//auto whereToWrite = desc[i].fd == STDIN_FILENO ? sock : STDOUT_FILENO;
+				std::string finalBuffer3(buffer,received);
+				std::cout<<finalBuffer3;
 
 				//PART FOR SENDING
 				if (desc[i].fd == STDIN_FILENO) {
-					//std::cout << "CHECK: ";// << buffer << "\n";
 					encodeMessage(sock, buffer, received);
 				}
 				//PART FOR RECEIVING 
 				else {
-					//buffer od 0 do received
-					//std::cout << "RECEIVED: " << std::to_string(received)<< "\n";
-
-					char subbuffer[received];
-					for (int i = 0; i < received; i++)
-					{
-						subbuffer[i] = buffer[i];
-					}
-					//std::cout << "subbuffer size : " << std::to_string(strlen(subbuffer)) << "\n";
-
-					std::string strBuffer(subbuffer); //buffer[0;received]
-					std::string finalBuffer = "";
-													  
-					for (int i = 0; i < received; i++)
-					{
-						finalBuffer += strBuffer[i];
-					}
-				    //std::cout << "strBuffer size : " << std::to_string(strBuffer.length()) << "\n";
-
-					//std::cout << "MESSAGE BEGGINING A: " << MESSAGE_QUEUE << "\n";
-					MESSAGE_QUEUE += finalBuffer;
-					//std::cout << "MESSAGE BEGGINING B: " << MESSAGE_QUEUE << "\n";
-
-					//std::cout << MESSAGE_QUEUE << "\n";
-					//wzorzecwiadomosci 
-					//regex wzorzec( "2*" );
+					///TO SIE ZAPELNIA BO SUBBUFER UCINA BUFER ALE PRZEZ TO JEST WYCIEK tworzyc stringa konstruktorem przyjmujacy poczatek tekstu i dlugosc  std::string strName(buf,30) buf to pocztek bufora a 30 to received
+					std::string finalBuffer2(buffer,received);
+					MESSAGE_QUEUE += finalBuffer2;
 				}
 			}
-			if (MESSAGE_QUEUE != "") {
+		}
+		if (MESSAGE_QUEUE != "") {
 				decodedMessage receivedData = decodeMessage(MESSAGE_QUEUE, received);
 				
-				
 				std::string debugString = "" + receivedData.commandLength + ";" + receivedData.commandType + ";" + receivedData.commandMessage + "*";
-				char cstr[debugString.size()+1];
-				strcpy(cstr, &debugString[0]);
-				//writeData(STDOUT_FILENO, cstr, sizeof(cstr)); 
 
-				/*convert string to char array and print the result
-				char cstr[receivedData.commandLength.size() + 1];
-				strcpy(cstr, &receivedData.commandLength[0]);
-				writeData(STDOUT_FILENO, cstr, sizeof(cstr));*/
 				//response regards game status ex 5;1;210 - go to game status and set lives to 10
 				if (receivedData.commandType == "1") {
 					//inicjalizacja
 					if (receivedData.commandMessage == "1") {
 						GAMESTATUS = "1";
-
-						///POWODUJE BLAD PO ODKOMENTOWANIU NIE WIADOMO CZEMU
-						//updateInitMonitor();
+						updateInitMonitor();
 					}
-					//gra -> regex po 2 jest ilosc zyc
 					//poczekalnia 
 					else if (receivedData.commandMessage == "3") {
 						GAMESTATUS = "3";
@@ -384,7 +279,6 @@ int main(int argc, char** argv) {
 				//response regards the number of letters in the new word ex 6;2;30* - 30 letters in the word
 				else if (receivedData.commandType == "2") {
 					WORDLENGTH = receivedData.commandMessage;
-
 					char cstr[WORDLENGTH.size() + 1];
 					strcpy(cstr, &WORDLENGTH[0]);
 					intWORDLENGTH = atol(cstr);
@@ -411,7 +305,5 @@ int main(int argc, char** argv) {
 					updateGameMonitor();
 				}
 			}
-					
-		} 
 	}
 }
