@@ -13,7 +13,9 @@
 #include <regex>
 #include <cstdlib>
 #include <fstream>
+#include <vector>
 
+#include <bits/stdc++.h> 
 
 //DEBUGGER GDB 
 //dgb ./a.out y
@@ -27,8 +29,8 @@
 
 //wiedza o grze od serwera
 std::string GAMESTATUS ="1",LIVES="10",TOPSCORE="UNKNOWN",nPLAYERS="UNKNOWN",nSPECTATORS="UNKNOWN",POINTS="0",WORD="", WORDLENGTH="0",MESSAGE_QUEUE="";
-int intWORDLENGTH = 0;
-
+int intWORDLENGTH = 0, REWARD=10;
+char LAST_LETTER_GUESS;
 
 
 struct decodedMessage
@@ -37,6 +39,8 @@ struct decodedMessage
 	std::string commandType;
 	std::string commandMessage;
 };
+
+
 
 
 void writeData(int fd, char* buffer, ssize_t count) {
@@ -100,7 +104,9 @@ void encodeMessage(int sock, char * buffer, int received) {
 		message.append(";1;");
 		message.append(finalBuffer2);
 		message.append("*");
-
+		if(finalBuffer2.length()==1){
+			LAST_LETTER_GUESS=finalBuffer2[0];
+		}
 
 		messageWithLength.append(std::to_string(message.length()));
 		messageWithLength.append(message);
@@ -118,6 +124,22 @@ void encodeMessage(int sock, char * buffer, int received) {
 	}
 
 }
+
+std::vector<std::string>  decodeMessageLoad(std::string message){
+	std::vector<std::string> message_items;
+	for(int i=0;i<message.length();i++){
+			int temp=i;
+			std::string item="";
+			for(temp;temp<message.length();temp++){
+				if (message[temp]=='-') break;
+				item+=message[temp];
+				i++;
+			}
+			message_items.push_back(item);
+	}
+	return message_items;
+}
+
 
 decodedMessage decodeMessage(std::string strBuffer, int received) {
 
@@ -163,7 +185,7 @@ int main(int argc, char** argv) {
 	if (argc != 3) error(1, 0, "Need 2 args");
 
 	setbuf(stdout, NULL);
-	
+
 	addrinfo * resolved, hints = { .ai_flags = 0,.ai_family = AF_INET,.ai_socktype = SOCK_STREAM };
 	int res = getaddrinfo(argv[1], argv[2], &hints, &resolved);
 	if (res || !resolved) error(1, 0, "getaddrinfo: %s", gai_strerror(res));
@@ -291,19 +313,39 @@ int main(int argc, char** argv) {
 				//response regards the correctness of chosen letter 
 				else if (receivedData.commandType == "3") {
 					if (receivedData.commandMessage == "") {
-						char cstr[LIVES.size() + 1];
-						strcpy(cstr, &LIVES[0]);
-						int  tmp= atol(cstr);
+						int  tmp= atol(LIVES.c_str());
 						tmp -= 1;
 						LIVES = std::to_string(tmp);
 						//LIVES -= 1;
 					}
 					//get letter positions and update the word array
 					else {
-						int nothing;
+						std::vector<std::string> positions = decodeMessageLoad(receivedData.commandMessage);
+						for (int i=0;i<positions.size();i++)
+						{
+							int intPosition= atol(positions[i].c_str());
+							WORD[intPosition]=LAST_LETTER_GUESS;
+							printf("%s\n", positions[i].c_str());
+						}
 					}
 					updateGameMonitor();
 				}
+				else if (receivedData.commandType == "4") {		
+					// add points
+					if (receivedData.commandMessage == "1"){
+						int tmp = atol(POINTS.c_str());
+						tmp+=REWARD;
+						POINTS = std::to_string(tmp);
+					}
+					// subtract one life
+					else{
+						int  tmp= atol(LIVES.c_str());
+						tmp -= 1;
+						LIVES = std::to_string(tmp);
+					}
+					updateGameMonitor();
+				}
+
 			}
-	}
+		}
 }
