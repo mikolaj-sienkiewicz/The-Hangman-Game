@@ -63,6 +63,7 @@ int main(int argc, char **argv)
                 //ADD USER
                 if (descr[i].fd == servFd)
                 {
+                    writeData(descr[i].fd, "HEJ", 3);
                     addUser(descr[i].revents);
                 }
                 else
@@ -144,7 +145,7 @@ void addUser(int revents)
 
         char *word = convertStringToChar(data);
 
-        writeData(clientFd, word, data.length());
+        writeData(number, word, data.length());
 
         descrCount++;
 
