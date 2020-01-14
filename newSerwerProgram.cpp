@@ -135,7 +135,7 @@ void addUser(int revents)
         data.append(std::to_string(number));
         data.append(" numerdescryptora: ");
         data.append(std::to_string(descrCount));
-        data.append("\n");
+        // data.append("\n");
 
         writeData(clientFd, convertStringToChar(data), data.length());
 
