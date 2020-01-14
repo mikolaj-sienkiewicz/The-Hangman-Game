@@ -212,8 +212,9 @@ void getMessageFromUser(int indexInDescr)
         int count = read(clientFd, buffer, 255);
         if (count < 1)
             revents |= POLLERR;
-        else
-            sendToAllBut(clientFd, buffer, count);
+            printf("PROBLEMS");
+        // else
+        //     sendToAllBut(clientFd, buffer, count);
     }
 
     if (revents & ~POLLIN)
