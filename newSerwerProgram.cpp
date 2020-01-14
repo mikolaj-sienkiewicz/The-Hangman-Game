@@ -21,7 +21,7 @@
 int LIVES = 2;
 int MIN_PLAYERS_TO_START_GAME = 3;
 
-//GLOBAL VARIABLES 
+//GLOBAL VARIABLES
 //INT
 int servFd;
 int descrCapacity = 16;
@@ -30,14 +30,15 @@ int descrCount = 1;
 //MALLOC
 pollfd *descr;
 
-//FUNCTIONS 
+//FUNCTIONS
 
 void initFunction(int argc, char **argv);
 void addUser(int revents);
 void writeData(int fd, char *buffer, ssize_t count);
 void ctrl_c(int);
+void getMessageFromUser(int indexInDescr);
 
-char* convertStringToChar(std::string word);
+char *convertStringToChar(std::string word);
 
 ssize_t readData(int fd, char *buffer, ssize_t buffsize);
 uint16_t readPort(char *txt);
@@ -64,6 +65,11 @@ int main(int argc, char **argv)
                 {
                     addUser(descr[i].revents);
                 }
+                else
+                {
+                    getMessageFromUser(i)
+                }
+                ready--;
             }
         }
     }
@@ -99,7 +105,6 @@ void initFunction(int argc, char **argv)
     descr = (pollfd *)malloc(sizeof(pollfd) * descrCapacity);
     descr[0].fd = servFd;
     descr[0].events = POLLIN;
-
 }
 
 void addUser(int revents)
@@ -137,7 +142,7 @@ void addUser(int revents)
         // data.append(std::to_string(descrCount));
         // data.append("\n");
 
-        char * word = convertStringToChar(data);
+        char *word = convertStringToChar(data);
 
         writeData(clientFd, word, data.length());
 
@@ -185,12 +190,41 @@ void ctrl_c(int)
     exit(0);
 }
 
-char* convertStringToChar(std::string word)
+char *convertStringToChar(std::string word)
 {
-    char convertedWord[word.length()]; 
-    for (int i = 0; i < sizeof(convertedWord); i++) { 
-        convertedWord[i] = word[i]; 
-    } 
+    char convertedWord[word.length()];
+    for (int i = 0; i < sizeof(convertedWord); i++)
+    {
+        convertedWord[i] = word[i];
+    }
 
     return convertedWord;
+}
+
+void getMessageFromUser(int indexInDescr)
+{
+    auto clientFd = descr[indexInDescr].fd;
+    auto revents = descr[indexInDescr].revents;
+
+    if (revents & POLLIN)
+    {
+        char buffer[255];
+        int count = read(clientFd, buffer, 255);
+        if (count < 1)
+            revents |= POLLERR;
+        else
+            sendToAllBut(clientFd, buffer, count);
+    }
+
+    if (revents & ~POLLIN)
+    {
+        printf("removing %d\n", clientFd);
+
+        // remove from description of watched files for poll
+        descr[indexInDescr] = descr[descrCount - 1];
+        descrCount--;
+
+        shutdown(clientFd, SHUT_RDWR);
+        close(clientFd);
+    }
 }
