@@ -63,7 +63,7 @@ int main(int argc, char **argv)
                 //ADD USER
                 if (descr[i].fd == servFd)
                 {
-                    printf("NUMBER ADDING: %s", i);
+                    printf("NUMBER ADDING: %d", i);
                     addUser(descr[i].revents);
                 }
                 else
@@ -147,7 +147,7 @@ void addUser(int revents)
 
         char *word = convertStringToChar(data);
 
-        writeData(number, word, data.length());
+        writeData(number, data.data(), data.length());
 
         descrCount++;
 
