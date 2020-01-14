@@ -37,6 +37,8 @@ void addUser(int revents);
 void writeData(int fd, char *buffer, ssize_t count);
 void ctrl_c(int);
 
+char* convertStringToChar(string word)
+
 ssize_t readData(int fd, char *buffer, ssize_t buffsize);
 uint16_t readPort(char *txt);
 
@@ -135,7 +137,7 @@ void addUser(int revents)
         data.append(std::to_string(descrCount));
         data.append("\n");
 
-        writeData(descrCount, data.data(), data.length());
+        writeData(descrCount, convertStringToChar(data), data.length());
 
         descrCount++;
 
@@ -179,4 +181,14 @@ void ctrl_c(int)
     close(servFd);
     printf("Closing server\n");
     exit(0);
+}
+
+char* convertStringToChar(string word)
+{
+    char convertedWord[word.length()]; 
+    for (int i = 0; i < sizeof(convertedWord); i++) { 
+        convertedWord[i] = word[i]; 
+    } 
+
+    return convertedWord
 }
