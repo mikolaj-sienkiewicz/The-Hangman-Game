@@ -137,7 +137,7 @@ void addUser(int revents)
         data.append(std::to_string(descrCount));
         data.append("\n");
 
-        writeData(descrCount, convertStringToChar(data), data.length());
+        writeData(clientFd, convertStringToChar(data), data.length());
 
         descrCount++;
 
