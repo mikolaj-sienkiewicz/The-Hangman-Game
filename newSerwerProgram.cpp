@@ -63,7 +63,7 @@ int main(int argc, char **argv)
                 //ADD USER
                 if (descr[i].fd == servFd)
                 {
-                    printf("NUMBER ADDING: %s", i)
+                    printf("NUMBER ADDING: %s", i);
                     addUser(descr[i].revents);
                 }
                 else
