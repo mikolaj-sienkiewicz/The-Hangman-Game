@@ -63,7 +63,7 @@ int main(int argc, char **argv)
                 //ADD USER
                 if (descr[i].fd == servFd)
                 {
-                    writeData(descr[i].fd, "HEJ", 3);
+                    printf("NUMBER ADDING: %s", i)
                     addUser(descr[i].revents);
                 }
                 else
@@ -131,6 +131,8 @@ void addUser(int revents)
             descrCapacity <<= 1;
             descr = (pollfd *)realloc(descr, sizeof(pollfd) * descrCapacity);
         }
+
+        writeData(clientFd, "HEJ", 3);
 
         descr[descrCount].fd = clientFd;
         descr[descrCount].events = POLLIN | POLLRDHUP;
