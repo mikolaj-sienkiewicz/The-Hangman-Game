@@ -190,5 +190,5 @@ char* convertStringToChar(std::string word)
         convertedWord[i] = word[i]; 
     } 
 
-    return convertedWord
+    return convertedWord;
 }
