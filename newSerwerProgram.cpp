@@ -139,7 +139,7 @@ void addUser(int revents)
 
         char * word = convertStringToChar(data);
 
-        writeData(clientFd, word, data.length();
+        writeData(clientFd, word, data.length());
 
         descrCount++;
 
