@@ -132,7 +132,7 @@ void addUser(int revents)
         int number = clientFd;
         std::string data;
         data.append("ClientFD ");
-        data.append(std::to_string(number));
+        // data.append(std::to_string(number));
         // data.append(" numerdescryptora: ");
         // data.append(std::to_string(descrCount));
         // data.append("\n");
