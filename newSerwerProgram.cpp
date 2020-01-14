@@ -67,7 +67,7 @@ int main(int argc, char **argv)
                 }
                 else
                 {
-                    getMessageFromUser(i)
+                    getMessageFromUser(i);
                 }
                 ready--;
             }
