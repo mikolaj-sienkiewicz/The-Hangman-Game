@@ -37,7 +37,7 @@ void addUser(int revents);
 void writeData(int fd, char *buffer, ssize_t count);
 void ctrl_c(int);
 
-char* convertStringToChar(string word)
+char* convertStringToChar(std::string word)
 
 ssize_t readData(int fd, char *buffer, ssize_t buffsize);
 uint16_t readPort(char *txt);
@@ -183,7 +183,7 @@ void ctrl_c(int)
     exit(0);
 }
 
-char* convertStringToChar(string word)
+char* convertStringToChar(std::string word)
 {
     char convertedWord[word.length()]; 
     for (int i = 0; i < sizeof(convertedWord); i++) { 
