@@ -38,7 +38,7 @@ void writeData(int fd, char *buffer, ssize_t count);
 void ctrl_c(int);
 
 ssize_t readData(int fd, char *buffer, ssize_t buffsize);
-
+uint16_t readPort(char *txt);
 
 int main(int argc, char **argv)
 {
@@ -149,6 +149,15 @@ ssize_t readData(int fd, char *buffer, ssize_t buffsize)
     if (ret == -1)
         error(1, errno, "read failed on descriptor %d", fd);
     return ret;
+}
+
+uint16_t readPort(char *txt)
+{
+    char *ptr;
+    auto port = strtol(txt, &ptr, 10);
+    if (*ptr != 0 || port < 1 || (port > ((1 << 16) - 1)))
+        error(1, 0, "illegal argument %s", txt);
+    return port;
 }
 
 void writeData(int fd, char *buffer, ssize_t count)
