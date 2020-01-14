@@ -35,6 +35,8 @@ pollfd *descr;
 void initFunction(int argc, char **argv);
 void addUser(int revents);
 void writeData(int fd, char *buffer, ssize_t count);
+void ctrl_c(int);
+
 ssize_t readData(int fd, char *buffer, ssize_t buffsize);
 
 
@@ -156,4 +158,16 @@ void writeData(int fd, char *buffer, ssize_t count)
         error(1, errno, "write failed on descriptor %d", fd);
     if (ret != count)
         error(0, errno, "wrote less than requested to descriptor %d (%ld/%ld)", fd, count, ret);
+}
+
+void ctrl_c(int)
+{
+    for (int i = 1; i < descrCount; ++i)
+    {
+        shutdown(descr[i].fd, SHUT_RDWR);
+        close(descr[i].fd);
+    }
+    close(servFd);
+    printf("Closing server\n");
+    exit(0);
 }
