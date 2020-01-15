@@ -90,7 +90,8 @@ int main(int argc, char **argv)
                     {
                         if (players[j].fd == descr[i].fd)
                         {
-                            writeData(players[j].fd, "HELLO", 6);
+                            std::string gamer = "Players "+j+" \n";
+                            writeData(players[j].fd, gamer, gamer.length());
                         }
                     }
                 }
