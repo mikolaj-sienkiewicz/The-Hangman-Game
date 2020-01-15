@@ -170,7 +170,10 @@ void addUser(int revents)
 
         if (!gameStarted)
         {
-            players.push_back(clientFd);
+            client newGamer;
+            newGamer.fd = clientFd;
+            
+            players.push_back(newGamer);
             amountOfGamers++;
         }
         amountOfAllPLayers++;
