@@ -143,6 +143,7 @@ void addUser(int revents)
         amountOfUsers++;
         descrCount++;
 
+        printf("%d \n", amountOfUsers);
         printf("new connection from: %s:%hu (fd: %d)\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), clientFd);
     }
 }
@@ -211,6 +212,7 @@ void getMessageFromUser(int indexInDescr)
         // remove from description of watched files for poll
         descr[indexInDescr] = descr[descrCount - 1];
         amountOfUsers--;
+        printf("%d \n", amountOfUsers);
         descrCount--;
 
         shutdown(clientFd, SHUT_RDWR);
