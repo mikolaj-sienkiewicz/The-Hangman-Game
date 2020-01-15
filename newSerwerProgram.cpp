@@ -38,8 +38,6 @@ void writeData(int fd, char *buffer, ssize_t count);
 void ctrl_c(int);
 void getMessageFromUser(int indexInDescr);
 
-char *convertStringToChar(std::string word);
-
 ssize_t readData(int fd, char *buffer, ssize_t buffsize);
 uint16_t readPort(char *txt);
 
@@ -132,22 +130,13 @@ void addUser(int revents)
             descr = (pollfd *)realloc(descr, sizeof(pollfd) * descrCapacity);
         }
 
-        writeData(clientFd, "HEJ", 3);
-
         descr[descrCount].fd = clientFd;
         descr[descrCount].events = POLLIN | POLLRDHUP;
 
-        int number = clientFd;
-        std::string data;
-        data.append("ClientFD ");
-        data.append(std::to_string(number));
-        data.append(" numerdescryptora: ");
-        // data.append(std::to_string(descrCount));
-        // data.append("\n");
+        std::string codeMessage = ";1;1-" + std::to_string(clientFd);
+        std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
 
-        char *word = convertStringToChar(data);
-
-        writeData(number, data.data(), data.length());
+        writeData(clientFd, codeMessage.data(), data.length());
 
         descrCount++;
 
@@ -193,18 +182,6 @@ void ctrl_c(int)
     exit(0);
 }
 
-char *convertStringToChar(std::string word)
-{
-    char convertedWord[word.length()];
-    for (int i = 0; i < sizeof(convertedWord); i++)
-    {
-        convertedWord[i] = word[i];
-    }
-
-    printf("%s", convertedWord);
-    return convertedWord;
-}
-
 void getMessageFromUser(int indexInDescr)
 {
     auto clientFd = descr[indexInDescr].fd;
@@ -216,7 +193,7 @@ void getMessageFromUser(int indexInDescr)
         int count = read(clientFd, buffer, 255);
         if (count < 1)
             revents |= POLLERR;
-            printf("PROBLEMS");
+        printf("PROBLEMS");
         // else
         //     sendToAllBut(clientFd, buffer, count);
     }
