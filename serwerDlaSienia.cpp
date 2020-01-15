@@ -159,7 +159,11 @@ int main(int argc, char **argv)
                 ready--;
             }
         }
-        sendToSieniu();
+        if(!isItConnected)
+        {
+            sendToSieniu();
+        }
+        
     }
 }
 
