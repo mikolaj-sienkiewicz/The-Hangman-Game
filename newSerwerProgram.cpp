@@ -59,9 +59,9 @@ void initFunction(int argc, char **argv);
 void addUser(int revents);
 void writeData(int fd, char *buffer, ssize_t count);
 void ctrl_c(int);
-void getMessageFromUser(int indexInDescr);
-void getMessageFromPlayer(int indexInDescr);
-void sendToUser(int fd, char * buffer, int count, int indexInDescr);
+void getMessageFromInit(int indexInDescr);
+void getMessageFromQueue(int indexInDescr);
+void sendToUser(int fd, char *buffer, int count, int indexInDescr);
 
 ssize_t readData(int fd, char *buffer, ssize_t buffsize);
 uint16_t readPort(char *txt);
@@ -88,17 +88,18 @@ int main(int argc, char **argv)
                 {
                     addUser(descr[i].revents);
                     ready--;
+                    joinToTheProgramForUser()
+
                     continue;
                 }
                 else
                 {
-                    // getMessageFromUser(i);
+                    // getMessageFromInit(i);
                     for (int j = 0; j < players.size() && gameStarted; j++)
                     {
                         if (players[j].fd == descr[i].fd)
                         {
                             //nie ma read tutaj
-                            getMessageFromPlayer(i);
                             // std::string gamer = "Players " + std::to_string(j) + " \n";
                             // writeData(descr[j].fd, gamer.data(), gamer.length());
                             // ready--;
@@ -110,11 +111,34 @@ int main(int argc, char **argv)
                 }
                 if (!gameStarted)
                 {
-                    getMessageFromUser(i);
+                    getMessageFromInit(i);
                     ready--;
+                    continue;
+                }
+                else
+                {
+                    getMessageFromQueue(i);
+                    ready--;
+                    continue;
                 }
             }
         }
+    }
+}
+
+void joinToTheProgramForUser()
+{
+    if (gameStarted)
+    {
+        std::string codeMessage = ";7;" + std::to_string((amountOfGamers - amountOfAllPLayers)) + "-" + std::to_string(amountOfAllPLayers) + "-" + std::to_string(topScore) + "-" + std::to_string(topPlayer) + "*";
+        std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
+        writeData(clientFd, codeMessageFinal.data(), codeMessageFinal.length());
+    }
+    else
+    {
+        std::string codeMessage = ";6;" + std::to_string(amountOfAllPLayers) + "*";
+        std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
+        writeData(clientFd, codeMessageFinal.data(), codeMessageFinal.length());
     }
 }
 
@@ -225,7 +249,8 @@ void writeData(int fd, char *buffer, ssize_t count)
     auto ret = write(fd, buffer, count);
     if (ret == -1)
         error(1, errno, "write failed on descriptor %d", fd);
-    if(ret!=count) error(0, errno, "wrote less than requested to descriptor %d (%ld/%ld)", fd, count, ret);
+    if (ret != count)
+        error(0, errno, "wrote less than requested to descriptor %d (%ld/%ld)", fd, count, ret);
 }
 
 void ctrl_c(int)
@@ -240,7 +265,7 @@ void ctrl_c(int)
     exit(0);
 }
 
-void getMessageFromPlayer(int indexInDescr)
+void getMessageFromQueue(int indexInDescr)
 {
     auto clientFd = descr[indexInDescr].fd;
     auto revents = descr[indexInDescr].revents;
@@ -255,12 +280,11 @@ void getMessageFromPlayer(int indexInDescr)
         }
         else
         {
-            std::string codeMessage = ";7;" + std::to_string((amountOfGamers - amountOfAllPLayers))+ "-" + std::to_string(amountOfAllPLayers) + "-" + std::to_string(topScore) + "-" + std::to_string(topPlayer) + "*";
+            std::string codeMessage = ";7;" + std::to_string((amountOfGamers - amountOfAllPLayers)) + "-" + std::to_string(amountOfAllPLayers) + "-" + std::to_string(topScore) + "-" + std::to_string(topPlayer) + "*";
             std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
             writeData(clientFd, codeMessageFinal.data(), codeMessageFinal.length());
         }
-
-    }  
+    }
 
     if (revents & ~POLLIN)
     {
@@ -277,20 +301,23 @@ void getMessageFromPlayer(int indexInDescr)
     }
 }
 
-void sendToUser(int fd, char * buffer, int count, int indexInDescr){
-     int res = write(fd, buffer, count);
+void sendToUser(int fd, char *buffer, int count, int indexInDescr)
+{
+    int res = write(fd, buffer, count);
 
-     if(res!=count){
-            printf("removing %d\n", fd);
-            shutdown(fd, SHUT_RDWR);
-            close(fd);
-            descr[indexInDescr] = descr[descrCount-1];
-            amountOfAllPLayers--;
-            descrCount--;        
-        }
+    if (res != count)
+    {
+        printf("removing %d\n", fd);
+        shutdown(fd, SHUT_RDWR);
+        close(fd);
+        descr[indexInDescr] = descr[descrCount - 1];
+        amountOfAllPLayers--;
+        descrCount--;
+    }
 }
 
-void getMessageFromUser(int indexInDescr){
+void getMessageFromInit(int indexInDescr)
+{
 
     auto clientFd = descr[indexInDescr].fd;
     auto revents = descr[indexInDescr].revents;
@@ -307,7 +334,6 @@ void getMessageFromUser(int indexInDescr){
         {
             std::string codeMessage = ";6;" + std::to_string(amountOfAllPLayers) + "*";
             std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
-            // sendToUser(clientFd, codeMessageFinal.data(), count,  codeMessageFinal.length());
             writeData(clientFd, codeMessageFinal.data(), codeMessageFinal.length());
         }
     }
@@ -326,4 +352,3 @@ void getMessageFromUser(int indexInDescr){
         close(clientFd);
     }
 }
-
