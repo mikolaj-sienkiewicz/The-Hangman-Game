@@ -10,6 +10,7 @@
 #include <poll.h>
 #include <unordered_set>
 #include <signal.h>
+#include <iostream>
 
 // server socket
 int servFd;
@@ -174,8 +175,6 @@ sendToSieniu()
         auto ret = write(descr[1].fd, writeText.data(), writeText.length());
         if (ret == -1)
             error(1, errno, "write failed on descriptor %d", descr[1].fd);
-        if (ret != count)
-            error(0, errno, "wrote less than requested to descriptor %d (%ld/%ld)", descr[1].fd, writeText.length(), ret);
     }
 
     printf("SEND CORRECTLY \n");
