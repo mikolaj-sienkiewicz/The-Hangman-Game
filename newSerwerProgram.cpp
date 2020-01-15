@@ -27,6 +27,8 @@ int servFd;
 int descrCapacity = 16;
 int descrCount = 1;
 
+int amountOfUsers = 0;
+
 //MALLOC
 pollfd *descr;
 
@@ -133,11 +135,12 @@ void addUser(int revents)
         descr[descrCount].fd = clientFd;
         descr[descrCount].events = POLLIN | POLLRDHUP;
 
-        std::string codeMessage = ";1;1-" + std::to_string(clientFd);
+        std::string codeMessage = ";1;1-" + std::to_string(clientFd) + "*";
         std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
 
         writeData(clientFd, codeMessageFinal.data(), codeMessageFinal.length());
 
+        amountOfUsers++;
         descrCount++;
 
         printf("new connection from: %s:%hu (fd: %d)\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), clientFd);
@@ -192,8 +195,11 @@ void getMessageFromUser(int indexInDescr)
         char buffer[255];
         int count = read(clientFd, buffer, 255);
         if (count < 1)
+        {
             revents |= POLLERR;
-        printf("PROBLEMS");
+            printf("REMOVE");
+        }
+            
         // else
         //     sendToAllBut(clientFd, buffer, count);
     }
@@ -204,6 +210,7 @@ void getMessageFromUser(int indexInDescr)
 
         // remove from description of watched files for poll
         descr[indexInDescr] = descr[descrCount - 1];
+        amountOfUsers--;
         descrCount--;
 
         shutdown(clientFd, SHUT_RDWR);
