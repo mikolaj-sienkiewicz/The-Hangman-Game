@@ -54,7 +54,7 @@ pollfd *descr;
 
 std::vector<client> players;
 //FUNCTIONS
-
+void startGame();
 void joinToTheProgramForUser(int cliendFd);
 void initFunction(int argc, char **argv);
 void addUser(int revents);
@@ -238,7 +238,7 @@ void startGame()
             std::string codeMessage = ";1;2-" + std::to_string(LIVES) + "*";
             std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
             int res = write(clientFd, codeMessageFinal.data(), codeMessageFinal.length());
-            if (res != count)
+            if (res != codeMessageFinal.length())
             {
                 printf("removing %d\n", clientFd);
                 shutdown(clientFd, SHUT_RDWR);
