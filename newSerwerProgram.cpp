@@ -17,6 +17,19 @@
 #include <stdlib.h>
 #include <time.h>
 
+struct client
+{
+    int score;
+    int lives;
+    int fd;
+
+    client()
+    {
+        score = 0;
+        lives = 0;
+    }
+};
+
 //GLOBAL VARIABLES TO CHANGE
 int LIVES = 2;
 int MIN_PLAYERS_TO_START_GAME = 3;
@@ -27,11 +40,16 @@ int servFd;
 int descrCapacity = 16;
 int descrCount = 1;
 
-int amountOfUsers = 0;
+int amountOfGamers = 0;
+int amountOfAllPLayers = 0;
+
+//BOOLEN
+bool gameStarted = false;
 
 //MALLOC
 pollfd *descr;
 
+std::vector<client> players;
 //FUNCTIONS
 
 void initFunction(int argc, char **argv);
@@ -63,14 +81,24 @@ int main(int argc, char **argv)
                 //ADD USER
                 if (descr[i].fd == servFd)
                 {
-                    printf("NUMBER ADDING: %d", i);
                     addUser(descr[i].revents);
                 }
                 else
                 {
-                    getMessageFromUser(i);
+                    // getMessageFromUser(i);
+                    for (int j = 0; j < players.size() && gameStarted; j++)
+                    {
+                        if (players[j].fd == descr[i].fd)
+                        {
+                            writeData(players[j].fd, "HELLO", 5);
+                        }
+                    }
                 }
                 ready--;
+
+                // if (gameStarted)
+                // {
+                // }
             }
         }
     }
@@ -140,11 +168,21 @@ void addUser(int revents)
 
         writeData(clientFd, codeMessageFinal.data(), codeMessageFinal.length());
 
-        amountOfUsers++;
+        if (!gameStarted)
+        {
+            players.push_back(clientFd);
+            amountOfGamers++;
+        }
+        amountOfAllPLayers++;
         descrCount++;
 
-        printf("%d \n", amountOfUsers);
         printf("new connection from: %s:%hu (fd: %d)\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), clientFd);
+
+        if (amountOfGamers >= MIN_PLAYERS_TO_START_GAME && !gameStarted)
+        {
+            amountOfAllPLayers = amountOfGamers;
+            gameStarted = true;
+        }
     }
 }
 
@@ -198,9 +236,8 @@ void getMessageFromUser(int indexInDescr)
         if (count < 1)
         {
             revents |= POLLERR;
-            printf("REMOVE");
         }
-            
+
         // else
         //     sendToAllBut(clientFd, buffer, count);
     }
@@ -211,8 +248,8 @@ void getMessageFromUser(int indexInDescr)
 
         // remove from description of watched files for poll
         descr[indexInDescr] = descr[descrCount - 1];
-        amountOfUsers--;
-        printf("%d \n", amountOfUsers);
+        amountOfGamers--;
+        amountOfAllPLayers--;
         descrCount--;
 
         shutdown(clientFd, SHUT_RDWR);
