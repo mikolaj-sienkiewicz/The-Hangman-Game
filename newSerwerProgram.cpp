@@ -255,8 +255,7 @@ void getMessageFromPlayer(int indexInDescr)
         }
         else
         {
-            std::string codeMessage = ";7;" + std::to_string(amountOfGamers - amountOfAllPLayers)+ "-" + 
-            std::to_string(amountOfAllPLayers) + "-" + std::to_string(topScore) + "-" + std::to_string(topPlayer) "*";
+            std::string codeMessage = ";7;" + std::to_string(amountOfGamers - amountOfAllPLayers)+ "-" + std::to_string(amountOfAllPLayers) + "-" + std::to_string(topScore) + "-" + std::to_string(topPlayer) "*";
             std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
             writeData(clientFd, codeMessageFinal.data(), count);
         }
