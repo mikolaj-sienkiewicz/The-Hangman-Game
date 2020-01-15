@@ -220,30 +220,35 @@ void addUser(int revents)
 
         printf("new connection from: %s:%hu (fd: %d)\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), clientFd);
 
-        if (amountOfGamers >= MIN_PLAYERS_TO_START_GAME && !gameStarted)
+        startGame();
+    }
+}
+
+void startGame()
+{
+    if (amountOfGamers >= MIN_PLAYERS_TO_START_GAME && !gameStarted)
+    {
+        amountOfAllPLayers = amountOfGamers;
+        gameStarted = true;
+
+        int i = 1;
+        while (i < descrCount)
         {
-            amountOfAllPLayers = amountOfGamers;
-            gameStarted = true;
-
-            int i = 1;
-            while (i < descrCount)
+            int clientFd = descr[i].fd;
+            std::string codeMessage = ";1;2-" + std::to_string(LIVES) + "*";
+            std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
+            int res = write(clientFd, codeMessageFinal.data(), codeMessageFinal.length());
+            if (res != count)
             {
-                int clientFd = descr[i].fd;
-                std::string codeMessage = ";1;2-" + std::to_string(LIVES) + "*";
-                std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
-                int res = write(clientFd, codeMessageFinal.data(), codeMessageFinal.length());
-                if (res != count)
-                {
-                    printf("removing %d\n", clientFd);
-                    shutdown(clientFd, SHUT_RDWR);
-                    close(clientFd);
-                    descr[i] = descr[descrCount - 1];
-                    descrCount--;
-                    continue;
-                }
-
-                i++;
+                printf("removing %d\n", clientFd);
+                shutdown(clientFd, SHUT_RDWR);
+                close(clientFd);
+                descr[i] = descr[descrCount - 1];
+                descrCount--;
+                continue;
             }
+
+            i++;
         }
     }
 }
