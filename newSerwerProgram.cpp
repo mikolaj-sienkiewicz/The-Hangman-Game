@@ -225,7 +225,7 @@ void addUser(int revents)
             amountOfAllPLayers = amountOfGamers;
             gameStarted = true;
 
-            for (int j = 1; j < amountOfAllPLayers; j++)
+            for (int j = 3; j < descrCount; j++)
             {
 
                 std::string codeMessage = ";1;2" + std::to_string(LIVES) + "*";
