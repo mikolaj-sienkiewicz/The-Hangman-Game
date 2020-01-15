@@ -92,6 +92,8 @@ int main(int argc, char **argv)
                         {
                             std::string gamer = "Players " + std::to_string(j) + " \n";
                             writeData(players[j].fd, gamer.data(), gamer.length());
+                            printf("AMOunt of ready %d \n", ready);
+                            continue;
                         }
                     }
                 }
