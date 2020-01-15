@@ -60,6 +60,7 @@ void addUser(int revents);
 void writeData(int fd, char *buffer, ssize_t count);
 void ctrl_c(int);
 void getMessageFromUser(int indexInDescr);
+void getMessageFromPlayer(int indexInDescr);
 void sendToUser(int fd, char * buffer, int count, int indexInDescr);
 
 ssize_t readData(int fd, char *buffer, ssize_t buffsize);
@@ -109,7 +110,7 @@ int main(int argc, char **argv)
                 }
                 if (!gameStarted)
                 {
-                    getMessageFromUser(i);
+                    getMessageFromPlayer(i);
                     ready--;
                 }
             }
@@ -239,7 +240,7 @@ void ctrl_c(int)
     exit(0);
 }
 
-void getMessageFromPlayer()
+void getMessageFromPlayer(int indexInDescr)
 {
     auto clientFd = descr[indexInDescr].fd;
     auto revents = descr[indexInDescr].revents;
