@@ -43,6 +43,9 @@ int descrCount = 1;
 int amountOfGamers = 0;
 int amountOfAllPLayers = 0;
 
+int topScore = 0;
+int topPlayer = 0;
+
 //BOOLEN
 bool gameStarted = false;
 
@@ -57,6 +60,7 @@ void addUser(int revents);
 void writeData(int fd, char *buffer, ssize_t count);
 void ctrl_c(int);
 void getMessageFromUser(int indexInDescr);
+void sendToUser(int fd, char * buffer, int count, int indexInDescr);
 
 ssize_t readData(int fd, char *buffer, ssize_t buffsize);
 uint16_t readPort(char *txt);
@@ -220,15 +224,7 @@ void writeData(int fd, char *buffer, ssize_t count)
     auto ret = write(fd, buffer, count);
     if (ret == -1)
         error(1, errno, "write failed on descriptor %d", fd);
-    if(res!=count){
-            printf("removing %d\n", fd);
-            shutdown(fd, SHUT_RDWR);
-            close(fd);
-            descr[i] = descr[descrCount-1];
-            descrCount--;
-            continue;
-        
-        } 
+    if(ret!=count) error(0, errno, "wrote less than requested to descriptor %d (%ld/%ld)", fd, count, ret);
 }
 
 void ctrl_c(int)
@@ -258,7 +254,8 @@ void getMessageFromPlayer()
         }
         else
         {
-            std::string codeMessage = ";6;1-" + std::to_string(amountOfAllPLayers) + "*";
+            std::string codeMessage = ";7;" + std::to_string(amountOfGamers - amountOfAllPLayers)+ "-" + 
+            std::to_string(amountOfAllPLayers) + "-" + std::to_string(topScore) + "-" + std::to_string(topPlayer) "*";
             std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
             writeData(clientFd, codeMessageFinal.data(), count);
         }
@@ -294,7 +291,9 @@ void getMessageFromUser(int indexInDescr)
         }
         else
         {
-            sendToUser(clientFd, buffer, count);
+            std::string codeMessage = ";6;" + std::to_string(amountOfAllPLayers) + "*";
+            std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
+            sendToUser(clientFd, codeMessageFinal.data(), count,  indexInDescr);
         }
              
 
@@ -313,4 +312,16 @@ void getMessageFromUser(int indexInDescr)
     }
 }
 
+void sendToUser(int fd, char * buffer, int count, int indexInDescr){
+     int res = writeData(clientFd, buffer, count);
+
+     if(res!=count){
+            printf("removing %d\n", clientFd);
+            shutdown(clientFd, SHUT_RDWR);
+            close(clientFd);
+            descr[indexInDescr] = descr[descrCount-1];
+            amountOfAllPLayers--;
+            descrCount--;        
+        }
+}
 
