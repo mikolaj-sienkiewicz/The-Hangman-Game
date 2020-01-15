@@ -90,7 +90,7 @@ int main(int argc, char **argv)
                     addUser(descr[i].revents);
                     ready--;
 
-                    joinToTheProgramForUser(descr[descrCount-1].fd);
+                    joinToTheProgramForUser(descr[descrCount - 1].fd);
                     continue;
                 }
                 else
@@ -224,6 +224,14 @@ void addUser(int revents)
         {
             amountOfAllPLayers = amountOfGamers;
             gameStarted = true;
+
+            for (int j = 1; j < amountOfAllPLayers; j++)
+            {
+
+                std::string codeMessage = ";1;2" + std::to_string(LIVES) + "*";
+                std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
+                writeData(descr[j].fd, codeMessageFinal.data(), codeMessageFinal.length());
+            }
         }
     }
 }
