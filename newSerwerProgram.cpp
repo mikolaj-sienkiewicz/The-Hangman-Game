@@ -82,6 +82,8 @@ int main(int argc, char **argv)
                 if (descr[i].fd == servFd)
                 {
                     addUser(descr[i].revents);
+                    ready--;
+                    continue;
                 }
                 else
                 {
@@ -96,14 +98,16 @@ int main(int argc, char **argv)
                             // writeData(descr[j].fd, gamer.data(), gamer.length());
                             // ready--;
                             // printf("AMOunt of ready %d \n", ready);
+                            ready--;
                             continue;
                         }
                     }
                 }
-                ready--;
-                // if (gameStarted)
-                // {
-                // }
+                if (!gameStarted)
+                {
+                    getMessageFromUser(i);
+                    ready--;
+                }
             }
         }
     }
@@ -216,8 +220,15 @@ void writeData(int fd, char *buffer, ssize_t count)
     auto ret = write(fd, buffer, count);
     if (ret == -1)
         error(1, errno, "write failed on descriptor %d", fd);
-    if (ret != count)
-        error(0, errno, "wrote less than requested to descriptor %d (%ld/%ld)", fd, count, ret);
+    if(res!=count){
+            printf("removing %d\n", fd);
+            shutdown(fd, SHUT_RDWR);
+            close(fd);
+            descr[i] = descr[descrCount-1];
+            descrCount--;
+            continue;
+        
+        } 
 }
 
 void ctrl_c(int)
@@ -230,6 +241,42 @@ void ctrl_c(int)
     close(servFd);
     printf("Closing server\n");
     exit(0);
+}
+
+void getMessageFromPlayer()
+{
+    auto clientFd = descr[indexInDescr].fd;
+    auto revents = descr[indexInDescr].revents;
+
+    if (revents & POLLIN)
+    {
+        char buffer[255];
+        int count = readData(clientFd, buffer, 255);
+        if (count < 1)
+        {
+            revents |= POLLERR;
+        }
+        else
+        {
+            std::string codeMessage = ";6;1-" + std::to_string(amountOfAllPLayers) + "*";
+            std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
+            writeData(clientFd, codeMessageFinal.data(), count);
+        }
+             
+
+    if (revents & ~POLLIN)
+    {
+        printf("removing %d\n", clientFd);
+
+        // remove from description of watched files for poll
+        descr[indexInDescr] = descr[descrCount - 1];
+        amountOfGamers--;
+        amountOfAllPLayers--;
+        descrCount--;
+
+        shutdown(clientFd, SHUT_RDWR);
+        close(clientFd);
+    }
 }
 
 void getMessageFromUser(int indexInDescr)
@@ -266,25 +313,4 @@ void getMessageFromUser(int indexInDescr)
     }
 }
 
-void sendToUser(int fd, char * buffer, int count){
-    int i = 1;
-    while(i < descrCount){
-        int clientFd = descr[i].fd;
-        if(clientFd == fd) {
-            i++;
-            continue;
-        }
-        int res = write(clientFd, buffer, count);
-        if(res!=count){
-            printf("removing %d\n", clientFd);
-            shutdown(clientFd, SHUT_RDWR);
-            close(clientFd);
-            descr[i] = descr[descrCount-1];
-            descrCount--;
-            continue;
-        
-        }
-        i++;
-    }
-}
 
