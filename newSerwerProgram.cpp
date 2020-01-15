@@ -136,7 +136,7 @@ void addUser(int revents)
         std::string codeMessage = ";1;1-" + std::to_string(clientFd);
         std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
 
-        writeData(clientFd, codeMessage.data(), data.length());
+        writeData(clientFd, codeMessageFinal.data(), codeMessageFinal.length());
 
         descrCount++;
 
