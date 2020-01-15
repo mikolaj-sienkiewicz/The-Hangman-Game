@@ -225,12 +225,22 @@ void addUser(int revents)
             amountOfAllPLayers = amountOfGamers;
             gameStarted = true;
 
-            int i=1;
-            while(i < descrCount){
+            int i = 1;
+            while (i < descrCount)
+            {
                 int clientFd = descr[i].fd;
                 std::string codeMessage = ";1;2-" + std::to_string(LIVES) + "*";
                 std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
-                writeData(clientFd, codeMessageFinal.data(), codeMessageFinal.length());
+                int res = write(clientFd, codeMessageFinal.data(), codeMessageFinal.length());
+                if (res != count)
+                {
+                    printf("removing %d\n", clientFd);
+                    shutdown(clientFd, SHUT_RDWR);
+                    close(clientFd);
+                    descr[i] = descr[descrCount - 1];
+                    descrCount--;
+                    continue;
+                }
 
                 i++;
             }
