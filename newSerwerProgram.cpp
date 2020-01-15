@@ -259,7 +259,8 @@ void getMessageFromPlayer(int indexInDescr)
             std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
             writeData(clientFd, codeMessageFinal.data(), count);
         }
-             
+
+    }  
 
     if (revents & ~POLLIN)
     {
