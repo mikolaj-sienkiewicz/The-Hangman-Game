@@ -14,8 +14,17 @@
 #include <cstdlib>
 #include <fstream>
 #include <vector>
-
 #include <bits/stdc++.h> 
+
+
+
+////Z poprzedniej gry dorobic dwa pola do kazdego z widokow (LAST GAME SCORE I PLAYER)
+////Obsluga przyjmowania podsumowania gry
+////obsluga odswiezania ekranu w inicie
+////i w poczekalni tez
+////obsluga X dla nowej rundy czy cos (kartka)
+////update poczatku rundy
+//odswiezanie ekranu w grze
 
 //DEBUGGER GDB 
 //dgb ./a.out y
@@ -28,9 +37,9 @@
 // w proc/<pid>/fd wszystkie otwarte pliki
 
 //wiedza o grze od serwera
-std::string GAMESTATUS ="1",LIVES="10",TOPSCORE="UNKNOWN",nPLAYERS="UNKNOWN",nSPECTATORS="UNKNOWN",POINTS="0",WORD="", WORDLENGTH="0",MESSAGE_QUEUE="";
+std::string GAMESTATUS ="1",LIVES="10",TOP_SCORE="UNKNOWN",TOP_PLAYER="UNKNOWN",nPLAYERS="UNKNOWN",nSPECTATORS="UNKNOWN",POINTS="0",WORD="", WORDLENGTH="0",MESSAGE_QUEUE="",YOUR_PLAYER_ID="ERROR",LAST_GAME_TOP_PLAYER="UNKNOWN",LAST_GAME_TOP_SCORE="UNKNOWN";
 int intWORDLENGTH = 0, REWARD=10;
-char LAST_LETTER_GUESS;
+char LAST_LETTER_GUESS='-';
 
 
 struct decodedMessage
@@ -40,7 +49,13 @@ struct decodedMessage
 	std::string commandMessage;
 };
 
-
+/*std::string updateStrInt(std::string VAR, std::string VAL){
+	
+	int  tmpVAR= atol(VAR.c_str());
+	int tmpVAL= atol(VAL.c_str());
+	tmpVAR = tmpVAL;
+	return std::to_string(tmpVAR);
+}*/
 
 
 void writeData(int fd, char* buffer, ssize_t count) {
@@ -51,19 +66,19 @@ void writeData(int fd, char* buffer, ssize_t count) {
 
 void updateInitMonitor() {
 	std::string theString = "";
-	theString += std::string("\033[2J") + "\033[0;0f"+"############################ THE HANGMAN #############################\n" + "Waiting for players to join\nCurrently there are: " + nSPECTATORS + " players in the waiting room\n\n" + "Press ENTER to refresh \nAnd remember that patience is key...\n";
+	theString += std::string("\033[2J") + "\033[0;0f"+"############################ THE HANGMAN #############################\n" + "YOU ARE PLAYER NUMBER: "+YOUR_PLAYER_ID+"\n######################################################################\n"+"Waiting for players to join\nCurrently there are: " + nSPECTATORS + " players in the waiting room\n\n" + "Press ENTER to refresh \nAnd remember that patience is key...\n""\n############################HALL OF FAME##############################\n"+"Last game won by: "+LAST_GAME_TOP_PLAYER+"\nWith the score of "+LAST_GAME_TOP_SCORE+" points"+"\n######################################################################\n";
 	printf ("%s",theString.c_str());
 }
 
 void updateGameMonitor() {
 	std::string theString="";
-	theString+= std::string("\033[2J") + "\033[0;0f"+"############################ THE HANGMAN #############################\n"+ "Current Word: " + WORD + "\n" + "Points: " + POINTS + "\n" + "Lives: " + LIVES + "\n" + "Insert 1 letter to guess it, or more to go for the word : \n";
+	theString+= std::string("\033[2J") + "\033[0;0f"+"############################ THE HANGMAN #############################\n"+ + "YOU ARE PLAYER NUMBER: "+YOUR_PLAYER_ID+"      Players to beat: "+nPLAYERS+"\n######################################################################\n"+"Current Word: " + WORD + "\nCurrently best score: " +TOP_SCORE +"\nYour points: " + POINTS + "\nLives: " + LIVES + "\n" + "Last game won by: "+LAST_GAME_TOP_PLAYER+"\nWith the score of "+LAST_GAME_TOP_SCORE+" points \nInsert 1 letter to guess it, or more to go for the word : \n";
 	printf("%s",theString.c_str());
 }
 
 void updateWaitingMonitor() {
 	std::string theString = "";
-	theString += std::string("\033[2J") + "\033[0;0f" + "############################ THE HANGMAN #############################\n" + "Current Top Score: " +TOPSCORE + "\n" + "Number of players in the game: " + nPLAYERS + "\n" + "Number of spectators watching: " + nSPECTATORS + "\n" + "press ENTER to refresh the screen\n";
+	theString += std::string("\033[2J") + "\033[0;0f" + "############################ THE HANGMAN #############################\n" + + "YOU ARE PLAYER NUMBER: "+YOUR_PLAYER_ID+"\n######################################################################\n"+"Current Top Score: " +TOP_SCORE + " & it belongs to player nuber: "+TOP_PLAYER+"\n" + "Number of players in the game: " + nPLAYERS + "\n" + "Number of spectators watching: " + nSPECTATORS + "\n" + "press ENTER to refresh the screen\n"+"\n############################HALL OF FAME##############################\n"+"Last game won by: "+LAST_GAME_TOP_PLAYER+"\nWith the score of "+LAST_GAME_TOP_SCORE+" points"+"\n######################################################################\n";
 	printf("%s",theString.c_str());
 }
 
@@ -72,31 +87,7 @@ void encodeMessage(int sock, char * buffer, int received) {
 	//-1 zeby uciac \n na koncu
 	std::string finalBuffer2(buffer, received-1);
 
-	//TYLE ILE RECEIVED ENKODOWAC
-	/*char subbuf[received]; //I TO SAMO CO NIZEJ 
-	
-	for (int i = 0; i < received-1; i++)
-	{
-		subbuf[i] = buffer[i];
-	}
-	std::string strBuffer(subbuf); //buffer[0;received]
-	std::string finalBuffer = "";
-
-	for (int i = 0; i < received-1; i++)
-	{
-		finalBuffer += strBuffer[i];
-	}*/
-
-	//finalBuffer przechowuje obciety buffer po received
-
-	if (GAMESTATUS == "1") {
-		//wysylam 1* po refresh encode()
-		updateInitMonitor();
-
-	}
-	else if (GAMESTATUS == "2") {
-
-		std::string messageWithLength;
+	std::string messageWithLength;
 		std::string message;
 		//std::string strBuffer(buffer);
 		
@@ -111,18 +102,21 @@ void encodeMessage(int sock, char * buffer, int received) {
 		messageWithLength.append(std::to_string(message.length()));
 		messageWithLength.append(message);
 
-
+		//check if user is not inserting ILLEGAL characters with ASCII
+		if (GAMESTATUS=="2"){
+			for(int i=0;i<finalBuffer2.length();i++){
+				if (finalBuffer2[i]<65||(finalBuffer2[i]<97&&finalBuffer2[i]>90)||finalBuffer2[i]>122){
+					int  tmp= atol(LIVES.c_str());
+					tmp -= 2;
+					LIVES = std::to_string(tmp);
+					updateGameMonitor();
+					std::cout<<"Illegal letter detected! try only (A-Z or a-z) \n\nDON'T TRY TO BREAK THE SYSTEM -2 lives punishment!\nInsert valid letter: ";
+					return;
+				}
+			}
+		}
 		///UWAGA
 		writeData(sock, messageWithLength.data(), strlen(messageWithLength.c_str()));
-
-		//chyba nie trzeba updatowac bo dostaniemy odpowiedz od serwera ktora to ztriggeruje
-		//updateGameMonitor();
-	}
-	else {
-		//wysylam 1* po refresh encode()
-		updateWaitingMonitor();
-	}
-
 }
 
 std::vector<std::string>  decodeMessageLoad(std::string message){
@@ -165,6 +159,7 @@ decodedMessage decodeMessage(std::string strBuffer, int received) {
 
 
 	}
+	///CHANGED FROM ELSE IF TO CHECK
 	//was empty but buffer got more
 	else if(finish != strBuffer.length()) {
 		
@@ -253,7 +248,8 @@ int main(int argc, char** argv) {
 				// jeśli program raportuje możliwość odczytu, odczytaj dane
 				received = readData(desc[i].fd, buffer, 255);
 				std::string finalBuffer3(buffer,received);
-				std::cout<<finalBuffer3;
+				
+				//std::cout<<finalBuffer3;
 
 				//PART FOR SENDING
 				if (desc[i].fd == STDIN_FILENO) {
@@ -274,33 +270,33 @@ int main(int argc, char** argv) {
 
 				//response regards game status ex 5;1;210 - go to game status and set lives to 10
 				if (receivedData.commandType == "1") {
+					std::vector<std::string> messageLoad = decodeMessageLoad(receivedData.commandMessage);
+
+					
 					//inicjalizacja
-					if (receivedData.commandMessage == "1") {
+					if (messageLoad[0] == "1") {
 						GAMESTATUS = "1";
+						if (messageLoad[1]!="X"&&messageLoad[1]!="x"){
+							YOUR_PLAYER_ID=messageLoad[1];
+						}
 						updateInitMonitor();
 					}
 					//poczekalnia 
-					else if (receivedData.commandMessage == "3") {
+					else if (messageLoad[0] == "3") {
 						GAMESTATUS = "3";
 						updateWaitingMonitor();
 					}
 					else {
 						//uzupelnia string WORD podkresleniami tyle ile jest po liczbie 2
 						GAMESTATUS = "2";
-						LIVES = receivedData.commandMessage.substr(1);
-						//char cstr[WORDLENGTH.size() + 1];
-						//strcpy(cstr, &WORDLENGTH[0]);
-						//int intWORDLENGTH = atol(cstr);
-						//for (int i = 0; i < intWORDLENGTH; i++)
-						//{
-						//	WORD += "_";
-						//}
+						LIVES = messageLoad[1];
 						updateGameMonitor();
 					}
 				}
 				//response regards the number of letters in the new word ex 6;2;30* - 30 letters in the word
 				else if (receivedData.commandType == "2") {
-					WORDLENGTH = receivedData.commandMessage;
+					std::vector<std::string> messageLoad = decodeMessageLoad(receivedData.commandMessage);
+					WORDLENGTH = messageLoad[0];
 					char cstr[WORDLENGTH.size() + 1];
 					strcpy(cstr, &WORDLENGTH[0]);
 					intWORDLENGTH = atol(cstr);
@@ -308,6 +304,8 @@ int main(int argc, char** argv) {
 					{
 						WORD += "_";
 					}
+					TOP_SCORE=messageLoad[1];
+					TOP_PLAYER=messageLoad[2];
 					updateGameMonitor();
 				}
 				//response regards the correctness of chosen letter 
@@ -330,6 +328,7 @@ int main(int argc, char** argv) {
 					}
 					updateGameMonitor();
 				}
+				//response regards the correctness of sent word 
 				else if (receivedData.commandType == "4") {		
 					// add points
 					if (receivedData.commandMessage == "1"){
@@ -345,6 +344,32 @@ int main(int argc, char** argv) {
 					}
 					updateGameMonitor();
 				}
+				//response has the summary of the game
+				else if (receivedData.commandType == "5") {	
+					std::vector<std::string> messageLoad = decodeMessageLoad(receivedData.commandMessage);
+					LAST_GAME_TOP_SCORE=messageLoad[0];
+					LAST_GAME_TOP_PLAYER=messageLoad[1];
+				}
+				//response contains data to refresh init screen
+				else if (receivedData.commandType == "6") {	
+					//std::vector<std::string> messageLoad = decodeMessageLoad(receivedData.commandMessage);
+					nSPECTATORS=receivedData.commandMessage;
+					updateInitMonitor();
+				}
+				//response contains data to refresh wating room	
+				else if (receivedData.commandType == "7") {	
+					std::vector<std::string> messageLoad = decodeMessageLoad(receivedData.commandMessage);
+					nSPECTATORS=messageLoad[0];
+					nPLAYERS=messageLoad[1];
+					TOP_SCORE=messageLoad[2];
+					TOP_PLAYER=messageLoad[3];
+					updateWaitingMonitor();
+				}
+				//catching the type for number of players after each request sent from player
+				else if (receivedData.commandType == "8"){
+					nPLAYERS=receivedData.commandMessage;
+					updateGameMonitor();
+				}	
 
 			}
 		}
