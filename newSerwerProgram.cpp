@@ -282,8 +282,8 @@ void sendToUser(int fd, char * buffer, int count, int indexInDescr){
 
      if(res!=count){
             printf("removing %d\n", clientFd);
-            shutdown(clientFd, SHUT_RDWR);
-            close(clientFd);
+            shutdown(fd, SHUT_RDWR);
+            close(fd);
             descr[indexInDescr] = descr[descrCount-1];
             amountOfAllPLayers--;
             descrCount--;        
