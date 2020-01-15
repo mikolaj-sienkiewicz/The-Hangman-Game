@@ -127,7 +127,7 @@ int main(int argc, char **argv)
     }
 }
 
-void joinToTheProgramForUser(int cliendFd)
+void joinToTheProgramForUser(int clientFd)
 {
     if (gameStarted)
     {
