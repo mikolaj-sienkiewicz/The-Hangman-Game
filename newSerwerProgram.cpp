@@ -98,7 +98,7 @@ int main(int argc, char **argv)
                         if (players[j].fd == descr[i].fd)
                         {
                             //nie ma read tutaj
-                            getMessageFromUser(i);
+                            getMessageFromPlayer(i);
                             // std::string gamer = "Players " + std::to_string(j) + " \n";
                             // writeData(descr[j].fd, gamer.data(), gamer.length());
                             // ready--;
@@ -110,7 +110,7 @@ int main(int argc, char **argv)
                 }
                 if (!gameStarted)
                 {
-                    getMessageFromPlayer(i);
+                    getMessageFromUser(i);
                     ready--;
                 }
             }
