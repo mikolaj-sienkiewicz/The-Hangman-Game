@@ -90,7 +90,7 @@ int main(int argc, char **argv)
                     addUser(descr[i].revents);
                     ready--;
 
-                    joinToTheProgramForUser(descr[i].fd);
+                    joinToTheProgramForUser(descr[descrCount-1].fd);
                     continue;
                 }
                 else
