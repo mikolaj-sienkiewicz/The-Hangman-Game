@@ -276,8 +276,21 @@ void getMessageFromPlayer(int indexInDescr)
     }
 }
 
-void getMessageFromUser(int indexInDescr)
-{
+void sendToUser(int fd, char * buffer, int count, int indexInDescr){
+     int res = writeData(clientFd, buffer, count);
+
+     if(res!=count){
+            printf("removing %d\n", clientFd);
+            shutdown(clientFd, SHUT_RDWR);
+            close(clientFd);
+            descr[indexInDescr] = descr[descrCount-1];
+            amountOfAllPLayers--;
+            descrCount--;        
+        }
+}
+
+void getMessageFromUser(int indexInDescr){
+    
     auto clientFd = descr[indexInDescr].fd;
     auto revents = descr[indexInDescr].revents;
 
@@ -310,18 +323,5 @@ void getMessageFromUser(int indexInDescr)
         shutdown(clientFd, SHUT_RDWR);
         close(clientFd);
     }
-}
-
-void sendToUser(int fd, char * buffer, int count, int indexInDescr){
-     int res = writeData(clientFd, buffer, count);
-
-     if(res!=count){
-            printf("removing %d\n", clientFd);
-            shutdown(clientFd, SHUT_RDWR);
-            close(clientFd);
-            descr[indexInDescr] = descr[descrCount-1];
-            amountOfAllPLayers--;
-            descrCount--;        
-        }
 }
 
