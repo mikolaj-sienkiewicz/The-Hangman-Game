@@ -278,7 +278,7 @@ void getMessageFromPlayer(int indexInDescr)
 }
 
 void sendToUser(int fd, char * buffer, int count, int indexInDescr){
-     int res = writeData(fd, buffer, count);
+     int res = write(fd, buffer, count);
 
      if(res!=count){
             printf("removing %d\n", fd);
