@@ -90,7 +90,7 @@ int main(int argc, char **argv)
                     {
                         if (players[j].fd == descr[i].fd)
                         {
-                            writeData(players[j].fd, "HELLO", 5);
+                            writeData(players[j].fd, "HELLO", 6);
                         }
                     }
                 }
@@ -172,7 +172,7 @@ void addUser(int revents)
         {
             client newGamer;
             newGamer.fd = clientFd;
-            
+
             players.push_back(newGamer);
             amountOfGamers++;
         }
