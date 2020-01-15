@@ -90,17 +90,17 @@ int main(int argc, char **argv)
                     {
                         if (players[j].fd == descr[i].fd)
                         {
-                            std::string gamer = "Players " + std::to_string(j) + " \n";
-                            writeData(players[j].fd, gamer.data(), gamer.length());
-                            ready--;
-                            printf("AMOunt of ready %d \n", ready);
+                            //nie ma read tutaj
+                            getMessageFromUser(i);
+                            // std::string gamer = "Players " + std::to_string(j) + " \n";
+                            // writeData(descr[j].fd, gamer.data(), gamer.length());
+                            // ready--;
+                            // printf("AMOunt of ready %d \n", ready);
                             continue;
                         }
                     }
                 }
-                printf("AMOunt of ready %d \n", ready);
                 ready--;
-                printf("AMOunt of ready %d \n", ready);
                 // if (gameStarted)
                 // {
                 // }
@@ -240,15 +240,16 @@ void getMessageFromUser(int indexInDescr)
     if (revents & POLLIN)
     {
         char buffer[255];
-        int count = read(clientFd, buffer, 255);
+        int count = readData(clientFd, buffer, 255);
         if (count < 1)
         {
             revents |= POLLERR;
         }
-
-        // else
-        //     sendToAllBut(clientFd, buffer, count);
-    }
+        else
+        {
+            sendToUser(clientFd, buffer, count);
+        }
+             
 
     if (revents & ~POLLIN)
     {
@@ -264,3 +265,26 @@ void getMessageFromUser(int indexInDescr)
         close(clientFd);
     }
 }
+
+void sendToUser(int fd, char * buffer, int count){
+    int i = 1;
+    while(i < descrCount){
+        int clientFd = descr[i].fd;
+        if(clientFd == fd) {
+            i++;
+            continue;
+        }
+        int res = write(clientFd, buffer, count);
+        if(res!=count){
+            printf("removing %d\n", clientFd);
+            shutdown(clientFd, SHUT_RDWR);
+            close(clientFd);
+            descr[i] = descr[descrCount-1];
+            descrCount--;
+            continue;
+        
+        }
+        i++;
+    }
+}
+
