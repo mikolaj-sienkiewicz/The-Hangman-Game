@@ -307,7 +307,8 @@ void getMessageFromUser(int indexInDescr){
         {
             std::string codeMessage = ";6;" + std::to_string(amountOfAllPLayers) + "*";
             std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
-            sendToUser(clientFd, codeMessageFinal.data(), count,  codeMessageFinal.length());
+            // sendToUser(clientFd, codeMessageFinal.data(), count,  codeMessageFinal.length());
+            writeData(clientFd, codeMessageFinal.data(), codeMessageFinal.length());
         }
     }
 
