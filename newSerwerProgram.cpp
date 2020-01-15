@@ -86,7 +86,8 @@ int main(int argc, char **argv)
                 else
                 {
                     // getMessageFromUser(i);
-                    for (int j = 0; j < players.size() && gameStarted; j++)
+                    //&& gameStarted
+                    for (int j = 0; j < players.size() ; j++)
                     {
                         if (players[j].fd == descr[i].fd)
                         {
