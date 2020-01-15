@@ -257,7 +257,7 @@ void getMessageFromPlayer(int indexInDescr)
         {
             std::string codeMessage = ";7;" + std::to_string((amountOfGamers - amountOfAllPLayers))+ "-" + std::to_string(amountOfAllPLayers) + "-" + std::to_string(topScore) + "-" + std::to_string(topPlayer) + "*";
             std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
-            writeData(clientFd, codeMessageFinal.data(), count);
+            writeData(clientFd, codeMessageFinal.data(), codeMessageFinal.length());
         }
 
     }  
@@ -307,7 +307,7 @@ void getMessageFromUser(int indexInDescr){
         {
             std::string codeMessage = ";6;" + std::to_string(amountOfAllPLayers) + "*";
             std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
-            sendToUser(clientFd, codeMessageFinal.data(), count,  indexInDescr);
+            sendToUser(clientFd, codeMessageFinal.data(), count,  codeMessageFinal.length());
         }
     }
 
