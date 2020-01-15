@@ -281,7 +281,7 @@ void sendToUser(int fd, char * buffer, int count, int indexInDescr){
      int res = writeData(fd, buffer, count);
 
      if(res!=count){
-            printf("removing %d\n", clientFd);
+            printf("removing %d\n", fd);
             shutdown(fd, SHUT_RDWR);
             close(fd);
             descr[indexInDescr] = descr[descrCount-1];
