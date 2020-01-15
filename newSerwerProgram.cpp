@@ -55,6 +55,7 @@ pollfd *descr;
 std::vector<client> players;
 //FUNCTIONS
 
+void joinToTheProgramForUser(int cliendFd);
 void initFunction(int argc, char **argv);
 void addUser(int revents);
 void writeData(int fd, char *buffer, ssize_t count);
@@ -88,8 +89,8 @@ int main(int argc, char **argv)
                 {
                     addUser(descr[i].revents);
                     ready--;
-                    joinToTheProgramForUser()
 
+                    joinToTheProgramForUser(descr[i].fd);
                     continue;
                 }
                 else
@@ -126,7 +127,7 @@ int main(int argc, char **argv)
     }
 }
 
-void joinToTheProgramForUser()
+void joinToTheProgramForUser(int cliendFd)
 {
     if (gameStarted)
     {
