@@ -24,6 +24,8 @@ bool isItConnected = true;
 // handles SIGINT
 void ctrl_c(int);
 
+void sendToSieniu();
+
 // sends data to clientFds excluding fd
 void sendToAllBut(int fd, char * buffer, int count);
 
