@@ -163,7 +163,7 @@ int main(int argc, char **argv)
     }
 }
 
-sendToSieniu()
+void sendToSieniu()
 {
     std::string writeText;
     std::cout << "SKIP SENDING PRESS '?':\n"
