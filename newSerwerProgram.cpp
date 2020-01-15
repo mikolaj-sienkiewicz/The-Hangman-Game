@@ -290,7 +290,7 @@ void sendToUser(int fd, char * buffer, int count, int indexInDescr){
 }
 
 void getMessageFromUser(int indexInDescr){
-    
+
     auto clientFd = descr[indexInDescr].fd;
     auto revents = descr[indexInDescr].revents;
 
@@ -308,7 +308,7 @@ void getMessageFromUser(int indexInDescr){
             std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
             sendToUser(clientFd, codeMessageFinal.data(), count,  indexInDescr);
         }
-             
+    }
 
     if (revents & ~POLLIN)
     {
