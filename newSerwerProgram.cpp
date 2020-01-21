@@ -474,6 +474,7 @@ void subGame(int fd, char *buffer, int indexPlayer)
     std::string strBuffer(buffer);
     std::size_t found = strBuffer.find_last_of(';'); //end of msg length; ex 1 in "2;1;22*"
     // int numberLetter = std::stoi(strBuffer.substr(0, found).data());
+    int numberLetter;
     std::istringstream(strBuffer.substr(0, found)) >> numberLetter;
     // std::string bufferSyntax = strBuffer.substr(found + 1);
 
