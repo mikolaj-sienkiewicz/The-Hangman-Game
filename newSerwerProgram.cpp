@@ -55,6 +55,7 @@ pollfd *descr;
 std::vector<client> players;
 //FUNCTIONS
 void startGame();
+void game(int cliendFd);
 void joinToTheProgramForUser(int cliendFd);
 void initFunction(int argc, char **argv);
 void addUser(int revents);
@@ -100,11 +101,7 @@ int main(int argc, char **argv)
                     {
                         if (players[j].fd == descr[i].fd)
                         {
-                            //nie ma read tutaj
-                            // std::string gamer = "Players " + std::to_string(j) + " \n";
-                            // writeData(descr[j].fd, gamer.data(), gamer.length());
-                            // ready--;
-                            // printf("AMOunt of ready %d \n", ready);
+                            game(i);
                             ready--;
                             continue;
                         }
@@ -306,7 +303,7 @@ void getMessageFromQueue(int indexInDescr)
         }
         else
         {
-            std::string codeMessage = ";7;" + std::to_string((amountOfGamers - amountOfAllPLayers)) + "-" + std::to_string(amountOfAllPLayers) + "-" + std::to_string(topScore) + "-" + std::to_string(topPlayer) + "*";
+            std::string codeMessage = ";7;" + std::to_string((amountOfAllPLayers - amountOfGamers)) + "-" + std::to_string(amountOfGamers) + "-" + std::to_string(topScore) + "-" + std::to_string(topPlayer) + "*";
             std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
             writeData(clientFd, codeMessageFinal.data(), codeMessageFinal.length());
         }
@@ -376,5 +373,129 @@ void getMessageFromInit(int indexInDescr)
 
         shutdown(clientFd, SHUT_RDWR);
         close(clientFd);
+    }
+}
+
+void game(int cliendFd)
+{
+    auto clientFd = descr[cliendFd].fd;
+    auto revents = descr[cliendFd].revents;
+
+    if (revents & POLLIN)
+    {
+        char buffer[255];
+        int count = readData(clientFd, buffer, 255);
+        if (count < 1)
+            revents |= POLLERR;
+        else
+            subGame(clientFd, buffer);
+    }
+
+    if (revents & ~POLLIN)
+    {
+        printf("removing %d\n", clientFd);
+
+        // remove from description of watched files for poll
+        descr[cliendFd] = descr[descrCount - 1];
+        descrCount--;
+
+        shutdown(clientFd, SHUT_RDWR);
+        close(clientFd);
+    }
+}
+
+void subGame(int fd, char *buffer, int indexPlayer)
+{
+    int i = 1;
+    std::string strBuffer(buffer);
+    std::size_t found = strBuffer.find_last_of(';'); //end of msg length; ex 1 in "2;1;22*"
+    int numberLetter = atoi(strBuffer.substr(0, found).c_str());
+    std::string bufferSyntax = strBuffer.substr(found + 1);
+
+    printf("Send by client %s", strBuffer.c_str());
+
+    std::string codeMessage = ";8;" + std::to_string((amountOfGamers));
+    std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
+    writeData(fd, codeMessageFinal.data(), codeMessageFinal.length());
+    writeData(fd, codeMessageFinal, codeMessageFinal.length());
+
+    if (bufferSyntax.substr(2, bufferSyntax.length() - 3).compare(toFindedWord) == 1)
+    {
+        //check compare
+        playersList[indexPlayer].score = playersList[indexPlayer].score + 10;
+
+        printf("Finded word Player %d", indexPlayer);
+
+        writeData(fd, "5;4;1*", 6);
+        return;
+    }
+    else if (numberLetter == 5)
+    {
+        char letter = strBuffer[4];
+
+        std::vector<size_t> positions; // holds all the positions that sub occurs within str
+
+        for (int i = 0; i < toFindedWord.size(); i++)
+        {
+            if (toFindedWord[i] == letter)
+            {
+                positions.push_back(i);
+            }
+        }
+
+        printf("Find Letter %c Player %d", letter, indexPlayer);
+
+        if (positions.size() != 0)
+        {
+            // string
+            std::string startString;
+            startString.append(";3;");
+
+            startString.append(std::to_string(positions[0]));
+
+            for (int i = 1; i < positions.size(); i++)
+            {
+                startString.append("-");
+                startString.append(std::to_string(positions[i]));
+            }
+
+            startString.append("*");
+            std::string startStringNew;
+            startStringNew.append(std::to_string(startString.length()));
+            startStringNew.append(startString);
+
+            write(fd, startStringNew.data(), startStringNew.length());
+
+            return;
+        }
+        else
+        {
+            playersList[indexPlayer].lives++;
+
+            if (playersList[indexPlayer].lives >= LIVES)
+            {
+                amountOfGamers--;
+                writeData(fd, "5;1;3*", 6);
+                return;
+            }
+
+            writeData(fd, "4;3;*", 5);
+            return;
+        }
+    }
+    else
+    {
+        // write(fd, "5;4;0*", 6);
+        playersList[indexPlayer].lives++;
+
+        if (playersList[indexPlayer].lives >= LIVES)
+        {
+            amountOfGamers--;
+            writeData(fd, "5;1;3*", 6);
+            return;
+        }
+
+        write(fd, "5;4;0*", 6);
+        return;
     }
 }
