@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <algorithm>
+#include <string> 
 
 struct client
 {
@@ -472,7 +473,7 @@ void subGame(int fd, char *buffer, int indexPlayer)
     int i = 1;
     std::string strBuffer(buffer);
     std::size_t found = strBuffer.find_last_of(';'); //end of msg length; ex 1 in "2;1;22*"
-    int numberLetter = std::stoi(strBuffer.substr(0, found));
+    int numberLetter = std::stoi(strBuffer.substr(0, found).data());
     // std::string bufferSyntax = strBuffer.substr(found + 1);
 
     printf("Send by client %d", numberLetter);
