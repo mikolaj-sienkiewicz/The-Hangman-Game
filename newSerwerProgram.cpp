@@ -425,7 +425,7 @@ void subGame(int fd, char *buffer, int indexPlayer)
     if (bufferSyntax.substr(2, bufferSyntax.length() - 3).compare(roundsWord) == 1)
     {
         //check compare
-        playersList[indexPlayer].score = playersList[indexPlayer].score + 10;
+        players[indexPlayer].score = players[indexPlayer].score + 10;
 
         printf("Finded word Player %d", indexPlayer);
 
@@ -473,9 +473,9 @@ void subGame(int fd, char *buffer, int indexPlayer)
         }
         else
         {
-            playersList[indexPlayer].lives++;
+            players[indexPlayer].lives++;
 
-            if (playersList[indexPlayer].lives >= LIVES)
+            if (players[indexPlayer].lives >= LIVES)
             {
                 amountOfGamers--;
                 writeData(fd, "5;1;3*", 6);
@@ -489,9 +489,9 @@ void subGame(int fd, char *buffer, int indexPlayer)
     else
     {
         // write(fd, "5;4;0*", 6);
-        playersList[indexPlayer].lives++;
+        players[indexPlayer].lives++;
 
-        if (playersList[indexPlayer].lives >= LIVES)
+        if (players[indexPlayer].lives >= LIVES)
         {
             amountOfGamers--;
             writeData(fd, "5;1;3*", 6);
