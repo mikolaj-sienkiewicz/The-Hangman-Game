@@ -128,8 +128,7 @@ void joinToTheProgramForUser(int clientFd)
 {
     if (gameStarted)
     {
-        //amountOfAllPLayers - 
-        std::string codeMessage = ";7;" + std::to_string((amountOfGamers)) + "-" + std::to_string(amountOfAllPLayers) + "-" + std::to_string(topScore) + "-" + std::to_string(topPlayer) + "*";
+        std::string codeMessage = ";7;" + std::to_string((amountOfAllPLayers - amountOfGamers)) + "-" + std::to_string(amountOfAllPLayers) + "-" + std::to_string(topScore) + "-" + std::to_string(topPlayer) + "*";
         std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
         writeData(clientFd, codeMessageFinal.data(), codeMessageFinal.length());
     }
@@ -304,8 +303,7 @@ void getMessageFromQueue(int indexInDescr)
         }
         else
         {
-            //amountOfAllPLayers - 
-            std::string codeMessage = ";7;" + std::to_string((amountOfGamers)) + "-" + std::to_string(amountOfGamers) + "-" + std::to_string(topScore) + "-" + std::to_string(topPlayer) + "*";
+            std::string codeMessage = ";7;" + std::to_string((amountOfAllPLayers - amountOfGamers)) + "-" + std::to_string(amountOfGamers) + "-" + std::to_string(topScore) + "-" + std::to_string(topPlayer) + "*";
             std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
             writeData(clientFd, codeMessageFinal.data(), codeMessageFinal.length());
         }
