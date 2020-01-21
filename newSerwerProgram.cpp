@@ -391,7 +391,7 @@ void game(int cliendFd)
         if (count < 1)
             revents |= POLLERR;
         else
-            subGame(clientFd, buffer);
+            subGame(clientFd, buffer, cliendFd);
     }
 
     if (revents & ~POLLIN)
