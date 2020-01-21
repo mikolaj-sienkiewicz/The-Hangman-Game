@@ -471,8 +471,8 @@ void subGame(int fd, char *buffer, int indexPlayer)
 {
     int i = 1;
     std::string strBuffer(buffer);
-    // std::size_t found = strBuffer.find_last_of(';'); //end of msg length; ex 1 in "2;1;22*"
-    // int numberLetter = atoi(strBuffer.substr(0, found).c_str());
+    std::size_t found = strBuffer.find_last_of(';'); //end of msg length; ex 1 in "2;1;22*"
+    int numberLetter = std::stoi(strBuffer.substr(0, found));
     // std::string bufferSyntax = strBuffer.substr(found + 1);
 
     // printf("Send by client %s", strBuffer.c_str());
