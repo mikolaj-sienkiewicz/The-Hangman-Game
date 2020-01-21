@@ -426,14 +426,14 @@ void game(int cliendFd)
 
 void startRound()
 {
-    roundsWord = wordsList(rand() % 10);
+    roundsWord = wordsList[rand() % 10];
     sizeOfWord = roundsWord.length();
 
-    printf("New word %s", toFindedWord.c_str());
+    printf("New word %s", roundsWord.c_str());
 
     std::string startString;
     startString.append(";2;");
-    startString.append(std::to_string(letterInWord));
+    startString.append(std::to_string(sizeOfWord));
     startString.append("*");
     std::string startStringNew;
     startStringNew.append(std::to_string(startString.length()));
@@ -459,13 +459,13 @@ void startRound()
 }
 
 void finishGame()
-[
+{
     if(playerIdentityList.size() < 2)
     {
         playerIdentityList.clear(); 
         printf("GAME FINISH");
     }
-]
+}
 
 void subGame(int fd, char *buffer, int indexPlayer)
 {
