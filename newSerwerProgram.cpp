@@ -475,8 +475,7 @@ void subGame(int fd, char *buffer, int indexPlayer)
     int numberLetter = std::stoi(strBuffer.substr(0, found));
     // std::string bufferSyntax = strBuffer.substr(found + 1);
 
-    // printf("Send by client %s", strBuffer.c_str());
-
+    printf("Send by client %d", numberLetter);
     std::string codeMessage = ";8;" + std::to_string((amountOfGamers));
     std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
     writeData(fd, codeMessageFinal.data(), codeMessageFinal.length());
