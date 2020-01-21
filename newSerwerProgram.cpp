@@ -471,29 +471,30 @@ void subGame(int fd, char *buffer, int indexPlayer)
 {
     int i = 1;
     std::string strBuffer(buffer);
-    std::size_t found = strBuffer.find_last_of(';'); //end of msg length; ex 1 in "2;1;22*"
-    int numberLetter = atoi(strBuffer.substr(0, found).c_str());
-    std::string bufferSyntax = strBuffer.substr(found + 1);
+    // std::size_t found = strBuffer.find_last_of(';'); //end of msg length; ex 1 in "2;1;22*"
+    // int numberLetter = atoi(strBuffer.substr(0, found).c_str());
+    // std::string bufferSyntax = strBuffer.substr(found + 1);
 
-    printf("Send by client %s", strBuffer.c_str());
+    // printf("Send by client %s", strBuffer.c_str());
 
     std::string codeMessage = ";8;" + std::to_string((amountOfGamers));
     std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
     writeData(fd, codeMessageFinal.data(), codeMessageFinal.length());
     // writeData(fd, codeMessageFinal, codeMessageFinal.length());
 
-    if (bufferSyntax.substr(2, bufferSyntax.length() - 3).compare(roundsWord) == 1)
-    {
-        //check compare
-        players[indexPlayer].score = players[indexPlayer].score + 10;
+    // if (bufferSyntax.substr(2, bufferSyntax.length() - 3).compare(roundsWord) == 1)
+    // {
+    //     //check compare
+    //     players[indexPlayer].score = players[indexPlayer].score + 10;
 
-        printf("Finded word Player %d", indexPlayer);
+    //     printf("Finded word Player %d", indexPlayer);
 
-        writeData(fd, "5;4;1*", 6);
-        startRound();
-        return;
-    }
-    else if (numberLetter == 5)
+    //     writeData(fd, "5;4;1*", 6);
+    //     startRound();
+    //     return;
+    // }
+    //else 
+    if (numberLetter == 5)
     {
         char letter = strBuffer[4];
 
