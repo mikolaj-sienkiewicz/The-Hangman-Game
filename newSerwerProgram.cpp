@@ -29,6 +29,8 @@ struct client
         lives = 0;
     }
 };
+//STRING WORD
+std::string roundsWord;
 
 //GLOBAL VARIABLES TO CHANGE
 int LIVES = 2;
@@ -64,6 +66,7 @@ void ctrl_c(int);
 void getMessageFromInit(int indexInDescr);
 void getMessageFromQueue(int indexInDescr);
 void sendToUser(int fd, char *buffer, int count, int indexInDescr);
+void subGame(int fd, char *buffer, int indexPlayer);
 
 ssize_t readData(int fd, char *buffer, ssize_t buffsize);
 uint16_t readPort(char *txt);
@@ -417,9 +420,9 @@ void subGame(int fd, char *buffer, int indexPlayer)
     std::string codeMessage = ";8;" + std::to_string((amountOfGamers));
     std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
     writeData(fd, codeMessageFinal.data(), codeMessageFinal.length());
-    writeData(fd, codeMessageFinal, codeMessageFinal.length());
+    // writeData(fd, codeMessageFinal, codeMessageFinal.length());
 
-    if (bufferSyntax.substr(2, bufferSyntax.length() - 3).compare(toFindedWord) == 1)
+    if (bufferSyntax.substr(2, bufferSyntax.length() - 3).compare(roundsWord) == 1)
     {
         //check compare
         playersList[indexPlayer].score = playersList[indexPlayer].score + 10;
@@ -435,9 +438,9 @@ void subGame(int fd, char *buffer, int indexPlayer)
 
         std::vector<size_t> positions; // holds all the positions that sub occurs within str
 
-        for (int i = 0; i < toFindedWord.size(); i++)
+        for (int i = 0; i < roundsWord.size(); i++)
         {
-            if (toFindedWord[i] == letter)
+            if (roundsWord[i] == letter)
             {
                 positions.push_back(i);
             }
