@@ -16,6 +16,7 @@
 #include <vector>
 #include <stdlib.h>
 #include <time.h>
+#include <algorithm>
 
 struct client
 {
@@ -29,8 +30,15 @@ struct client
         lives = 0;
     }
 };
+//INDEX LIST OF PLAYERS
+std::vector<int> playerIdentityList;
+
+//LIST OF STRINGS
+std::string wordsList[10] = {"zielony", "polak", "matka", "ananas", "graf", "matematyka", "czerwony", "niebieski", "pomaranczowy", "lis"};
+
 //STRING WORD
 std::string roundsWord;
+int sizeOfWord = 0;
 
 //GLOBAL VARIABLES TO CHANGE
 int LIVES = 2;
@@ -67,6 +75,7 @@ void getMessageFromInit(int indexInDescr);
 void getMessageFromQueue(int indexInDescr);
 void sendToUser(int fd, char *buffer, int count, int indexInDescr);
 void subGame(int fd, char *buffer, int indexPlayer);
+void startRound();
 
 ssize_t readData(int fd, char *buffer, ssize_t buffsize);
 uint16_t readPort(char *txt);
@@ -104,6 +113,10 @@ int main(int argc, char **argv)
                     {
                         if (players[j].fd == descr[i].fd)
                         {
+                            std::vector<int>::iterator existPlayer = std::find(playerIdentityList.begin(), playerIdentityList.end(), players[j].fd);
+                            if(*existPlayer == 0){
+                                continue;
+                            }
                             game(i);
                             ready--;
                             continue;
@@ -211,7 +224,7 @@ void addUser(int revents)
         {
             client newGamer;
             newGamer.fd = clientFd;
-
+            //it is problem
             players.push_back(newGamer);
             amountOfGamers++;
         }
@@ -221,6 +234,7 @@ void addUser(int revents)
         printf("new connection from: %s:%hu (fd: %d)\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), clientFd);
 
         startGame();
+        startRound();
     }
 }
 
@@ -235,6 +249,7 @@ void startGame()
         while (i < descrCount)
         {
             int clientFd = descr[i].fd;
+            playerIdentityList.push_back(clientFd);
             std::string codeMessage = ";1;2-" + std::to_string(LIVES) + "*";
             std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
             int res = write(clientFd, codeMessageFinal.data(), codeMessageFinal.length());
@@ -396,6 +411,8 @@ void game(int cliendFd)
 
     if (revents & ~POLLIN)
     {
+        playerIdentityList.erase(std::remove(playerIdentityList.begin(), playerIdentityList.end(), clientFd), playerIdentityList.end());
+
         printf("removing %d\n", clientFd);
 
         // remove from description of watched files for poll
@@ -406,6 +423,49 @@ void game(int cliendFd)
         close(clientFd);
     }
 }
+
+void startRound()
+{
+    roundsWord = wordsList(rand() % 10);
+    sizeOfWord = roundsWord.length();
+
+    printf("New word %s", toFindedWord.c_str());
+
+    std::string startString;
+    startString.append(";2;");
+    startString.append(std::to_string(letterInWord));
+    startString.append("*");
+    std::string startStringNew;
+    startStringNew.append(std::to_string(startString.length()));
+    startStringNew.append(startString);
+
+    int i = 1;
+    while (i < descrCount)
+    {
+        int clientFd = descr[i].fd;
+        int res = write(clientFd, startStringNew.data(), startStringNew.length());
+        if (res != startStringNew.length())
+        {
+            printf("removing %d\n", clientFd);
+            shutdown(clientFd, SHUT_RDWR);
+            close(clientFd);
+            descr[i] = descr[descrCount - 1];
+            descrCount--;
+            continue;
+        }
+
+        i++;
+    }
+}
+
+void finishGame()
+[
+    if(playerIdentityList.size() < 2)
+    {
+        playerIdentityList.clear(); 
+        printf("GAME FINISH");
+    }
+]
 
 void subGame(int fd, char *buffer, int indexPlayer)
 {
@@ -430,6 +490,7 @@ void subGame(int fd, char *buffer, int indexPlayer)
         printf("Finded word Player %d", indexPlayer);
 
         writeData(fd, "5;4;1*", 6);
+        startRound();
         return;
     }
     else if (numberLetter == 5)
@@ -479,6 +540,8 @@ void subGame(int fd, char *buffer, int indexPlayer)
             {
                 amountOfGamers--;
                 writeData(fd, "5;1;3*", 6);
+                playerIdentityList.erase(std::remove(playerIdentityList.begin(), playerIdentityList.end(), fd), playerIdentityList.end());
+
                 return;
             }
 
@@ -495,6 +558,8 @@ void subGame(int fd, char *buffer, int indexPlayer)
         {
             amountOfGamers--;
             writeData(fd, "5;1;3*", 6);
+            playerIdentityList.erase(std::remove(playerIdentityList.begin(), playerIdentityList.end(), fd), playerIdentityList.end());
+
             return;
         }
 
