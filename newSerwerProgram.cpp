@@ -118,6 +118,7 @@ int main(int argc, char **argv)
                             std::vector<int>::iterator existPlayer = std::find(playerIdentityList.begin(), playerIdentityList.end(), players[j].fd);
                             if (*existPlayer == 0)
                             {
+                                printf("NOT EXIST %d", players[j].fd)
                                 continue;
                             }
                             game(i);
@@ -484,7 +485,7 @@ void subGame(int fd, char *buffer, int indexPlayer)
     // std::string bufferSyntax = strBuffer.substr(found + 1);
 
     printf("Send by client %d", numberLetter);
-    std::string codeMessage = ";8;" + std::to_string((amountOfGamers));
+    std::string codeMessage = ";8;" + std::to_string((amountOfGamers))+"*";
     std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
     writeData(fd, codeMessageFinal.data(), codeMessageFinal.length());
     // writeData(fd, codeMessageFinal, codeMessageFinal.length());
