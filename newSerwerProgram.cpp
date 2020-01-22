@@ -118,7 +118,7 @@ int main(int argc, char **argv)
                             std::vector<int>::iterator existPlayer = std::find(playerIdentityList.begin(), playerIdentityList.end(), players[j].fd);
                             if (*existPlayer == 0)
                             {
-                                printf("NOT EXIST %d", players[j].fd)
+                                printf("NOT EXIST %d", players[j].fd);
                                 continue;
                             }
                             game(i);
