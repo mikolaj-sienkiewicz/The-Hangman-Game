@@ -97,6 +97,7 @@ int main(int argc, char **argv)
 
         for (int i = 0; i < descrCount && ready > 0; ++i)
         {
+            bool playersHasQuestion = false;
             if (descr[i].revents)
             {
                 //ADD USER
@@ -108,32 +109,31 @@ int main(int argc, char **argv)
                     joinToTheProgramForUser(descr[descrCount - 1].fd);
                     continue;
                 }
-                else
+                // getMessageFromInit(i);
+                for (int j = 0; j < players.size() && gameStarted; j++)
                 {
-                    // getMessageFromInit(i);
-                    for (int j = 0; j < players.size() && gameStarted; j++)
+                    if (players[j].fd == descr[i].fd)
                     {
-                        if (players[j].fd == descr[i].fd)
+                        std::vector<int>::iterator existPlayer = std::find(playerIdentityList.begin(), playerIdentityList.end(), players[j].fd);
+                        if (*existPlayer == 0)
                         {
-                            std::vector<int>::iterator existPlayer = std::find(playerIdentityList.begin(), playerIdentityList.end(), players[j].fd);
-                            if (*existPlayer == 0)
-                            {
-                                printf("NOT EXIST %d", players[j].fd);
-                                continue;
-                            }
-                            game(i);
-                            ready--;
+                            printf("NOT EXIST %d", players[j].fd);
                             continue;
                         }
+                        game(i);
+                        playersHasQuestion = true;
+                        ready--;
+                        continue;
                     }
                 }
+
                 if (!gameStarted)
                 {
                     getMessageFromInit(i);
                     ready--;
                     continue;
                 }
-                else
+                if(gameStarted && playersHasQuestion)
                 {
                     getMessageFromQueue(i);
                     ready--;
@@ -485,7 +485,7 @@ void subGame(int fd, char *buffer, int indexPlayer)
     // std::string bufferSyntax = strBuffer.substr(found + 1);
 
     printf("Send by client %d", numberLetter);
-    std::string codeMessage = ";8;" + std::to_string((amountOfGamers))+"*";
+    std::string codeMessage = ";8;" + std::to_string((amountOfGamers)) + "*";
     std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
     writeData(fd, codeMessageFinal.data(), codeMessageFinal.length());
     // writeData(fd, codeMessageFinal, codeMessageFinal.length());
