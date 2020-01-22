@@ -17,7 +17,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <algorithm>
-#include <string> 
+#include <string>
 
 struct client
 {
@@ -59,6 +59,7 @@ int topPlayer = 0;
 
 //BOOLEN
 bool gameStarted = false;
+bool gameLoaded = false;
 
 //MALLOC
 pollfd *descr;
@@ -115,7 +116,8 @@ int main(int argc, char **argv)
                         if (players[j].fd == descr[i].fd)
                         {
                             std::vector<int>::iterator existPlayer = std::find(playerIdentityList.begin(), playerIdentityList.end(), players[j].fd);
-                            if(*existPlayer == 0){
+                            if (*existPlayer == 0)
+                            {
                                 continue;
                             }
                             game(i);
@@ -233,9 +235,6 @@ void addUser(int revents)
         descrCount++;
 
         printf("new connection from: %s:%hu (fd: %d)\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), clientFd);
-
-        startGame();
-        startRound();
     }
 }
 
@@ -266,6 +265,8 @@ void startGame()
 
             i++;
         }
+
+        startRound();
     }
 }
 
@@ -461,9 +462,9 @@ void startRound()
 
 void finishGame()
 {
-    if(playerIdentityList.size() < 2)
+    if (playerIdentityList.size() < 2)
     {
-        playerIdentityList.clear(); 
+        playerIdentityList.clear();
         printf("GAME FINISH");
     }
 }
@@ -495,7 +496,7 @@ void subGame(int fd, char *buffer, int indexPlayer)
     //     startRound();
     //     return;
     // }
-    //else 
+    //else
     if (numberLetter == 5)
     {
         char letter = strBuffer[4];
