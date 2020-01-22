@@ -235,6 +235,8 @@ void addUser(int revents)
         descrCount++;
 
         printf("new connection from: %s:%hu (fd: %d)\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), clientFd);
+
+        startGame();
     }
 }
 
