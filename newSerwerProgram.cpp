@@ -42,7 +42,7 @@ std::string roundsWord;
 int sizeOfWord = 0;
 
 //GLOBAL VARIABLES TO CHANGE
-int LIVES = 2;
+int LIVES = 3;
 int MIN_PLAYERS_TO_START_GAME = 3;
 
 //GLOBAL VARIABLES
@@ -252,6 +252,7 @@ void startGame()
         while (i < descrCount)
         {
             int clientFd = descr[i].fd;
+            printf("ILE Petla sie wykona");
             playerIdentityList.push_back(clientFd);
             std::string codeMessage = ";1;2-" + std::to_string(LIVES) + "*";
             std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
