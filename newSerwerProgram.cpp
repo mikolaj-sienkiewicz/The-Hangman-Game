@@ -252,7 +252,7 @@ void startGame()
         while (i < descrCount)
         {
             int clientFd = descr[i].fd;
-            printf("ILE Petla sie wykona");
+            printf("ILE Petla sie wykona \n");
             playerIdentityList.push_back(clientFd);
             std::string codeMessage = ";1;2-" + std::to_string(LIVES) + "*";
             std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
