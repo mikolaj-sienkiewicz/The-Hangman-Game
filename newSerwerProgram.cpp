@@ -115,23 +115,18 @@ int main(int argc, char **argv)
                     printf("PETLA FOR CONTROLLER: %d\n", descr[i].fd);
                     if (players[j].fd == descr[i].fd)
                     {
-                        // std::vector<int>::iterator existPlayer = std::find(playerIdentityList.begin(), playerIdentityList.end(), players[j].fd);
-                        int existPlayer = std::distance(vecOfNums.begin(), players[j].fd);
-                        for (auto &i : playerIdentityList)
+                        for (auto &existPlayer : playerIdentityList)
                         {
-                            std::cout << i << " ";
+                            if (existPlayer == players[j].fd)
+                            {
+                                printf("THE PLAYER EXIST: %d\n", existPlayer);
+                                game(i);
+                                playersHasQuestion = false;
+                                ready--;
+                                break;
+                            }
                         }
-                        printf("\nSIZE PLAYERS %d\n", playerIdentityList.size());
-                        printf("THE PLAYER EXIST: %d\n", existPlayer);
-                        if (existPlayer == 0)
-                        {
-                            printf("NOT EXIST %d", players[j].fd);
-                            break;
-                        }
-                        printf("WE ARE IN THE GAME: %d\n", descr[i].fd);
-                        game(i);
-                        playersHasQuestion = false;
-                        ready--;
+                        printf("NOT EXIST %d", players[j].fd);
                         break;
                     }
                 }
