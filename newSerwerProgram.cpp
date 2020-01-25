@@ -97,7 +97,7 @@ int main(int argc, char **argv)
 
         for (int i = 0; i < descrCount && ready > 0; ++i)
         {
-            bool playersHasQuestion = false;
+            bool playersHasQuestion = true;
             if (descr[i].revents)
             {
                 //ADD USER
@@ -112,6 +112,7 @@ int main(int argc, char **argv)
                 // getMessageFromInit(i);
                 for (int j = 0; j < players.size() && gameStarted; j++)
                 {
+                    printf("PETLA FOR CONTROLLER: %d\n", clientFd);
                     if (players[j].fd == descr[i].fd)
                     {
                         std::vector<int>::iterator existPlayer = std::find(playerIdentityList.begin(), playerIdentityList.end(), players[j].fd);
@@ -120,21 +121,24 @@ int main(int argc, char **argv)
                             printf("NOT EXIST %d", players[j].fd);
                             continue;
                         }
+                        printf("WE ARE IN THE GAME: %d\n", clientFd);
                         game(i);
-                        playersHasQuestion = true;
+                        playersHasQuestion = false;
                         ready--;
-                        continue;
+                        break;
                     }
                 }
 
                 if (!gameStarted)
                 {
+                    printf("WITHOUT COMPATION: %d\n", descr[i].fd );
                     getMessageFromInit(i);
                     ready--;
                     continue;
                 }
                 if(gameStarted && playersHasQuestion)
                 {
+                    printf("IN QUE %d\n", descr[i].fd );
                     getMessageFromQueue(i);
                     ready--;
                     continue;
