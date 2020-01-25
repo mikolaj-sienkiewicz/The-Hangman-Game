@@ -227,6 +227,7 @@ void addUser(int revents)
         if (!gameStarted)
         {
             client newGamer;
+            printf("Number of DESCRIPOR USED: %d", clientFd);
             newGamer.fd = clientFd;
             //it is problem
             players.push_back(newGamer);
@@ -252,11 +253,12 @@ void startGame()
         while (i < descrCount)
         {
             int clientFd = descr[i].fd;
-            printf("ILE Petla sie wykona \n");
             playerIdentityList.push_back(clientFd);
             std::string codeMessage = ";1;2-" + std::to_string(LIVES) + "*";
             std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
             int res = write(clientFd, codeMessageFinal.data(), codeMessageFinal.length());
+
+            printf("Number of DESCRIPOR USED: %d", clientFd);
             if (res != codeMessageFinal.length())
             {
                 printf("removing %d\n", clientFd);
@@ -551,6 +553,7 @@ void subGame(int fd, char *buffer, int indexPlayer)
                 amountOfGamers--;
                 writeData(fd, "5;1;3*", 6);
                 playerIdentityList.erase(std::remove(playerIdentityList.begin(), playerIdentityList.end(), fd), playerIdentityList.end());
+                printf("DELETE PLAYER");
 
                 return;
             }
@@ -569,6 +572,7 @@ void subGame(int fd, char *buffer, int indexPlayer)
             amountOfGamers--;
             writeData(fd, "5;1;3*", 6);
             playerIdentityList.erase(std::remove(playerIdentityList.begin(), playerIdentityList.end(), fd), playerIdentityList.end());
+            printf("DELETE PLAYER");
 
             return;
         }
