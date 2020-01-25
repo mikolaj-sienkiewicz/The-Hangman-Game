@@ -66,6 +66,7 @@ pollfd *descr;
 std::vector<client> players;
 //FUNCTIONS
 void startGame();
+void finishGame();
 void game(int cliendFd);
 void joinToTheProgramForUser(int cliendFd);
 void initFunction(int argc, char **argv);
