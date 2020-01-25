@@ -258,9 +258,10 @@ void startGame()
             playerIdentityList.push_back(clientFd);
             std::string codeMessage = ";1;2-" + std::to_string(LIVES) + "*";
             std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
+            printf("PETLA PETLA %d\n", clientFd);
             int res = write(clientFd, codeMessageFinal.data(), codeMessageFinal.length());
 
-            printf("Number of DESCRIPOR USED: %d", clientFd);
+            printf("Number PETLA USED: %d\n", clientFd);
             if (res != codeMessageFinal.length())
             {
                 printf("removing %d\n", clientFd);
