@@ -227,7 +227,7 @@ void addUser(int revents)
         if (!gameStarted)
         {
             client newGamer;
-            printf("Number of DESCRIPOR USED: %d", clientFd);
+            printf("Number of DESCRIPOR USED: %d\n", clientFd);
             newGamer.fd = clientFd;
             //it is problem
             players.push_back(newGamer);
@@ -244,12 +244,14 @@ void addUser(int revents)
 
 void startGame()
 {
+    printf("HELLO:\n");
     if (amountOfGamers >= MIN_PLAYERS_TO_START_GAME && !gameStarted)
     {
         amountOfAllPLayers = amountOfGamers;
         gameStarted = true;
 
         int i = 1;
+        printf("TUTAJ JESTEM:\n");
         while (i < descrCount)
         {
             int clientFd = descr[i].fd;
