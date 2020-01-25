@@ -116,6 +116,11 @@ int main(int argc, char **argv)
                     if (players[j].fd == descr[i].fd)
                     {
                         std::vector<int>::iterator existPlayer = std::find(playerIdentityList.begin(), playerIdentityList.end(), players[j].fd);
+                        for (auto &i : playerIdentityList)
+                        {
+                            std::cout << i << " ";
+                        }
+                        printf("\nAVAILABLE PLAYERS\n");
                         printf("THE PLAYER EXIST: %d\n", *existPlayer);
                         if (*existPlayer == 0)
                         {
@@ -132,14 +137,14 @@ int main(int argc, char **argv)
 
                 if (!gameStarted)
                 {
-                    printf("WITHOUT COMPATION: %d\n", descr[i].fd );
+                    printf("WITHOUT COMPATION: %d\n", descr[i].fd);
                     getMessageFromInit(i);
                     ready--;
                     continue;
                 }
-                if(gameStarted && playersHasQuestion)
+                if (gameStarted && playersHasQuestion)
                 {
-                    printf("IN QUE %d\n", descr[i].fd );
+                    printf("IN QUE %d\n", descr[i].fd);
                     getMessageFromQueue(i);
                     ready--;
                     continue;
@@ -561,7 +566,11 @@ void subGame(int fd, char *buffer, int indexPlayer)
                 amountOfGamers--;
                 writeData(fd, "5;1;3*", 6);
                 playerIdentityList.erase(std::remove(playerIdentityList.begin(), playerIdentityList.end(), fd), playerIdentityList.end());
-                printf("DELETE PLAYER");
+                for (auto &i : playerIdentityList)
+                {
+                    std::cout << i << " ";
+                }
+                printf("\nDELETE PLAYER\n");
 
                 return;
             }
@@ -580,7 +589,11 @@ void subGame(int fd, char *buffer, int indexPlayer)
             amountOfGamers--;
             writeData(fd, "5;1;3*", 6);
             playerIdentityList.erase(std::remove(playerIdentityList.begin(), playerIdentityList.end(), fd), playerIdentityList.end());
-            printf("DELETE PLAYER");
+            for (auto &i : playerIdentityList)
+            {
+                std::cout << i << " ";
+            }
+            printf("\nDELETE PLAYER\n");
 
             return;
         }
