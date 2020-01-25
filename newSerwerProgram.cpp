@@ -112,7 +112,7 @@ int main(int argc, char **argv)
                 // getMessageFromInit(i);
                 for (int j = 0; j < players.size() && gameStarted; j++)
                 {
-                    printf("PETLA FOR CONTROLLER: %d\n", clientFd);
+                    printf("PETLA FOR CONTROLLER: %d\n", descr[i].fd);
                     if (players[j].fd == descr[i].fd)
                     {
                         std::vector<int>::iterator existPlayer = std::find(playerIdentityList.begin(), playerIdentityList.end(), players[j].fd);
@@ -121,7 +121,7 @@ int main(int argc, char **argv)
                             printf("NOT EXIST %d", players[j].fd);
                             continue;
                         }
-                        printf("WE ARE IN THE GAME: %d\n", clientFd);
+                        printf("WE ARE IN THE GAME: %d\n", descr[i].fd);
                         game(i);
                         playersHasQuestion = false;
                         ready--;
