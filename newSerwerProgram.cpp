@@ -116,10 +116,11 @@ int main(int argc, char **argv)
                     if (players[j].fd == descr[i].fd)
                     {
                         std::vector<int>::iterator existPlayer = std::find(playerIdentityList.begin(), playerIdentityList.end(), players[j].fd);
+                        printf("THE PLAYER EXIST: %d\n", *existPlayer);
                         if (*existPlayer == 0)
                         {
                             printf("NOT EXIST %d", players[j].fd);
-                            continue;
+                            break;
                         }
                         printf("WE ARE IN THE GAME: %d\n", descr[i].fd);
                         game(i);
