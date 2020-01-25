@@ -115,14 +115,15 @@ int main(int argc, char **argv)
                     printf("PETLA FOR CONTROLLER: %d\n", descr[i].fd);
                     if (players[j].fd == descr[i].fd)
                     {
-                        std::vector<int>::iterator existPlayer = std::find(playerIdentityList.begin(), playerIdentityList.end(), players[j].fd);
+                        // std::vector<int>::iterator existPlayer = std::find(playerIdentityList.begin(), playerIdentityList.end(), players[j].fd);
+                        int existPlayer = std::distance(vecOfNums.begin(), players[j].fd);
                         for (auto &i : playerIdentityList)
                         {
                             std::cout << i << " ";
                         }
                         printf("\nSIZE PLAYERS %d\n", playerIdentityList.size());
-                        printf("THE PLAYER EXIST: %d\n", *existPlayer);
-                        if (*existPlayer == 0)
+                        printf("THE PLAYER EXIST: %d\n", existPlayer);
+                        if (existPlayer == 0)
                         {
                             printf("NOT EXIST %d", players[j].fd);
                             break;
