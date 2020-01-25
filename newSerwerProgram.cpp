@@ -118,7 +118,11 @@ int main(int argc, char **argv)
                         {
                             if (existPlayer == players[j].fd)
                             {
-                                printf("THE PLAYER EXIST: %d\n", existPlayer);
+                                if (topScore < players[j].score)
+                                {
+                                    topScore = players[j].score;
+                                    topPlayer = players[j].fd;
+                                }
                                 game(i);
                                 playersHasQuestion = false;
                                 ready--;
@@ -129,6 +133,8 @@ int main(int argc, char **argv)
                         break;
                     }
                 }
+
+                finishGame();
 
                 if (!gameStarted)
                 {
@@ -229,14 +235,6 @@ void addUser(int revents)
 
         writeData(clientFd, codeMessageFinal.data(), codeMessageFinal.length());
 
-        if (!gameStarted)
-        {
-            client newGamer;
-            printf("Number of DESCRIPOR USED: %d\n", clientFd);
-            newGamer.fd = clientFd;
-            //it is problem
-            players.push_back(newGamer);
-        }
         amountOfAllPLayers++;
         descrCount++;
 
@@ -259,6 +257,11 @@ void startGame()
         while (i < descrCount)
         {
             int clientFd = descr[i].fd;
+
+            client newGamer;
+            newGamer.fd = clientFd;
+
+            players.push_back(newGamer);
             playerIdentityList.push_back(clientFd);
             std::string codeMessage = ";1;2-" + std::to_string(LIVES) + "*";
             std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
@@ -474,10 +477,35 @@ void startRound()
 
 void finishGame()
 {
-    if (playerIdentityList.size() < 2)
+    if (gameStarted && players.size() < 2)
     {
+
+        std::string startString;
+        startString.append(";5;");
+        startString.append(std::to_string(topScore)+"-"+std::to_string(topPlayer));
+        startString.append("*");
+        std::string startStringNew;
+        startStringNew.append(std::to_string(startString.length()));
+        startStringNew.append(startString);
+
+        int i = 1;
+        while (i < descrCount)
+        {
+            int clientFd = descr[i].fd;
+            int res = write(clientFd, startStringNew.data(), startStringNew.length());
+            if (res != startStringNew.length())
+            {
+                printf("removing %d\n", clientFd);
+                shutdown(clientFd, SHUT_RDWR);
+                close(clientFd);
+                descr[i] = descr[descrCount - 1];
+                descrCount--;
+                continue;
+            }
+            i++;
+        }
         playerIdentityList.clear();
-        printf("GAME FINISH");
+        startGame();
     }
 }
 
