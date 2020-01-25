@@ -120,7 +120,7 @@ int main(int argc, char **argv)
                         {
                             std::cout << i << " ";
                         }
-                        printf("\nAVAILABLE PLAYERS\n");
+                        printf("\nSIZE PLAYERS %d\n", playerIdentityList.size());
                         printf("THE PLAYER EXIST: %d\n", *existPlayer);
                         if (*existPlayer == 0)
                         {
