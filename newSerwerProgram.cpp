@@ -478,8 +478,10 @@ void startRound()
 
 void finishGame()
 {
+    printf("FINISHING\n");
     if (gameStarted && players.size() < 2)
     {
+        printf("FINISHED\n");
         gameStarted = false;
         std::string startString;
         startString.append(";5;");
@@ -505,6 +507,7 @@ void finishGame()
             }
             i++;
         }
+        printf("FINISHED\n");
         playerIdentityList.clear();
         startGame();
     }
