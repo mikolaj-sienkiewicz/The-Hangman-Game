@@ -51,7 +51,6 @@ int servFd;
 int descrCapacity = 16;
 int descrCount = 1;
 
-int amountOfGamers = 0;
 int amountOfAllPLayers = 0;
 
 int topScore = 0;
@@ -154,7 +153,7 @@ void joinToTheProgramForUser(int clientFd)
 {
     if (gameStarted)
     {
-        std::string codeMessage = ";7;" + std::to_string((amountOfAllPLayers - amountOfGamers)) + "-" + std::to_string(amountOfAllPLayers) + "-" + std::to_string(topScore) + "-" + std::to_string(topPlayer) + "*";
+        std::string codeMessage = ";7;" + std::to_string((amountOfAllPLayers - playerIdentityList.size())) + "-" + std::to_string(amountOfAllPLayers) + "-" + std::to_string(topScore) + "-" + std::to_string(topPlayer) + "*";
         std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
         writeData(clientFd, codeMessageFinal.data(), codeMessageFinal.length());
     }
@@ -237,7 +236,6 @@ void addUser(int revents)
             newGamer.fd = clientFd;
             //it is problem
             players.push_back(newGamer);
-            amountOfGamers++;
         }
         amountOfAllPLayers++;
         descrCount++;
@@ -251,9 +249,9 @@ void addUser(int revents)
 void startGame()
 {
     printf("HELLO:\n");
-    if (amountOfGamers >= MIN_PLAYERS_TO_START_GAME && !gameStarted)
+    if (amountOfAllPLayers >= MIN_PLAYERS_TO_START_GAME && !gameStarted)
     {
-        amountOfAllPLayers = amountOfGamers;
+        amountOfAllPLayers;
         gameStarted = true;
 
         int i = 1;
@@ -338,7 +336,7 @@ void getMessageFromQueue(int indexInDescr)
         }
         else
         {
-            std::string codeMessage = ";7;" + std::to_string((amountOfAllPLayers - amountOfGamers)) + "-" + std::to_string(amountOfGamers) + "-" + std::to_string(topScore) + "-" + std::to_string(topPlayer) + "*";
+            std::string codeMessage = ";7;" + std::to_string((amountOfAllPLayers - playerIdentityList.size())) + "-" + std::to_string(playerIdentityList.size()) + "-" + std::to_string(topScore) + "-" + std::to_string(topPlayer) + "*";
             std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
             writeData(clientFd, codeMessageFinal.data(), codeMessageFinal.length());
         }
@@ -350,7 +348,6 @@ void getMessageFromQueue(int indexInDescr)
 
         // remove from description of watched files for poll
         descr[indexInDescr] = descr[descrCount - 1];
-        amountOfGamers--;
         amountOfAllPLayers--;
         descrCount--;
 
@@ -402,7 +399,6 @@ void getMessageFromInit(int indexInDescr)
 
         // remove from description of watched files for poll
         descr[indexInDescr] = descr[descrCount - 1];
-        amountOfGamers--;
         amountOfAllPLayers--;
         descrCount--;
 
@@ -434,6 +430,7 @@ void game(int cliendFd)
 
         // remove from description of watched files for poll
         descr[cliendFd] = descr[descrCount - 1];
+        amountOfAllPLayers--;
         descrCount--;
 
         shutdown(clientFd, SHUT_RDWR);
@@ -497,7 +494,7 @@ void subGame(int fd, char *buffer, int indexPlayer)
     // std::string bufferSyntax = strBuffer.substr(found + 1);
 
     printf("Send by client %d", numberLetter);
-    std::string codeMessage = ";8;" + std::to_string((amountOfGamers)) + "*";
+    std::string codeMessage = ";8;" + std::to_string((playerIdentityList.size())) + "*";
     std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
     writeData(fd, codeMessageFinal.data(), codeMessageFinal.length());
     // writeData(fd, codeMessageFinal, codeMessageFinal.length());
@@ -559,7 +556,6 @@ void subGame(int fd, char *buffer, int indexPlayer)
 
             if (players[indexPlayer].lives >= LIVES)
             {
-                amountOfGamers--;
                 writeData(fd, "5;1;3*", 6);
                 playerIdentityList.erase(std::remove(playerIdentityList.begin(), playerIdentityList.end(), fd), playerIdentityList.end());
                 for (auto &i : playerIdentityList)
@@ -582,7 +578,6 @@ void subGame(int fd, char *buffer, int indexPlayer)
 
         if (players[indexPlayer].lives >= LIVES)
         {
-            amountOfGamers--;
             writeData(fd, "5;1;3*", 6);
             playerIdentityList.erase(std::remove(playerIdentityList.begin(), playerIdentityList.end(), fd), playerIdentityList.end());
             for (auto &i : playerIdentityList)
