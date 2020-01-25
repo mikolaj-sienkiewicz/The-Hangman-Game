@@ -480,7 +480,7 @@ void finishGame()
 {
     if (gameStarted && players.size() < 2)
     {
-
+        gameStarted = false;
         std::string startString;
         startString.append(";5;");
         startString.append(std::to_string(topScore)+"-"+std::to_string(topPlayer));
