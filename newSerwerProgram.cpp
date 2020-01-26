@@ -67,7 +67,7 @@ std::vector<client> players;
 //FUNCTIONS
 void startGame();
 void finishGame();
-void game(int cliendFd);
+void game(int cliendFd, int indexArray);
 void joinToTheProgramForUser(int cliendFd);
 void initFunction(int argc, char **argv);
 void addUser(int revents);
