@@ -117,6 +117,7 @@ int main(int argc, char **argv)
                         {
                             if (existPlayer == players[j].fd)
                             {
+                                printf("USER I %d, USER J %d", descr[i].fd, players[j].fd)
                                 if (topScore < players[j].score)
                                 {
                                     topScore = players[j].score;
@@ -248,7 +249,6 @@ void startGame()
         gameStarted = true;
 
         int i = 1;
-        printf("TUTAJ JESTEM:\n");
         while (i < descrCount)
         {
             int clientFd = descr[i].fd;
@@ -441,7 +441,7 @@ void startRound()
     roundsWord = wordsList[rand() % 10];
     sizeOfWord = roundsWord.length();
 
-    printf("New word %s", roundsWord.c_str());
+    printf("New word %s\n", roundsWord.c_str());
 
     std::string startString;
     startString.append(";2;");
@@ -518,7 +518,7 @@ void subGame(int fd, char *buffer, int indexPlayer)
     // std::istringstream(strBuffer.substr(0, found)) >> numberLetter;
     // std::string bufferSyntax = strBuffer.substr(found + 1);
 
-    printf("Send by client %d", numberLetter);
+    // printf("Send by client %d", numberLetter);
     std::string codeMessage = ";8;" + std::to_string((playerIdentityList.size())) + "*";
     std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
     writeData(fd, codeMessageFinal.data(), codeMessageFinal.length());
