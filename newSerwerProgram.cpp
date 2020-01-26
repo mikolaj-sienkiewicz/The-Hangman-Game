@@ -109,10 +109,8 @@ int main(int argc, char **argv)
                     joinToTheProgramForUser(descr[descrCount - 1].fd);
                     continue;
                 }
-                // getMessageFromInit(i);
                 for (int j = 0; j < players.size() && gameStarted; j++)
                 {
-                    printf("PETLA FOR CONTROLLER: %d\n", descr[i].fd);
                     if (players[j].fd == descr[i].fd)
                     {
                         for (auto &existPlayer : playerIdentityList)
@@ -130,7 +128,6 @@ int main(int argc, char **argv)
                                 break;
                             }
                         }
-                        printf("NOT EXIST %d", players[j].fd);
                         break;
                     }
                 }
@@ -139,14 +136,12 @@ int main(int argc, char **argv)
 
                 if (!gameStarted)
                 {
-                    printf("WITHOUT COMPATION: %d\n", descr[i].fd);
                     getMessageFromInit(i);
                     ready--;
                     continue;
                 }
                 if (gameStarted && playersHasQuestion)
                 {
-                    printf("IN QUE %d\n", descr[i].fd);
                     getMessageFromQueue(i);
                     ready--;
                     continue;
@@ -247,7 +242,6 @@ void addUser(int revents)
 
 void startGame()
 {
-    printf("HELLO:\n");
     if (amountOfAllPLayers >= MIN_PLAYERS_TO_START_GAME && !gameStarted)
     {
         amountOfAllPLayers;
@@ -268,10 +262,8 @@ void startGame()
             playerIdentityList.push_back(clientFd);
             std::string codeMessage = ";1;2-" + std::to_string(LIVES) + "*";
             std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
-            printf("PETLA PETLA %d\n", clientFd);
             int res = write(clientFd, codeMessageFinal.data(), codeMessageFinal.length());
 
-            printf("Number PETLA USED: %d\n", clientFd);
             if (res != codeMessageFinal.length())
             {
                 printf("removing %d\n", clientFd);
@@ -483,7 +475,6 @@ void finishGame()
     
     if (gameStarted && playerIdentityList.size() < 2)
     {
-        printf("FINISHED\n");
         gameStarted = false;
         std::string startString;
         startString.append(";5;");
@@ -509,7 +500,6 @@ void finishGame()
             }
             i++;
         }
-        printf("FINISHED\n");
         playerIdentityList.clear();
         players.clear();
         startGame();
@@ -589,16 +579,12 @@ void subGame(int fd, char *buffer, int indexPlayer)
         {
             players[indexPlayer].lives++;
 
+            printf("LIVE OF USER: %d, LIVES: %d, FD LIST %d\n",fd, players[indexPlayer].lives, players[indexPlayer].fd);
             if (players[indexPlayer].lives >= LIVES)
             {
                 writeData(fd, "5;1;3*", 6);
                 playerIdentityList.erase(std::remove(playerIdentityList.begin(), playerIdentityList.end(), fd), playerIdentityList.end());
-                for (auto &i : playerIdentityList)
-                {
-                    std::cout << i << " ";
-                }
-                printf("\nDELETE PLAYER\n");
-
+                
                 return;
             }
 
@@ -611,15 +597,11 @@ void subGame(int fd, char *buffer, int indexPlayer)
         // write(fd, "5;4;0*", 6);
         players[indexPlayer].lives++;
 
+        printf("LIVE OF USER: %d, LIVES: %d, FD LIST %d\n",fd, players[indexPlayer].lives, players[indexPlayer].fd);
         if (players[indexPlayer].lives >= LIVES)
         {
             writeData(fd, "5;1;3*", 6);
             playerIdentityList.erase(std::remove(playerIdentityList.begin(), playerIdentityList.end(), fd), playerIdentityList.end());
-            for (auto &i : playerIdentityList)
-            {
-                std::cout << i << " ";
-            }
-            printf("\nDELETE PLAYER\n");
 
             return;
         }
