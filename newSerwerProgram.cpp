@@ -117,7 +117,6 @@ int main(int argc, char **argv)
                         {
                             if (existPlayer == players[j].fd)
                             {
-                                printf("USER I %d, USER J %d", descr[i].fd, players[j].fd);
                                 if (topScore < players[j].score)
                                 {
                                     topScore = players[j].score;
@@ -445,7 +444,7 @@ void startRound()
 
     std::string startString;
     startString.append(";2;");
-    startString.append(std::to_string(sizeOfWord));
+    startString.append(std::to_string(sizeOfWord)+"-"+std::to_string(topScore)+"-"+std::to_string(topPlayer));
     startString.append("*");
     std::string startStringNew;
     startStringNew.append(std::to_string(startString.length()));
@@ -508,35 +507,30 @@ void finishGame()
 
 void subGame(int fd, char *buffer, int indexPlayer)
 {
-    int i = 1;
-    std::string strBuffer(buffer);
-    std::size_t found = strBuffer.find_last_of(';'); //end of msg length; ex 1 in "2;1;22*"
-    // int numberLetter = std::stoi(strBuffer.substr(0, found).data());
-    int numberLetter;
-
-    numberLetter = atoi(strBuffer.substr(0, found).c_str());
-    // std::istringstream(strBuffer.substr(0, found)) >> numberLetter;
-    // std::string bufferSyntax = strBuffer.substr(found + 1);
-
-    // printf("Send by client %d", numberLetter);
     std::string codeMessage = ";8;" + std::to_string((playerIdentityList.size())) + "*";
     std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
     writeData(fd, codeMessageFinal.data(), codeMessageFinal.length());
     // writeData(fd, codeMessageFinal, codeMessageFinal.length());
+    int i = 1;
+    std::string strBuffer(buffer);
+    std::size_t found = strBuffer.find_last_of(';'); //end of msg length; ex 1 in "2;1;22*"
+    
+    int numberLetter = atoi(strBuffer.substr(0, found).c_str());
+    
+    std::string playerWord = strBuffer.substr(found+1,numberLetter-4);
 
-    // if (bufferSyntax.substr(2, bufferSyntax.length() - 3).compare(roundsWord) == 1)
-    // {
-    //     //check compare
-    //     players[indexPlayer].score = players[indexPlayer].score + 10;
+    if (playerWord.compare(roundsWord) == 0)
+    {
+        //check compare
+        players[indexPlayer].score = players[indexPlayer].score + 10;
 
-    //     printf("Finded word Player %d", indexPlayer);
+        printf("Finded word Player %d", indexPlayer);
 
-    //     writeData(fd, "5;4;1*", 6);
-    //     startRound();
-    //     return;
-    // }
-    //else
-    if (numberLetter == 5)
+        writeData(fd, "5;4;1*", 6);
+        startRound();
+        return;
+    }
+    else if (numberLetter == 5)
     {
         char letter = strBuffer[4];
 
@@ -579,7 +573,6 @@ void subGame(int fd, char *buffer, int indexPlayer)
         {
             players[indexPlayer].lives++;
 
-            printf("LIVE OF USER: %d, LIVES: %d, FD LIST %d\n",fd, players[indexPlayer].lives, players[indexPlayer].fd);
             if (players[indexPlayer].lives >= LIVES)
             {
                 writeData(fd, "5;1;3*", 6);
@@ -594,10 +587,8 @@ void subGame(int fd, char *buffer, int indexPlayer)
     }
     else
     {
-        // write(fd, "5;4;0*", 6);
         players[indexPlayer].lives++;
 
-        printf("LIVE OF USER: %d, LIVES: %d, FD LIST %d\n",fd, players[indexPlayer].lives, players[indexPlayer].fd);
         if (players[indexPlayer].lives >= LIVES)
         {
             writeData(fd, "5;1;3*", 6);
