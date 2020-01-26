@@ -511,6 +511,7 @@ void finishGame()
         }
         printf("FINISHED\n");
         playerIdentityList.clear();
+        players.clear();
         startGame();
     }
 }
