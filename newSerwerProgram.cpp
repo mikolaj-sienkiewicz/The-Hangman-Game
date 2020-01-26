@@ -260,8 +260,8 @@ void startGame()
             int clientFd = descr[i].fd;
 
             client newGamer;
-            client.score = 0;
-            client.lives = 0;
+            newGamer.score = 0;
+            newGamer.lives = 0;
             newGamer.fd = clientFd;
 
             players.push_back(newGamer);
