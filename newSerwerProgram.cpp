@@ -479,7 +479,7 @@ void startRound()
 void finishGame()
 {
     
-    if (gameStarted && players.playerIdentityList() < 2)
+    if (gameStarted && playerIdentityList.size() < 2)
     {
         printf("FINISHED\n");
         gameStarted = false;
