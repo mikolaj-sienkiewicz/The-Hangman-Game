@@ -122,7 +122,7 @@ int main(int argc, char **argv)
                                     topScore = players[j].score;
                                     topPlayer = players[j].fd;
                                 }
-                                game(i);
+                                game(i,j);
                                 playersHasQuestion = false;
                                 ready--;
                                 break;
@@ -405,7 +405,7 @@ void getMessageFromInit(int indexInDescr)
     }
 }
 
-void game(int cliendFd)
+void game(int cliendFd, int indexArray)
 {
     auto clientFd = descr[cliendFd].fd;
     auto revents = descr[cliendFd].revents;
@@ -417,7 +417,7 @@ void game(int cliendFd)
         if (count < 1)
             revents |= POLLERR;
         else
-            subGame(clientFd, buffer, cliendFd);
+            subGame(clientFd, buffer, indexArray);
     }
 
     if (revents & ~POLLIN)
