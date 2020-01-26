@@ -117,7 +117,7 @@ int main(int argc, char **argv)
                         {
                             if (existPlayer == players[j].fd)
                             {
-                                printf("USER I %d, USER J %d", descr[i].fd, players[j].fd)
+                                printf("USER I %d, USER J %d", descr[i].fd, players[j].fd);
                                 if (topScore < players[j].score)
                                 {
                                     topScore = players[j].score;
