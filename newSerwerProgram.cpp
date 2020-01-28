@@ -236,7 +236,6 @@ void addUser(int revents)
         descrCount++;
 
         printf("new connection from: %s:%hu (fd: %d)\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), clientFd);
-        gameFinished = true;
 
         startGame();
     }
@@ -503,6 +502,7 @@ void finishGame()
     if (gameStarted && playerIdentityList.size() < 2)
     {
         gameStarted = false;
+        gameFinished = true;
         std::string startString;
         startString.append(";5;");
         startString.append(std::to_string(topScore)+"-"+std::to_string(topPlayer));
