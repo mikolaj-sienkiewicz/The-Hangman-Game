@@ -280,7 +280,7 @@ void startGame()
 
         startRound();
     }
-    else if(gameFinished)
+    if(gameFinished)
     {
         gameFinished = false;
         int i = 1;
