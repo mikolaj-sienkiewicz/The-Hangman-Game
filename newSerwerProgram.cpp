@@ -59,6 +59,7 @@ int topPlayer = 0;
 //BOOLEN
 bool gameStarted = false;
 bool gameLoaded = false;
+bool gameFinished = false;
 
 //MALLOC
 pollfd *descr;
@@ -235,6 +236,7 @@ void addUser(int revents)
         descrCount++;
 
         printf("new connection from: %s:%hu (fd: %d)\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), clientFd);
+        gameFinished = true;
 
         startGame();
     }
@@ -244,6 +246,7 @@ void startGame()
 {
     if (amountOfAllPLayers >= MIN_PLAYERS_TO_START_GAME && !gameStarted)
     {
+        gameFinished = false;
         amountOfAllPLayers;
         gameStarted = true;
 
@@ -277,6 +280,31 @@ void startGame()
         }
 
         startRound();
+    }
+    else if(gameFinished)
+    {
+        gameFinished = false;
+        int i = 1;
+        while (i < descrCount)
+        {
+            int clientFd = descr[i].fd;
+
+            std::string codeMessage = ";6;" + std::to_string(amountOfAllPLayers) + "*";
+            std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
+            int res = write(clientFd, codeMessageFinal.data(), codeMessageFinal.length());
+
+            if (res != codeMessageFinal.length())
+            {
+                printf("removing %d\n", clientFd);
+                shutdown(clientFd, SHUT_RDWR);
+                close(clientFd);
+                descr[i] = descr[descrCount - 1];
+                descrCount--;
+                continue;
+            }
+
+            i++;
+        }
     }
 }
 
