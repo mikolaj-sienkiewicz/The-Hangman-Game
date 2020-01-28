@@ -60,6 +60,7 @@ int topPlayer = 0;
 bool gameStarted = false;
 bool gameLoaded = false;
 bool gameFinished = false;
+bool startedGame = true;
 
 //MALLOC
 pollfd *descr;
@@ -107,7 +108,13 @@ int main(int argc, char **argv)
                     addUser(descr[i].revents);
                     ready--;
 
-                    joinToTheProgramForUser(descr[descrCount - 1].fd);
+                    if(startedGame)
+                    {
+                        joinToTheProgramForUser(descr[descrCount - 1].fd);
+                    }else{
+                        startedGame = true;
+                    }
+                    
                     continue;
                 }
                 for (int j = 0; j < players.size() && gameStarted; j++)
@@ -245,6 +252,7 @@ void startGame()
 {
     if (amountOfAllPLayers >= MIN_PLAYERS_TO_START_GAME && !gameStarted)
     {
+        startedGame = false;
         gameFinished = false;
         amountOfAllPLayers;
         gameStarted = true;
