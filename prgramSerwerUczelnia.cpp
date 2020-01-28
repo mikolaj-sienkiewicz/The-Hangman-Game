@@ -14,8 +14,8 @@
 #include <iostream>
 #include <cstdlib>
 #include <vector>
-#include <stdlib.h>     
-#include <time.h>       
+#include <stdlib.h>
+#include <time.h>
 
 //struct for clients
 struct client
@@ -28,11 +28,11 @@ struct client
     client()
     {
         score = 0;
-        lives = 0;
+        3 = 0;
     }
 };
 
-std::string listOfWords [10] = {"zielony", "polak", "matka", "ananas", "graf", "matematyka", "czerwony", "niebieski", "pomaranczowy", "lis"};
+std::string listOfWords[10] = {"zielony", "polak", "matka", "ananas", "graf", "matematyka", "czerwony", "niebieski", "pomaranczowy", "lis"};
 // server socket
 int servFd;
 
@@ -67,18 +67,23 @@ std::string startGame();
 
 std::string randomWord();
 
-char * convertStringToChars(std::string word);
+char *convertStringToChars(std::string word);
 
-ssize_t readData(int fd, char * buffer, ssize_t buffsize){
-	auto ret = read(fd, buffer, buffsize);
-	if(ret==-1) error(1,errno, "read failed on descriptor %d", fd);
-	return ret;
+ssize_t readData(int fd, char *buffer, ssize_t buffsize)
+{
+    auto ret = read(fd, buffer, buffsize);
+    if (ret == -1)
+        error(1, errno, "read failed on descriptor %d", fd);
+    return ret;
 }
 
-void writeData(int fd, char * buffer, ssize_t count){
-	auto ret = write(fd, buffer, count);
-	if(ret==-1) error(1, errno, "write failed on descriptor %d", fd);
-	if(ret!=count) error(0, errno, "wrote less than requested to descriptor %d (%ld/%ld)", fd, count, ret);
+void writeData(int fd, char *buffer, ssize_t count)
+{
+    auto ret = write(fd, buffer, count);
+    if (ret == -1)
+        error(1, errno, "write failed on descriptor %d", fd);
+    if (ret != count)
+        error(0, errno, "wrote less than requested to descriptor %d (%ld/%ld)", fd, count, ret);
 }
 
 void sendToClient(int fd, char *buffer, int indexPlayer);
@@ -151,16 +156,16 @@ void eventStart(int indexInDescr)
         int count = readData(clientFd, buffer, 255);
         if (count < 1)
             revents |= POLLERR;
-  
+
         // std::string strBuffer(buffer);
 
         // printf("Send by client %s", strBuffer.c_str());
         std::string startString;
-        startString.append("The ");
+        startString.append("the ");
         startString.append(std::to_string(amountOfPlayers));
-        startString.append(" Players\n");
+        startString.append(" players");
 
-        writeData(clientFd, convertStringToChars(startString), startString.length());
+        writeData(clientFd, convertStringToChars(startString), startString.length() + 1);
     }
 
     if (revents & ~POLLIN)
@@ -214,7 +219,7 @@ void eventOnClientFd(int indexInDescr, int indexPlayer)
 
 int main(int argc, char **argv)
 {
-    srand (time(NULL));
+    srand(time(NULL));
 
     // get and validate port number
     if (argc != 2)
@@ -253,7 +258,7 @@ int main(int argc, char **argv)
 
     while (true)
     {
-        
+
         int ready = poll(descr, descrCount, -1);
         if (ready == -1)
         {
@@ -276,11 +281,11 @@ int main(int argc, char **argv)
                     printf(" 1. Add clients\n");
                     donePlayer = false;
                     eventOnServFd(descr[i].revents);
-                   
+                    //tutaj dodać pętle
                     // continue;
                 }
 
-                for (int j = 1; j < playersListCapacity && gameStarted && donePlayer ; j++)
+                for (int j = 1; j < playersListCapacity && gameStarted && donePlayer; j++)
                 {
                     if (descr[i].fd == playersList[j].descriptor && playersList[j].lives <= LIVES)
                     {
@@ -291,14 +296,14 @@ int main(int argc, char **argv)
                             theBestPlayer = playersList[j];
                         }
                         printf("Descryptory ktore dzialaja: i %d j %d  ", i, j);
-                        eventOnClientFd(i, j);                        
+                        eventOnClientFd(i, j);
                     }
                 }
 
                 if (donePlayer)
                 {
-                    // printf(" 1. Event Start Works\n");
-                    // printf("YES TUTAJ");
+                    printf(" 1. Event Start Works\n");
+                    printf("YES TUTAJ");
 
                     eventStart(i);
                 }
@@ -313,13 +318,13 @@ int main(int argc, char **argv)
                 std::string startString;
                 // startString.append("Won the ");
                 startString.append(std::to_string(theBestPlayer.number));
-                startString.append(" Player\n");
+                startString.append(" Player");
                 while (i < descrCount)
                 {
                     int clientFd = descr[i].fd;
                     if (clientFd == theBestPlayer.descriptor)
                     {
-                        // writeData(clientFd, "You won \n", 10);                        
+                        // writeData(clientFd, "You won \n", 10);
                         writeData(clientFd, "5;1;3*\n", 8);
                         i++;
                         continue;
@@ -346,7 +351,7 @@ int main(int argc, char **argv)
             if (descrCount > START_GAME && !gameStarted)
             {
                 printf("NEW GAME START");
-                playersListCapacity = descrCount-1;
+                playersListCapacity = descrCount;
                 free(playersList);
                 playersList = (client *)malloc(sizeof(client) * descrCount);
 
@@ -355,8 +360,11 @@ int main(int argc, char **argv)
                 for (int i = 1; i < descrCount; i++)
                 {
                     playersList[i].descriptor = descr[i].fd;
-                    playersList[i].number = i;
-                    writeData(playersList[i].descriptor, convertStringToChars(startGame()), startGame().length() + 1);
+                    playersList[i].number = i + 1;
+                    playersList[i].lives = 0;
+                    playersList[i].score = 0;
+                    printf("deskryptor wysylanie \n");
+                    writeData(descr[i].fd, convertStringToChars(startGame()), startGame().length());
                 }
 
                 amountOfPlayers = playersListCapacity;
@@ -366,7 +374,7 @@ int main(int argc, char **argv)
                 break;
             }
 
-            if(descrCount < START_GAME)
+            if (descrCount < START_GAME)
             {
                 printf("NOT ENOUGH PLAYERS\n");
             }
@@ -463,7 +471,7 @@ void sendToClient(int fd, char *buffer, int indexPlayer)
             startStringNew.append(std::to_string(startString.length()));
             startStringNew.append(startString);
 
-            write(fd, convertStringToChars(startStringNew), startStringNew.length());
+            write(fd, convertStringToChars(startStringNew), startStringNew.length() + 1);
 
             return;
         }
@@ -518,7 +526,7 @@ void generateWord()
     for (int i = 1; i < descrCount; i++)
     {
         // playersList[i].descriptor = descr[i].fd;
-        writeData(descr[playersList[i].number].fd, convertStringToChars(startStringNew), startStringNew.length());
+        writeData(descr[i].fd, convertStringToChars(startStringNew), startStringNew.length() + 1);
     }
 }
 
@@ -535,7 +543,7 @@ std::string startGame()
     return startStringNew;
 }
 
-char * convertStringToChars(std::string word)
+char *convertStringToChars(std::string word)
 {
     char cstr[word.length() + 1];
 
@@ -543,6 +551,8 @@ char * convertStringToChars(std::string word)
     cstr[word.length()] = '\0';
     return cstr;
 }
+
+// data nie zwraca consta jak  cstr. przyklad string.data()
 
 // void sendToAllBut(int fd, char *buffer, int count)
 // {
