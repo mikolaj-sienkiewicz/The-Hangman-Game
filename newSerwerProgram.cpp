@@ -618,7 +618,7 @@ void subGame(int fd, char *buffer, int indexPlayer)
 
                 std::string codeMessage = ";7;" + std::to_string((amountOfAllPLayers - playerIdentityList.size())) + "-" + std::to_string(playerIdentityList.size()) + "-" + std::to_string(topScore) + "-" + std::to_string(topPlayer) + "*";
                 std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
-                writeData(fd_set, codeMessageFinal.data(), codeMessageFinal.length());
+                writeData(fd, codeMessageFinal.data(), codeMessageFinal.length());
 
                 return;
             }
