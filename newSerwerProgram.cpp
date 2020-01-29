@@ -108,13 +108,15 @@ int main(int argc, char **argv)
                     addUser(descr[i].revents);
                     ready--;
 
-                    if(startedGame)
+                    if (startedGame)
                     {
                         joinToTheProgramForUser(descr[descrCount - 1].fd);
-                    }else{
+                    }
+                    else
+                    {
                         startedGame = true;
                     }
-                    
+
                     continue;
                 }
                 for (int j = 0; j < players.size() && gameStarted; j++)
@@ -130,7 +132,7 @@ int main(int argc, char **argv)
                                     topScore = players[j].score;
                                     topPlayer = players[j].fd;
                                 }
-                                game(i,j);
+                                game(i, j);
                                 playersHasQuestion = false;
                                 ready--;
                                 break;
@@ -288,7 +290,7 @@ void startGame()
 
         startRound();
     }
-    if(gameFinished)
+    if (gameFinished)
     {
         gameFinished = false;
         int i = 1;
@@ -479,7 +481,7 @@ void startRound()
 
     std::string startString;
     startString.append(";2;");
-    startString.append(std::to_string(sizeOfWord)+"-"+std::to_string(topScore)+"-"+std::to_string(topPlayer));
+    startString.append(std::to_string(sizeOfWord) + "-" + std::to_string(topScore) + "-" + std::to_string(topPlayer));
     startString.append("*");
     std::string startStringNew;
     startStringNew.append(std::to_string(startString.length()));
@@ -506,14 +508,14 @@ void startRound()
 
 void finishGame()
 {
-    
+
     if (gameStarted && playerIdentityList.size() < 2)
     {
         gameStarted = false;
         gameFinished = true;
         std::string startString;
         startString.append(";5;");
-        startString.append(std::to_string(topScore)+"-"+std::to_string(topPlayer));
+        startString.append(std::to_string(topScore) + "-" + std::to_string(topPlayer));
         startString.append("*");
         std::string startStringNew;
         startStringNew.append(std::to_string(startString.length()));
@@ -550,10 +552,10 @@ void subGame(int fd, char *buffer, int indexPlayer)
     int i = 1;
     std::string strBuffer(buffer);
     std::size_t found = strBuffer.find_last_of(';'); //end of msg length; ex 1 in "2;1;22*"
-    
+
     int numberLetter = atoi(strBuffer.substr(0, found).c_str());
-    
-    std::string playerWord = strBuffer.substr(found+1,numberLetter-4);
+
+    std::string playerWord = strBuffer.substr(found + 1, numberLetter - 4);
 
     if (playerWord.compare(roundsWord) == 0)
     {
@@ -601,7 +603,7 @@ void subGame(int fd, char *buffer, int indexPlayer)
             startStringNew.append(std::to_string(startString.length()));
             startStringNew.append(startString);
 
-            write(fd, startStringNew.data(), startStringNew.length());
+            writeData(fd, startStringNew.data(), startStringNew.length());
 
             return;
         }
@@ -613,7 +615,11 @@ void subGame(int fd, char *buffer, int indexPlayer)
             {
                 writeData(fd, "5;1;3*", 6);
                 playerIdentityList.erase(std::remove(playerIdentityList.begin(), playerIdentityList.end(), fd), playerIdentityList.end());
-                
+
+                std::string codeMessage = ";7;" + std::to_string((amountOfAllPLayers - playerIdentityList.size())) + "-" + std::to_string(amountOfAllPLayers) + "-" + std::to_string(topScore) + "-" + std::to_string(topPlayer) + "*";
+                std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
+                writeData(fd, codeMessageFinal.data(), codeMessageFinal.length());
+
                 return;
             }
 
@@ -629,6 +635,10 @@ void subGame(int fd, char *buffer, int indexPlayer)
         {
             writeData(fd, "5;1;3*", 6);
             playerIdentityList.erase(std::remove(playerIdentityList.begin(), playerIdentityList.end(), fd), playerIdentityList.end());
+
+            std::string codeMessage = ";7;" + std::to_string((amountOfAllPLayers - playerIdentityList.size())) + "-" + std::to_string(amountOfAllPLayers) + "-" + std::to_string(topScore) + "-" + std::to_string(topPlayer) + "*";
+            std::string codeMessageFinal = std::to_string(codeMessage.length()) + codeMessage;
+            writeData(fd, codeMessageFinal.data(), codeMessageFinal.length());
 
             return;
         }
