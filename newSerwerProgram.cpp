@@ -18,6 +18,7 @@
 #include <time.h>
 #include <algorithm>
 #include <string>
+#include <fstream>
 
 struct client
 {
@@ -35,7 +36,7 @@ struct client
 std::vector<int> playerIdentityList;
 
 //LIST OF STRINGS
-std::string wordsList[10] = {"zielony", "polak", "matka", "ananas", "graf", "matematyka", "czerwony", "niebieski", "pomaranczowy", "lis"};
+std::vector<std::string> wordsList = {"zielony", "polak", "matka", "ananas", "graf", "matematyka", "czerwony", "niebieski", "pomaranczowy", "lis"};
 
 //STRING WORD
 std::string roundsWord;
@@ -69,6 +70,7 @@ std::vector<client> players;
 //FUNCTIONS
 void startGame();
 void finishGame();
+void readFile();
 void game(int cliendFd, int indexArray);
 void joinToTheProgramForUser(int cliendFd);
 void initFunction(int argc, char **argv);
@@ -82,10 +84,12 @@ void subGame(int fd, char *buffer, int indexPlayer);
 void startRound();
 
 ssize_t readData(int fd, char *buffer, ssize_t buffsize);
+std::vector<std::string> splitStrings(std::string str, char dl);
 uint16_t readPort(char *txt);
 
 int main(int argc, char **argv)
 {
+    readFile();
     initFunction(argc, argv);
 
     while (true)
@@ -159,6 +163,38 @@ int main(int argc, char **argv)
             }
         }
     }
+}
+
+void readFile()
+{
+    std::string readLine;
+    std::ifstream infile;
+    infile.open("configFile.txt");
+    while (!infile.eof) // To get you all the lines.
+    {
+
+        getline(infile, readLine); // Saves the line in STRING.
+
+        if (readLine.find("LIVES") == 0)
+        {
+            std::size_t found = readLine.find_last_of(':')+1; //end of msg length; ex 1 in "2;1;22*"
+            LIVES = atoi(readLine.substr(found).c_str());
+        }
+        else if (readLine.find("MIN PLAYERS") == 0)
+        {
+            std::size_t found = readLine.find_last_of(':')+1; //end of msg length; ex 1 in "2;1;22*"
+            MIN_PLAYERS_TO_START_GAME = atoi(readLine.substr(found).c_str());
+        }
+        else if(readLine.find("WORDS")== 0)
+        {
+            std::size_t found = readLine.find_last_of(':')+1; //end of msg length; ex 1 in "2;1;22*"
+            std::string words = readLine.substr(found);
+            wordsList = splitStrings(words);
+        }
+
+        cout << readLine; // Prints our STRING.
+    }
+    infile.close();
 }
 
 void joinToTheProgramForUser(int clientFd)
@@ -647,3 +683,43 @@ void subGame(int fd, char *buffer, int indexPlayer)
         return;
     }
 }
+
+std::vector<std::string> splitStrings(std::string str, char dl) 
+{ 
+    string word = ""; 
+  
+    // to count the number of split strings 
+    int num = 0; 
+  
+    // adding delimiter character at the end 
+    // of 'str' 
+    str = str + dl; 
+  
+    // length of 'str' 
+    int l = str.size(); 
+  
+    // traversing 'str' from left to right 
+    vector<string> substr_list; 
+    for (int i = 0; i < l; i++) { 
+  
+        // if str[i] is not equal to the delimiter 
+        // character then accumulate it to 'word' 
+        if (str[i] != dl) 
+            word = word + str[i]; 
+  
+        else { 
+  
+            // if 'word' is not an empty string, 
+            // then add this 'word' to the array 
+            // 'substr_list[]' 
+            if ((int)word.size() != 0) 
+                substr_list.push_back(word); 
+  
+            // reset 'word' 
+            word = ""; 
+        } 
+    } 
+  
+    // return the splitted strings 
+    return substr_list; 
+} 
