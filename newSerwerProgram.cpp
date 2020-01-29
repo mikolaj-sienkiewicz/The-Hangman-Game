@@ -564,7 +564,7 @@ void subGame(int fd, char *buffer, int indexPlayer)
 
         printf("Finded word Player %d", indexPlayer);
 
-        writeData(fd, std::to_string("5;4;1*").data(), 6);
+        writeData(fd, "5;4;1*", 6);
         startRound();
         return;
     }
@@ -613,7 +613,7 @@ void subGame(int fd, char *buffer, int indexPlayer)
 
             if (players[indexPlayer].lives >= LIVES)
             {
-                writeData(fd, (std::to_string("5;1;3*")).data(), 6);
+                writeData(fd, "5;1;3*", 6);
                 playerIdentityList.erase(std::remove(playerIdentityList.begin(), playerIdentityList.end(), fd), playerIdentityList.end());
 
                 std::string codeMessage = ";7;" + std::to_string((amountOfAllPLayers - playerIdentityList.size())) + "-" + std::to_string(playerIdentityList.size()) + "-" + std::to_string(topScore) + "-" + std::to_string(topPlayer) + "*";
@@ -623,7 +623,7 @@ void subGame(int fd, char *buffer, int indexPlayer)
                 return;
             }
 
-            writeData(fd, (std::to_string("4;3;*")).data(), 5);
+            writeData(fd, "4;3;*", 5);
             return;
         }
     }
@@ -633,7 +633,7 @@ void subGame(int fd, char *buffer, int indexPlayer)
 
         if (players[indexPlayer].lives >= LIVES)
         {
-            writeData(fd, (std::to_string("5;1;3*")).data(), 6);
+            writeData(fd, "5;1;3*", 6);
             playerIdentityList.erase(std::remove(playerIdentityList.begin(), playerIdentityList.end(), fd), playerIdentityList.end());
 
             std::string codeMessage = ";7;" + std::to_string((amountOfAllPLayers - playerIdentityList.size())) + "-" + std::to_string(playerIdentityList.size()) + "-" + std::to_string(topScore) + "-" + std::to_string(topPlayer) + "*";
@@ -643,7 +643,7 @@ void subGame(int fd, char *buffer, int indexPlayer)
             return;
         }
 
-        write(fd, (std::to_string("5;4;0*").data(), 6);
+        write(fd, "5;4;0*", 6);
         return;
     }
 }
