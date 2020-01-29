@@ -106,9 +106,6 @@ void encodeMessage(int sock, char * buffer, int received) {
 		if (GAMESTATUS=="2"){
 			for(int i=0;i<finalBuffer2.length();i++){
 				if (finalBuffer2[i]<65||(finalBuffer2[i]<97&&finalBuffer2[i]>90)||finalBuffer2[i]>122){
-					int  tmp= atol(LIVES.c_str());
-					tmp -= 2;
-					LIVES = std::to_string(tmp);
 					updateGameMonitor();
 					std::cout<<"Illegal letter detected! try only (A-Z or a-z) \nInsert valid letter: ";
 					return;
