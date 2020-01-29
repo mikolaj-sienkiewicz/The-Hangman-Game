@@ -110,7 +110,7 @@ void encodeMessage(int sock, char * buffer, int received) {
 					tmp -= 2;
 					LIVES = std::to_string(tmp);
 					updateGameMonitor();
-					std::cout<<"Illegal letter detected! try only (A-Z or a-z) \n\nDON'T TRY TO BREAK THE SYSTEM -2 lives punishment!\nInsert valid letter: ";
+					std::cout<<"Illegal letter detected! try only (A-Z or a-z) \nInsert valid letter: ";
 					return;
 				}
 			}
@@ -226,11 +226,11 @@ int main(int argc, char** argv) {
 			close(sock);
 			error(1, errno, "poll failed");
 		}
+		
 
-
-	///CZYSCIC POLL.REEVENTS JAK JUZ WEJDZIESZ W IFA 
-	//POLL WYPELNIL STRUKTURE A POTEM JAKBY ZOSTANIE TA SAMA WARTOSC WIEC REEVENTS TRZEBA CZYSCIC
-	//if ready!=0 ALE WTEDY ZOBACZYC CZY IF Z MESSAGE QUEUE NIE TRZEBA WYWALIC ZA FOR
+		///CZYSCIC POLL.REEVENTS JAK JUZ WEJDZIESZ W IFA 
+		//POLL WYPELNIL STRUKTURE A POTEM JAKBY ZOSTANIE TA SAMA WARTOSC WIEC REEVENTS TRZEBA CZYSCIC
+		//if ready!=0 ALE WTEDY ZOBACZYC CZY IF Z MESSAGE QUEUE NIE TRZEBA WYWALIC ZA FOR
 		for (int i = 0; i < 2; ++i) {
 			// pole revents jest wypełniane przez poll opisem gotowych zdarzeń
 			if (desc[i].revents & (POLLERR | POLLHUP | POLLRDHUP)) {
@@ -300,6 +300,7 @@ int main(int argc, char** argv) {
 					char cstr[WORDLENGTH.size() + 1];
 					strcpy(cstr, &WORDLENGTH[0]);
 					intWORDLENGTH = atol(cstr);
+					WORD="";
 					for (int i = 0; i < intWORDLENGTH; i++)
 					{
 						WORD += "_";
