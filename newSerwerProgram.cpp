@@ -170,10 +170,10 @@ void readFile()
     std::string readLine;
     std::ifstream infile;
     infile.open("configFile.txt");
-    while (!infile.eof) // To get you all the lines.
+    while (getline(infile, readLine)) // To get you all the lines.
     {
 
-        getline(infile, readLine); // Saves the line in STRING.
+         // Saves the line in STRING.
 
         if (readLine.find("LIVES") == 0)
         {
