@@ -1,4 +1,4 @@
 LIVES: 3
 MIN PLAYERS: 3
-WORDS: zielony,polak,matka,ananas,mgraf,matematyka,czerwony,niebieski,pomaranczowy,lis
+WORDS:zielony,polak,matka,ananas,mgraf,matematyka,czerwony,niebieski,pomaranczowy,lis
 

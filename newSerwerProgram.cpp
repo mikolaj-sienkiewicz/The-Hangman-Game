@@ -189,10 +189,8 @@ void readFile()
         {
             std::size_t found = readLine.find_last_of(':')+1; //end of msg length; ex 1 in "2;1;22*"
             std::string words = readLine.substr(found);
-            wordsList = splitStrings(words);
+            wordsList = splitStrings(words, ',');
         }
-
-        cout << readLine; // Prints our STRING.
     }
     infile.close();
 }
@@ -686,7 +684,7 @@ void subGame(int fd, char *buffer, int indexPlayer)
 
 std::vector<std::string> splitStrings(std::string str, char dl) 
 { 
-    string word = ""; 
+    std::string word = ""; 
   
     // to count the number of split strings 
     int num = 0; 
@@ -699,7 +697,7 @@ std::vector<std::string> splitStrings(std::string str, char dl)
     int l = str.size(); 
   
     // traversing 'str' from left to right 
-    vector<string> substr_list; 
+    std::vector<std::string> substr_list; 
     for (int i = 0; i < l; i++) { 
   
         // if str[i] is not equal to the delimiter 
