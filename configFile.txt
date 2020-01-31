@@ -1,3 +1,3 @@
 LIVES: 3
 MIN PLAYERS: 3
-WORDS:zielony,polak,matka,ananas,graf,matematyka,czerwony,niebieski,granatowy,lis,
+WORDS:zielony,polak,matka,ananas,graf,matematyka,czerwony,niebieski,granatowy,lis,owca,krowa,plecak,opos,
