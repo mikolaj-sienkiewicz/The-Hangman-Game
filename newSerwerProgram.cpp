@@ -173,21 +173,21 @@ void readFile()
     while (getline(infile, readLine)) // To get you all the lines.
     {
 
-         // Saves the line in STRING.
+        // Saves the line in STRING.
 
         if (readLine.find("LIVES") == 0)
         {
-            std::size_t found = readLine.find_last_of(':')+1; //end of msg length; ex 1 in "2;1;22*"
+            std::size_t found = readLine.find_last_of(':') + 1; //end of msg length; ex 1 in "2;1;22*"
             LIVES = atoi(readLine.substr(found).c_str());
         }
         else if (readLine.find("MIN PLAYERS") == 0)
         {
-            std::size_t found = readLine.find_last_of(':')+1; //end of msg length; ex 1 in "2;1;22*"
+            std::size_t found = readLine.find_last_of(':') + 1; //end of msg length; ex 1 in "2;1;22*"
             MIN_PLAYERS_TO_START_GAME = atoi(readLine.substr(found).c_str());
         }
-        else if(readLine.find("WORDS")== 0)
+        else if (readLine.find("WORDS") == 0)
         {
-            std::size_t found = readLine.find_last_of(':')+1; //end of msg length; ex 1 in "2;1;22*"
+            std::size_t found = readLine.find_last_of(':') + 1; //end of msg length; ex 1 in "2;1;22*"
             std::string words = readLine.substr(found);
             wordsList = splitStrings(words, ',');
         }
@@ -595,6 +595,11 @@ void subGame(int fd, char *buffer, int indexPlayer)
     {
         //check compare
         players[indexPlayer].score = players[indexPlayer].score + 10;
+        if (topScore < players[indexPlayer].score)
+        {
+            topScore = players[indexPlayer].score;
+            topPlayer = players[indexPlayer].fd;
+        }
 
         printf("Finded word Player %d", indexPlayer);
 
@@ -682,42 +687,44 @@ void subGame(int fd, char *buffer, int indexPlayer)
     }
 }
 
-std::vector<std::string> splitStrings(std::string str, char dl) 
-{ 
-    std::string word = ""; 
-  
-    // to count the number of split strings 
-    int num = 0; 
-  
-    // adding delimiter character at the end 
-    // of 'str' 
-    str = str + dl; 
-  
-    // length of 'str' 
-    int l = str.size(); 
-  
-    // traversing 'str' from left to right 
-    std::vector<std::string> substr_list; 
-    for (int i = 0; i < l; i++) { 
-  
-        // if str[i] is not equal to the delimiter 
-        // character then accumulate it to 'word' 
-        if (str[i] != dl) 
-            word = word + str[i]; 
-  
-        else { 
-  
-            // if 'word' is not an empty string, 
-            // then add this 'word' to the array 
-            // 'substr_list[]' 
-            if ((int)word.size() != 0) 
-                substr_list.push_back(word); 
-  
-            // reset 'word' 
-            word = ""; 
-        } 
-    } 
-  
-    // return the splitted strings 
-    return substr_list; 
-} 
+std::vector<std::string> splitStrings(std::string str, char dl)
+{
+    std::string word = "";
+
+    // to count the number of split strings
+    int num = 0;
+
+    // adding delimiter character at the end
+    // of 'str'
+    str = str + dl;
+
+    // length of 'str'
+    int l = str.size();
+
+    // traversing 'str' from left to right
+    std::vector<std::string> substr_list;
+    for (int i = 0; i < l; i++)
+    {
+
+        // if str[i] is not equal to the delimiter
+        // character then accumulate it to 'word'
+        if (str[i] != dl)
+            word = word + str[i];
+
+        else
+        {
+
+            // if 'word' is not an empty string,
+            // then add this 'word' to the array
+            // 'substr_list[]'
+            if ((int)word.size() != 0)
+                substr_list.push_back(word);
+
+            // reset 'word'
+            word = "";
+        }
+    }
+
+    // return the splitted strings
+    return substr_list;
+}
